@@ -39,5 +39,5 @@ yarn-error.log*
 dist
 
 # custom
-package-lock.json
 bun.lockb
+package-lock.json
