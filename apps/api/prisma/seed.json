@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "User Test",
+      "phone_number": "0819299001122",
+      "email": "jcwd2902@mail.com",
+      "password": "$2b$10$.ghPwWl3.0q2M8l6p2rgReaxYiSHo3GdBGCYSyyaDrD3WhVBamEH.",
+      "role": "user"
+    },
+    {
+      "id": 2,
+      "name": "Tenant Test",
+      "phone_number": "0819299001133",
+      "email": "jcwd2902@gmail.com",
+      "password": "$2b$10$.ghPwWl3.0q2M8l6p2rgReaxYiSHo3GdBGCYSyyaDrD3WhVBamEH.",
+      "role": "tenant"
+    }
+  ]
+}
