@@ -2,10 +2,15 @@ import prisma from '../prisma';
 import { Prisma, users_role } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { Request } from 'express';
-import fs from 'fs';
+import fs, { readSync } from 'fs';
 import { IUser } from '../interfaces/user.interface';
 import { ErrorHandler } from '../helpers/response.helper';
-import { generateToken } from '../libs/token.lib';
+import {
+  sendForgetPasswordEmail as sendFPMail,
+  sendVerificationEmail as sendVerifyMail,
+} from '../libs/nodemailer.lib';
+import { generateForgetPaswordToken, generateToken } from '../libs/token.lib';
+import { FORGETPASSWORD_URL_PATH, WEB_URL } from '@/config';
 
 export class AuthService {
   static async login(req: Request) {
@@ -64,27 +69,95 @@ export class AuthService {
 
     return null;
   }
-
+  static async sendVerifyEmail(req: Request) {}
   static async confirmPassword(req: Request) {
-    const { password, token } = req.body;
-    const hashPassword = await hash(password, 10);
-    return hashPassword;
+    const { password, token, id } = req.body;
+    const data = await prisma.users.findUnique({
+      where: { id },
+      select: {
+        forget_password_token: true,
+        isVerified: true,
+      },
+    });
+    if (data) {
+      const isMatch = token == data.forget_password_token;
+      const hashPassword = await hash(password, 10);
+      const result = await prisma.$transaction(async (trx) => {
+        return await trx.users.update({
+          where: { id },
+          data: { password: isMatch ? hashPassword : undefined },
+        });
+      });
+      return result;
+    }
+    return null;
   }
 
-  static async forgetPassword(req: Request) {}
+  static async sendForgetPasswordEmail(req: Request) {
+    try {
+      if (req.user) {
+        const { user } = req;
+        const result = await prisma.$transaction(async (trx) => {
+          const userData = (await trx.users.update({
+            where: { id: user.id, isVerified: true },
+            data: {
+              forget_password_token: generateForgetPaswordToken({
+                id: await hash(user.id, 10),
+                email: await hash(user.email, 10),
+              }),
+            },
+          })) as IUser;
+          if (!userData) {
+            throw new ErrorHandler('User not found', 404);
+          }
+          sendFPMail(userData.name, {
+            email: userData.email,
+            forgetPasswordUrl: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${result}`,
+          });
+        });
+        return true;
+      } else {
+        throw new ErrorHandler('Unauthorized', 401);
+      }
+    } catch (error) {
+      throw new ErrorHandler(error, 500);
+    }
+  }
+
+  static async forgetPassword(req: Request) {
+    const { password, token, id } = req.body;
+    const data = await prisma.users.findUnique({
+      where: { id },
+      select: {
+        forget_password_token: true,
+      },
+    });
+    if (data) {
+      const isMatch = token == data.forget_password_token;
+      const hashPassword = await hash(password, 10);
+      const result = await prisma.$transaction(async (trx) => {
+        return await trx.users.update({
+          where: { id },
+          data: { password: isMatch ? hashPassword : undefined },
+        });
+      });
+      return result;
+    }
+    return null;
+  }
 
   static async getProfile(req: Request) {
     try {
       if (req.user) {
-        const { id } = req.user;
-        const user = (await prisma.users.findFirst({
-          where: { id: id },
+        const { user } = req;
+        const userData = (await prisma.users.findFirst({
+          where: { id: user.id },
         })) as IUser;
-        if (!user) {
+        if (!userData) {
           throw new ErrorHandler('User not found', 404);
         }
-        delete user.password;
-        return user;
+        delete userData.password;
+        return userData;
       } else {
         throw new ErrorHandler('Unauthorized', 401);
       }

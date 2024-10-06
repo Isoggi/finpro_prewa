@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
+import { AuthMiddleware } from '@/middlewares/auth.middleware';
+import { uploader } from '@/libs/uploader.lib';
 // import { validateAuth } from "../middlewares/authValidator.middleware";
 // import { loginSchema, registerSchema } from "../schemas/auth.schema";
-// import { AuthMiddleware } from "../middlewares/auth.middleware";
 // import { uploader } from "../libs/uploader.lib";
 
 export class AuthRouter {
@@ -24,27 +25,18 @@ export class AuthRouter {
       this.authController.register,
     );
 
-    this.router.put(
-      '/verify-password',
-      //   AuthMiddleware,
-      //   uploader("AVATAR", "avatars").single("image"),
-      this.authController.confirmPassword,
-    );
-    this.router.get(
-      '/profile',
-      // AuthMiddleware,
-      this.authController.profile,
-    );
+    this.router.put('/verify-password', this.authController.confirmPassword);
+    this.router.get('/profile', AuthMiddleware, this.authController.profile);
     this.router.patch(
       '/profile',
-      //   AuthMiddleware,
-      //   uploader("AVATAR", "avatars").single("image"),
+      AuthMiddleware,
+      uploader('AVATAR', 'avatars').single('image'),
       this.authController.updateProfile,
     );
     this.router.put(
       '/profile',
-      //   AuthMiddleware,
-      //   uploader("AVATAR", "avatars").single("image"),
+      AuthMiddleware,
+      uploader('AVATAR', 'avatars').single('image'),
       this.authController.updateProfile,
     );
   }
