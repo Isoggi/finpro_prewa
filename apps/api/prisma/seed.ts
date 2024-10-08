@@ -10,6 +10,8 @@ import {
   Rooms,
   Availability,
   PeakSeasonRate,
+  transactions,
+  transactionsItems,
 } from './seed.json';
 
 const seedUser = async () => {
@@ -203,6 +205,40 @@ const seedPeakSeasonRate = async () => {
     }
   });
 };
+const seedTransactions = async () => {
+  await prisma.$transaction(async (trx) => {
+    for (let i = 0; i < transactions.length; i++) {
+      const data = {
+        ...transactions[i],
+      } as any;
+
+      await trx.transactions.upsert({
+        create: data,
+        where: {
+          id: transactions[i].id,
+        },
+        update: data,
+      });
+    }
+  });
+};
+const seedTransactionItems = async () => {
+  await prisma.$transaction(async (trx) => {
+    for (let i = 0; i < transactionsItems.length; i++) {
+      const data = {
+        ...transactionsItems[i],
+      } as any;
+
+      await trx.transactionItems.upsert({
+        create: data,
+        where: {
+          id: transactionsItems[i].id,
+        },
+        update: data,
+      });
+    }
+  });
+};
 
 const delay = (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -216,6 +252,8 @@ const modelMapping = {
   rooms: prisma.rooms.aggregate({ _count: { id: true } }),
   availability: prisma.availability.aggregate({ _count: { id: true } }),
   peakSeasonRate: prisma.peakSeasonRate.aggregate({ _count: { id: true } }),
+  transaction: prisma.transactions.aggregate({ _count: { id: true } }),
+  transactionItems: prisma.transactionItems.aggregate({ _count: { id: true } }),
   // Add more models as needed
 };
 // Check if a table is seeded
@@ -300,6 +338,22 @@ const main = async () => {
   } else {
     console.log('PeakSeasonRate table already seeded');
   }
+
+  if (!(await isTableSeeded('transaction'))) {
+    await seedTransactions();
+    console.log('Seeded Transactions');
+  } else {
+    console.log('Transactions table already seeded');
+  }
+  await delay();
+
+  if (!(await isTableSeeded('transactionItems'))) {
+    await seedTransactionItems();
+    console.log('Seeded Transaction Items');
+  } else {
+    console.log('Transaction Items table already seeded');
+  }
+  await delay();
 
   console.log('Seeding process completed.');
 };

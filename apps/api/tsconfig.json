@@ -11,13 +11,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "typeRoots": [
-      "./src/interfaces"
-      // , "./node_modules/@types"
-    ],
+    "typeRoots": ["./src/interfaces", "./node_modules/@types"],
     "resolveJsonModule": true
   },
   // "include": ["src/**/*"],
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "**/*.d.ts"],
   "exclude": ["node_modules"]
 }

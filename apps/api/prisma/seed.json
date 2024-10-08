@@ -120,5 +120,60 @@
       "rates": -150000,
       "rateCategory": "once"
     }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "amount": 350000,
+      "payment_method": "manual",
+      "payment_proof": "proof.jpg",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "amount": 400000,
+      "payment_method": "manual",
+      "payment_proof": "proof.jpg",
+      "status": "completed"
+    },
+
+    {
+      "id": 3,
+      "user_id": 1,
+      "amount": 400000,
+      "payment_method": "manual",
+      "status": "failed"
+    }
+  ],
+  "transactionsItems": [
+    {
+      "id": 1,
+      "transaction_id": 1,
+      "room_id": 1,
+      "start_date": "2024-12-01T00:00:00Z",
+      "end_date": "2024-12-02T00:00:00Z",
+      "total_price": 350000,
+      "status": "confirmed"
+    },
+    {
+      "id": 2,
+      "transaction_id": 2,
+      "room_id": 1,
+      "start_date": "2024-11-01T00:00:00Z",
+      "end_date": "2024-11-02T00:00:00Z",
+      "total_price": 400000,
+      "status": "confirmed"
+    },
+    {
+      "id": 3,
+      "transaction_id": 3,
+      "room_id": 1,
+      "start_date": "2024-11-01T00:00:00Z",
+      "end_date": "2024-11-02T00:00:00Z",
+      "total_price": 400000,
+      "status": "cancelled"
+    }
   ]
 }

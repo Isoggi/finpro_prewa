@@ -199,7 +199,7 @@ model Users {
   created_at            DateTime   @default(now())
   updated_at            DateTime   @updatedAt
   verified_at           DateTime?  @db.DateTime
-  forget_password_token String?    @db.VarChar(255)
+  forget_password_token String?    @db.Text
   image                 String?    @db.VarChar(255)
 
   tenant       Tenants[]

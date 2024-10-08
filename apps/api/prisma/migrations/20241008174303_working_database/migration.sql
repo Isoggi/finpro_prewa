@@ -1,12 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `samples` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE `samples`;
-
 -- CreateTable
 CREATE TABLE `address` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -41,8 +32,8 @@ CREATE TABLE `properties` (
     `address_id` INTEGER NOT NULL,
     `slug_address` VARCHAR(255) NULL,
     `image` VARCHAR(255) NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `properties_slug_address_key`(`slug_address`),
     INDEX `address_id`(`address_id`),
@@ -55,8 +46,8 @@ CREATE TABLE `properties` (
 CREATE TABLE `properties_categories` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -70,8 +61,8 @@ CREATE TABLE `properties_rooms` (
     `price` DECIMAL(10, 0) NOT NULL,
     `capacity` INTEGER NOT NULL,
     `image` VARCHAR(255) NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     INDEX `property_id`(`property_id`),
     PRIMARY KEY (`id`)
@@ -83,8 +74,8 @@ CREATE TABLE `properties_rooms_availability` (
     `room_id` INTEGER NOT NULL,
     `stock` INTEGER NOT NULL,
     `date` DATE NOT NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
     `isCanceled` BOOLEAN NOT NULL DEFAULT false,
 
     INDEX `room_id`(`room_id`),
@@ -120,8 +111,8 @@ CREATE TABLE `reviews` (
     `rating` INTEGER NULL,
     `comment` TEXT NULL,
     `prev_review_id` INTEGER NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     INDEX `property_id`(`property_id`),
     INDEX `user_id`(`user_id`),
@@ -147,8 +138,8 @@ CREATE TABLE `transaction_items` (
     `end_date` DATETIME(0) NOT NULL,
     `total_price` DECIMAL(10, 0) NOT NULL,
     `status` ENUM('waitingpayment', 'confirmed', 'cancelled') NOT NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     INDEX `room_id`(`room_id`),
     INDEX `transaction_id`(`transaction_id`),
@@ -163,8 +154,8 @@ CREATE TABLE `transactions` (
     `payment_method` ENUM('manual', 'doku', 'midtrans', 'other') NOT NULL,
     `payment_proof` VARCHAR(255) NULL,
     `status` ENUM('pending', 'completed', 'failed') NOT NULL,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
 
     INDEX `user_id`(`user_id`),
     PRIMARY KEY (`id`)
@@ -179,10 +170,10 @@ CREATE TABLE `users` (
     `name` VARCHAR(255) NOT NULL,
     `phone_number` VARCHAR(255) NOT NULL,
     `isVerified` BOOLEAN NOT NULL DEFAULT false,
-    `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
     `verified_at` DATETIME NULL,
-    `forget_password_token` VARCHAR(255) NULL,
+    `forget_password_token` TEXT NULL,
     `image` VARCHAR(255) NULL,
 
     UNIQUE INDEX `email`(`email`),
