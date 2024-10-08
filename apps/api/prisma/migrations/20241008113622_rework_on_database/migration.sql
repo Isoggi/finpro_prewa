@@ -10,8 +10,8 @@ DROP TABLE `samples`;
 -- CreateTable
 CREATE TABLE `address` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `lng` VARCHAR(255) NULL,
-    `lat` VARCHAR(255) NULL,
+    `lng` DOUBLE NOT NULL,
+    `lat` DOUBLE NOT NULL,
     `province_id` INTEGER NOT NULL,
     `district_id` INTEGER NOT NULL,
     `detail` VARCHAR(255) NULL,
@@ -25,7 +25,7 @@ CREATE TABLE `address` (
 CREATE TABLE `district` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `province_id` INTEGER NOT NULL,
-    `name` VARCHAR(255) NULL,
+    `name` VARCHAR(255) NOT NULL,
 
     INDEX `province_id`(`province_id`),
     PRIMARY KEY (`id`)
@@ -35,14 +35,16 @@ CREATE TABLE `district` (
 CREATE TABLE `properties` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `tenant_id` INTEGER NOT NULL,
-    `name` VARCHAR(255) NULL,
+    `name` VARCHAR(255) NOT NULL,
     `description` TEXT NULL,
     `category_id` INTEGER NOT NULL,
     `address_id` INTEGER NOT NULL,
+    `slug_address` VARCHAR(255) NULL,
     `image` VARCHAR(255) NULL,
-    `created_at` TIMESTAMP(0) NULL,
+    `created_at` TIMESTAMP(0) NOT NULL,
     `updated_at` TIMESTAMP(0) NULL,
 
+    UNIQUE INDEX `properties_slug_address_key`(`slug_address`),
     INDEX `address_id`(`address_id`),
     INDEX `category_id`(`category_id`),
     INDEX `tenant_id`(`tenant_id`),
@@ -52,8 +54,8 @@ CREATE TABLE `properties` (
 -- CreateTable
 CREATE TABLE `properties_categories` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NULL,
-    `created_at` TIMESTAMP(0) NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `created_at` TIMESTAMP(0) NOT NULL,
     `updated_at` TIMESTAMP(0) NULL,
 
     PRIMARY KEY (`id`)
@@ -93,8 +95,8 @@ CREATE TABLE `properties_rooms_availability` (
 CREATE TABLE `properties_rooms_peakseasonrate` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `room_id` INTEGER NOT NULL,
-    `start_date` DATE NULL,
-    `end_date` DATE NULL,
+    `start_date` DATE NOT NULL,
+    `end_date` DATE NOT NULL,
     `rates` INTEGER NOT NULL,
     `rateCategory` ENUM('every', 'once') NULL,
 
@@ -105,7 +107,7 @@ CREATE TABLE `properties_rooms_peakseasonrate` (
 -- CreateTable
 CREATE TABLE `province` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NULL,
+    `name` VARCHAR(255) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -129,8 +131,8 @@ CREATE TABLE `reviews` (
 -- CreateTable
 CREATE TABLE `tenants` (
     `id` INTEGER NOT NULL,
-    `bankAccount` ENUM('BCA', 'Mandiri', 'BRI', 'BNI', 'BankJago', 'Jenius') NULL,
-    `accountNumber` VARCHAR(255) NULL,
+    `bankAccount` ENUM('BCA', 'Mandiri', 'BRI', 'BNI', 'BankJago', 'Jenius') NOT NULL,
+    `accountNumber` VARCHAR(255) NOT NULL,
     `phone_number` VARCHAR(255) NULL,
 
     PRIMARY KEY (`id`)
@@ -138,7 +140,7 @@ CREATE TABLE `tenants` (
 
 -- CreateTable
 CREATE TABLE `transaction_items` (
-    `id` INTEGER NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `transaction_id` INTEGER NOT NULL,
     `room_id` INTEGER NOT NULL,
     `start_date` DATETIME(0) NOT NULL,
@@ -155,9 +157,9 @@ CREATE TABLE `transaction_items` (
 
 -- CreateTable
 CREATE TABLE `transactions` (
-    `id` INTEGER NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
-    `amount` DECIMAL(10, 0) NULL,
+    `amount` DECIMAL(10, 0) NOT NULL,
     `payment_method` ENUM('manual', 'doku', 'midtrans', 'other') NOT NULL,
     `payment_proof` VARCHAR(255) NULL,
     `status` ENUM('pending', 'completed', 'failed') NOT NULL,
@@ -170,7 +172,7 @@ CREATE TABLE `transactions` (
 
 -- CreateTable
 CREATE TABLE `users` (
-    `id` INTEGER NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NULL,
     `role` ENUM('user', 'tenant') NOT NULL,
@@ -178,7 +180,7 @@ CREATE TABLE `users` (
     `phone_number` VARCHAR(255) NOT NULL,
     `isVerified` BOOLEAN NOT NULL DEFAULT false,
     `created_at` TIMESTAMP(0) NOT NULL,
-    `updated_at` TIMESTAMP(0) NOT NULL,
+    `updated_at` TIMESTAMP(0) NULL,
     `verified_at` DATETIME NULL,
     `forget_password_token` VARCHAR(255) NULL,
     `image` VARCHAR(255) NULL,

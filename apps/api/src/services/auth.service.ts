@@ -1,6 +1,6 @@
 import prisma from '../prisma';
 import { Prisma, users_role } from '@prisma/client';
-import { compare, hash } from 'bcrypt';
+import { compare, hash,  } from 'bcrypt';
 import { Request } from 'express';
 import fs, { readSync } from 'fs';
 import { IUser } from '../interfaces/user.interface';
@@ -48,6 +48,8 @@ export class AuthService {
   }
   static async register(req: Request) {
     const { name, email, phone_number, role } = req.body;
+    const user_role = role.toLowerCase() as unknown as users_role;
+    // if(user_role === 'tenant')
     const data: Prisma.UsersCreateInput = {
       name,
       email,
@@ -55,21 +57,29 @@ export class AuthService {
       role: role.toLowerCase() as unknown as users_role,
       created_at: new Date().toUTCString(),
       updated_at: new Date().toUTCString(),
+      tenant: user_role === 'tenant' ? {} : undefined 
     };
 
-    // if (req?.file) {
-    //   const image = req.file;
-    //   data.image = image.filename;
-    // }
-
-    await prisma.$transaction(async (trx) => {
+    
+    const result = await prisma.$transaction(async (trx) => {
       const newData = await trx.users.create({ data });
       return newData;
+    });
+
+    sendVerifyMail(result.email, {
+      email: result.email,
+      verification_url: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${generateForgetPaswordToken(
+        {
+          id: await hash(result.id.toString(), 10),
+          email: await hash(result.email, 10),
+        },
+      )}`,
     });
 
     return null;
   }
   static async sendVerifyEmail(req: Request) {}
+
   static async confirmPassword(req: Request) {
     const { password, token, id } = req.body;
     const data = await prisma.users.findUnique({
@@ -80,6 +90,7 @@ export class AuthService {
       },
     });
     if (data) {
+      
       const isMatch = token == data.forget_password_token;
       const hashPassword = await hash(password, 10);
       const result = await prisma.$transaction(async (trx) => {
