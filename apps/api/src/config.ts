@@ -10,10 +10,11 @@ config({ path: resolve(__dirname, `../${envFile}.local`), override: true });
 
 // Load all environment variables from .env file
 export const BASE_URL = process.env.BASE_URL || 'http://localhost';
-export const WEB_URL = process.env.BASE_URL || 'http://localhost:3000';
+export const WEB_URL = process.env.WEB_URL || 'http://localhost:3000';
 export const PORT = process.env.PORT || 8000;
 export const DATABASE_URL = process.env.DATABASE_URL || '';
 
+export const GENERAL_JWT_SECRET = process.env.GENERAL_JWT_SECRET || 'secret';
 export const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 export const JWT_EXPIRY = process.env.JWT_EXPIRY || 3600;
 

@@ -12,6 +12,12 @@ export const registerSchema = z.object({
   email: z.string().email().min(5, {
     message: 'silahkan masukan email anda',
   }),
+  role: z.enum(['User', 'Organizer'], {
+    message: 'silahkan pilih role anda terlebih dahulu',
+  }),
+});
+
+export const verifyForgetPasswordSchema = z.object({
   password: z
     .string({ message: 'Mohon masukan kata sandi Anda.' })
     .min(6, {
@@ -27,9 +33,6 @@ export const registerSchema = z.object({
         'Mohon masukan kata sandi anda sebagai Kata sandi minimal harus 6 karakter, berisi huruf dan angka',
     })
     .trim(),
-  role: z.enum(['User', 'Organizer'], {
-    message: 'silahkan pilih role anda terlebih dahulu',
-  }),
 });
 
 export const loginSchema = z.object({
