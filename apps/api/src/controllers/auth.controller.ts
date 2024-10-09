@@ -41,6 +41,44 @@ export class AuthController {
       next(error);
     }
   }
+  async verifyPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await AuthService.sendVerifyEmail(req);
+      return res
+        .status(200)
+        .json({ message: 'Success send verify email', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  async forgetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await AuthService.forgetPassword(req);
+      return res
+        .status(200)
+        .json({ message: 'Success confirm password', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+  async confirmForgetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await AuthService.confirmPassword(req);
+      return res
+        .status(200)
+        .json({
+          message: 'Success reset confirm password',
+          data,
+          success: true,
+        });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 
   async profile(req: Request, res: Response, next: NextFunction) {
     try {

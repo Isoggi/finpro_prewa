@@ -3,21 +3,22 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Address {
-  id          Int     @id @default(autoincrement())
-  lng         String? @db.VarChar(255)
-  lat         String? @db.VarChar(255)
+  id          Int          @id @default(autoincrement())
+  lng         Float
+  lat         Float
   province_id Int
-  provinces Provinces @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "address_ibfk_1")
+  provinces   Provinces    @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "address_ibfk_1")
   district_id Int
-  district District @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "address_ibfk_2")
-  properties Properties[]
+  district    District     @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "address_ibfk_2")
+  properties  Properties[]
 
-  detail      String? @db.VarChar(255)
+  detail String? @db.VarChar(255)
 
   @@index([district_id], map: "district_id")
   @@index([province_id], map: "province_id")
@@ -25,33 +26,33 @@ model Address {
 }
 
 model District {
-  id          Int     @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   province_id Int
-  name        String? @db.VarChar(255)
-  address Address[]
-  province Provinces @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "district_ibfk_1")
+  name        String    @db.VarChar(255)
+  address     Address[]
+  province    Provinces @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "district_ibfk_1")
 
   @@index([province_id], map: "province_id")
   @@map("district")
 }
 
 model Properties {
-  id          Int       @id @default(autoincrement())
-  tenant_id   Int
-  name        String?   @db.VarChar(255)
-  description String?   @db.Text
-  category_id Int
-  address_id  Int
-  image       String?   @db.VarChar(255)
-  created_at  DateTime? @db.Timestamp(0)
-  updated_at  DateTime? @db.Timestamp(0)
-  
-  category Categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_1")
-  tenant Users @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_2")
-  address Address @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_3")
-  reviews Reviews[]
-  rooms Rooms[]
+  id           Int      @id @default(autoincrement())
+  tenant_id    Int
+  name         String   @db.VarChar(255)
+  description  String?  @db.Text
+  category_id  Int
+  address_id   Int
+  slug_address String?  @unique @db.VarChar(255)
+  image        String?  @db.VarChar(255)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
+  category Categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_1")
+  tenant   Users      @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_2")
+  address  Address    @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_3")
+  reviews  Reviews[]
+  rooms    Rooms[]
 
   @@index([address_id], map: "address_id")
   @@index([category_id], map: "category_id")
@@ -60,29 +61,29 @@ model Properties {
 }
 
 model Categories {
-  id         Int       @id @default(autoincrement())
-  name       String?   @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
   properties Properties[]
 
   @@map("properties_categories")
 }
 
 model Rooms {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   property_id Int
   name        String   @db.VarChar(255)
   description String   @db.Text
   price       Decimal  @db.Decimal(10, 0)
   capacity    Int
-  image       String?   @db.VarChar(255)
-  created_at  DateTime @db.Timestamp(0)
-  updated_at  DateTime? @db.Timestamp(0)
-  
-  property Properties @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_ibfk_1")
-  transaction TransactionItems[]
-  available Availability[]
+  image       String?  @db.VarChar(255)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  property       Properties         @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_ibfk_1")
+  transaction    TransactionItems[]
+  available      Availability[]
   peakSeasonRate PeakSeasonRate[]
 
   @@index([property_id], map: "property_id")
@@ -90,14 +91,14 @@ model Rooms {
 }
 
 model Availability {
-  id         Int       @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   room_id    Int
   stock      Int
   date       DateTime @db.Date
-  created_at DateTime @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   isCanceled Boolean  @default(false)
-  rooms Rooms @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_availability_ibfk_1")
+  rooms      Rooms    @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_availability_ibfk_1")
 
   @@index([room_id], map: "room_id")
   @@map("properties_rooms_availability")
@@ -106,36 +107,36 @@ model Availability {
 model PeakSeasonRate {
   id           Int                                           @id @default(autoincrement())
   room_id      Int
-  start_date   DateTime?                                     @db.Date
-  end_date     DateTime?                                     @db.Date
+  start_date   DateTime                                      @db.Date
+  end_date     DateTime                                      @db.Date
   rates        Int
   rateCategory properties_rooms_peakseasonrate_rateCategory?
-  rooms Rooms @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_peakseasonrate_ibfk_1")
+  rooms        Rooms                                         @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_peakseasonrate_ibfk_1")
 
   @@index([room_id], map: "room_id")
   @@map("properties_rooms_peakseasonrate")
 }
 
 model Provinces {
-  id   Int     @id @default(autoincrement())
-  name String? @db.VarChar(255)
-  address Address[]
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(255)
+  address  Address[]
   district District[]
 
   @@map("province")
 }
 
 model Reviews {
-  id             Int       @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   user_id        Int
   property_id    Int
   rating         Int?
-  comment        String?   @db.Text
+  comment        String?    @db.Text
   prev_review_id Int?
-  created_at     DateTime @db.Timestamp(0)
-  updated_at     DateTime? @db.Timestamp(0)
-  user Users @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
-  property Properties @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+  user           Users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
+  property       Properties @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
 
   @@index([property_id], map: "property_id")
   @@index([user_id], map: "user_id")
@@ -143,28 +144,28 @@ model Reviews {
 }
 
 model Tenants {
-  id            Int                  @id
-  bankAccount   tenants_bankAccount?
-  accountNumber String?              @db.VarChar(255)
-  phone_number  String?              @db.VarChar(255)
+  id            Int                 @id
+  bankAccount   tenants_bankAccount
+  accountNumber String              @db.VarChar(255)
+  phone_number  String?             @db.VarChar(255)
+  Users         Users[]
 
   @@map("tenants")
-  Users Users[]
 }
 
 model TransactionItems {
-  id             Int                       @id @default(autoincrement())
+  id             Int                      @id @default(autoincrement())
   transaction_id Int
   room_id        Int
   start_date     DateTime                 @db.DateTime(0)
   end_date       DateTime                 @db.DateTime(0)
   total_price    Decimal                  @db.Decimal(10, 0)
   status         transaction_items_status
-  created_at     DateTime                 @db.Timestamp(0)
-  updated_at     DateTime?                 @db.Timestamp(0)
+  created_at     DateTime                 @default(now())
+  updated_at     DateTime                 @updatedAt
 
   transaction Transactions @relation(fields: [transaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactionitems_ibfk_1")
-  room Rooms @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactionitems_ibfk_2")
+  room        Rooms        @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactionitems_ibfk_2")
 
   @@index([room_id], map: "room_id")
   @@index([transaction_id], map: "transaction_id")
@@ -172,15 +173,15 @@ model TransactionItems {
 }
 
 model Transactions {
-  id             Int                          @id @default(autoincrement())
-  user_id        Int
-  amount         Decimal?                     @db.Decimal(10, 0)
-  payment_method transactions_payment_method
-  payment_proof  String?                      @db.VarChar(255)
-  status         transactions_status
-  created_at     DateTime?                    @db.Timestamp(0)
-  updated_at     DateTime?                    @db.Timestamp(0)
-  user Users @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
+  id               Int                         @id @default(autoincrement())
+  user_id          Int
+  amount           Decimal                     @db.Decimal(10, 0)
+  payment_method   transactions_payment_method
+  payment_proof    String?                     @db.VarChar(255)
+  status           transactions_status
+  created_at       DateTime                    @default(now())
+  updated_at       DateTime                    @updatedAt
+  user             Users                       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
   transactionItems TransactionItems[]
 
   @@index([user_id], map: "user_id")
@@ -188,23 +189,23 @@ model Transactions {
 }
 
 model Users {
-  id                    Int         @id @default(autoincrement())
+  id                    Int        @id @default(autoincrement())
   email                 String     @unique(map: "email") @db.VarChar(255)
-  password              String?     @db.VarChar(255)
+  password              String?    @db.VarChar(255)
   role                  users_role
   name                  String     @db.VarChar(255)
   phone_number          String     @db.VarChar(255)
   isVerified            Boolean    @default(false)
-  created_at            DateTime   @db.Timestamp(0)
-  updated_at            DateTime   @db.Timestamp(0)
-  verified_at           DateTime?   @db.DateTime
-  forget_password_token String?     @db.VarChar(255)
-  image                 String?     @db.VarChar(255)
+  created_at            DateTime   @default(now())
+  updated_at            DateTime   @updatedAt
+  verified_at           DateTime?  @db.DateTime
+  forget_password_token String?    @db.Text
+  image                 String?    @db.VarChar(255)
 
-  tenant Tenants[]
+  tenant       Tenants[]
   transactions Transactions[]
-  properties Properties[]
-  reviews Reviews[]
+  properties   Properties[]
+  reviews      Reviews[]
 
   @@map("users")
 }
