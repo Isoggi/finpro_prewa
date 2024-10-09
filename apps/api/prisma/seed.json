@@ -6,7 +6,8 @@
       "phone_number": "0819299001122",
       "email": "jcwd2902@mail.com",
       "password": "$2b$10$.ghPwWl3.0q2M8l6p2rgReaxYiSHo3GdBGCYSyyaDrD3WhVBamEH.",
-      "role": "user"
+      "role": "user",
+      "isVerified": true
     },
     {
       "id": 2,
@@ -14,7 +15,165 @@
       "phone_number": "0819299001133",
       "email": "jcwd2902@gmail.com",
       "password": "$2b$10$.ghPwWl3.0q2M8l6p2rgReaxYiSHo3GdBGCYSyyaDrD3WhVBamEH.",
-      "role": "tenant"
+      "role": "tenant",
+      "isVerified": true
+    }
+  ],
+  "provinces": [
+    {
+      "id": 1,
+      "name": "DKI Jakarta"
+    },
+    {
+      "id": 2,
+      "name": "Banten"
+    }
+  ],
+  "districts": [
+    {
+      "id": 1,
+      "province_id": 1,
+      "name": "Jakarta Selatan"
+    },
+    {
+      "id": 2,
+      "province_id": 2,
+      "name": "Kab. Tangerang"
+    }
+  ],
+  "addresses": [
+    {
+      "id": 1,
+      "detail": "Jl. BSD Grand Boulevard No.69-70, Sampora, Kec. Cisauk, Kabupaten Tangerang, Banten 15345",
+      "province_id": 2,
+      "district_id": 2,
+      "lat": -6.302802,
+      "lng": 106.6494667
+    }
+  ],
+  "categories": [
+    { "id": 1, "name": "Hotel" },
+    { "id": 2, "name": "Apartemen" },
+    { "id": 3, "name": "Kos" }
+  ],
+  "properties": [
+    {
+      "id": 1,
+      "tenant_id": 2,
+      "name": "Hotel GOP 9",
+      "description": "A lovely place to stay near your office, with access to The Breeze and ICE BSD. Feel the luxury amid hustle.",
+      "category_id": 1,
+      "address_id": 1,
+      "slug_address": "hotel-gop-9"
+    }
+  ],
+  "Rooms": [
+    {
+      "id": 1,
+      "property_id": 1,
+      "name": "Room One",
+      "description": "A cozy room with a great view.",
+      "price": 500000,
+      "capacity": 2,
+      "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "property_id": 1,
+      "name": "Room Two",
+      "description": "A spacious room with a private bathroom.",
+      "price": 700000,
+      "capacity": 3,
+      "created_at": "2024-02-01T00:00:00Z"
+    }
+  ],
+  "Availability": [
+    {
+      "id": 1,
+      "room_id": 1,
+      "stock": 2,
+      "date": "2024-10-10T00:00:00Z",
+      "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "room_id": 2,
+      "stock": 2,
+      "date": "2024-10-10T00:00:00Z",
+      "created_at": "2024-02-01T00:00:00Z"
+    }
+  ],
+  "PeakSeasonRate": [
+    {
+      "id": 1,
+      "room_id": 1,
+      "start_date": "2024-10-01T00:00:00Z",
+      "end_date": "2024-12-31T00:00:00Z",
+      "rates": -100000,
+      "rateCategory": "every"
+    },
+    {
+      "id": 2,
+      "room_id": 2,
+      "start_date": "2024-12-01T00:00:00Z",
+      "end_date": "2024-12-31T00:00:00Z",
+      "rates": -150000,
+      "rateCategory": "once"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "amount": 350000,
+      "payment_method": "manual",
+      "payment_proof": "proof.jpg",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "amount": 400000,
+      "payment_method": "manual",
+      "payment_proof": "proof.jpg",
+      "status": "completed"
+    },
+
+    {
+      "id": 3,
+      "user_id": 1,
+      "amount": 400000,
+      "payment_method": "manual",
+      "status": "failed"
+    }
+  ],
+  "transactionsItems": [
+    {
+      "id": 1,
+      "transaction_id": 1,
+      "room_id": 1,
+      "start_date": "2024-12-01T00:00:00Z",
+      "end_date": "2024-12-02T00:00:00Z",
+      "total_price": 350000,
+      "status": "confirmed"
+    },
+    {
+      "id": 2,
+      "transaction_id": 2,
+      "room_id": 1,
+      "start_date": "2024-11-01T00:00:00Z",
+      "end_date": "2024-11-02T00:00:00Z",
+      "total_price": 400000,
+      "status": "confirmed"
+    },
+    {
+      "id": 3,
+      "transaction_id": 3,
+      "room_id": 1,
+      "start_date": "2024-11-01T00:00:00Z",
+      "end_date": "2024-11-02T00:00:00Z",
+      "total_price": 400000,
+      "status": "cancelled"
     }
   ]
 }

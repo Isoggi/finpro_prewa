@@ -25,7 +25,22 @@ export class AuthRouter {
       this.authController.register,
     );
 
-    this.router.put('/verify-password', this.authController.confirmPassword);
+    this.router.patch('/verify-password', this.authController.verifyPassword);
+    this.router.patch(
+      '/confirm-verify-password',
+      this.authController.confirmPassword,
+    );
+    this.router.get(
+      '/forget-password',
+      AuthMiddleware,
+      this.authController.forgetPassword,
+    );
+
+    this.router.patch(
+      '/confirm-forget-password',
+      AuthMiddleware,
+      this.authController.confirmForgetPassword,
+    );
     this.router.get('/profile', AuthMiddleware, this.authController.profile);
     this.router.patch(
       '/profile',
