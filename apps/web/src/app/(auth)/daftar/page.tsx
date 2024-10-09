@@ -1,17 +1,21 @@
 'use client';
-
 import React, { useState } from 'react';
 
 export default function Daftar() {
   const [phone, setPhone] = useState<string>('');
+  const [role, setRole] = useState<string>('');
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
   };
 
+  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRole(e.target.value);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(`Phone number submitted: ${phone}`);
+    console.log(`Phone: ${phone}, Role: ${role}`);
   };
 
   return (
@@ -30,7 +34,26 @@ export default function Daftar() {
               className="border border-gray-300 rounded-r-md p-2 w-full"
             />
           </div>
-          <p className="text-sm text-center mb-4">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Pilih Role:
+            </label>
+            <select
+              value={role}
+              onChange={handleRoleChange}
+              className="border border-gray-300 rounded-md p-2 w-full"
+            >
+              <option value="user">User</option>
+              <option value="admin">Tenant</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="bg-[#128ede] text-white font-semibold py-2 px-4 rounded-md w-full hover:bg-gray-800"
+          >
+            Lanjut
+          </button>
+          <p className="text-sm text-center pt-5 mb-4">
             Sudah punya akun?{' '}
             <a href="/masuk" className="text-blue-600 hover:underline">
               Log in aja!
@@ -41,22 +64,6 @@ export default function Daftar() {
               Kembali ke Home
             </a>
           </p>
-          <p className="text-xs text-gray-500 mb-4 text-center">
-            Dengan melanjutkan, kamu menyetujui{' '}
-            <a href="/" className="text-blue-600 hover:underline">
-              Syarat & Ketentuan
-            </a>{' '}
-            dan{' '}
-            <a href="/" className="text-blue-600 hover:underline">
-              Kebijakan Privasi Bukalapak
-            </a>
-          </p>
-          <button
-            type="submit"
-            className="bg-black text-white font-semibold py-2 px-4 rounded-md w-full hover:bg-gray-800"
-          >
-            Lanjut
-          </button>
         </form>
       </div>
     </div>

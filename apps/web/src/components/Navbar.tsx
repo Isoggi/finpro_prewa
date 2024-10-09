@@ -11,10 +11,10 @@ export default function Navbar() {
               Sewa
             </a>
             <a href="#" className="text-sm hidden md:block">
-              Kerjasama Rukita
+              Kerjasama Prewa
             </a>
             <a href="#" className="text-sm hidden md:block">
-              Rukita for Business
+              Prewa for Business
             </a>
             <a href="#" className="text-sm hidden md:block">
               Tentang Prewa
@@ -27,6 +27,9 @@ export default function Navbar() {
             <Link href="/daftar" className="text-xs md:text-sm lg:text-base">
               Daftar
             </Link>
+            <Link href="/dashboard" className="text-xs md:text-sm lg:text-base">
+              Dashboard
+            </Link>
           </div>
         </div>
       </nav>
@@ -36,14 +39,19 @@ export default function Navbar() {
           <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
             <span className="text-sm ">Indonesia</span>
           </div>
-
           <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
-            <span className="text-sm ">4 Oct 24 - Belum Tahu</span>
+            <span className="text-sm ">
+              <input type="date" />
+            </span>
+          </div>
+          <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
+            <select id="category" className="text-sm">
+              <option value="apartemen">Apartemen</option>
+              <option value="hotel">Hotel</option>
+              <option value="vila">Vila</option>
+            </select>
           </div>
 
-          <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
-            <span className="text-sm ">Apartemen</span>
-          </div>
           <button className="bg-[#128ede] text-white p-2 px-4 rounded-xl">
             Cari Hunian
           </button>
