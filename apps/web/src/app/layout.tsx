@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-// Ubah ini jika Header juga menggunakan default export
-import Footer from '@/components/Footer'; // Ubah ke default import
+import Footer from '@/components/footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
