@@ -1,22 +1,22 @@
 import { Router } from 'express';
-import { TransactionController } from '../controllers/transaction.controller';
+import { TenantController } from '../controllers/tenant.controller';
 // import { validateAuth } from "../middlewares/authValidator.middleware";
 // import { loginSchema, registerSchema } from "../schemas/auth.schema";
 // import { AuthMiddleware } from "../middlewares/auth.middleware";
 // import { uploader } from "../libs/uploader.lib";
 
-export class TransactionRouter {
+export class TenantRouter {
   private router: Router = Router();
-  private transactionController = new TransactionController();
+  private tenantController = new TenantController();
   constructor() {
     this.routes();
   }
 
   private routes(): void {
     this.router.get(
-      '/',
+      '/transaction',
       // AuthMiddleware(),
-      this.transactionController.get,
+      this.tenantController.getTransactions,
     );
   }
   public getRouter(): Router {

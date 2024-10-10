@@ -17,7 +17,11 @@ import {
   generateToken,
   generateVerifyToken,
 } from '../libs/token.lib';
-import { FORGETPASSWORD_URL_PATH, WEB_URL } from '@/config';
+import {
+  FORGETPASSWORD_URL_PATH,
+  VERIFICATION_URL_PATH,
+  WEB_URL,
+} from '@/config';
 
 export class AuthService {
   static async login(req: Request) {
@@ -127,7 +131,7 @@ export class AuthService {
 
     sendVerifyMail(data.email, {
       email: data.email,
-      verification_url: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
+      verification_url: `${WEB_URL}${VERIFICATION_URL_PATH}${token}`,
     });
 
     return 'Email Send';
