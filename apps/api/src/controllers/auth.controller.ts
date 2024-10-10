@@ -67,13 +67,11 @@ export class AuthController {
   async confirmForgetPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const data = await AuthService.confirmPassword(req);
-      return res
-        .status(200)
-        .json({
-          message: 'Success reset confirm password',
-          data,
-          success: true,
-        });
+      return res.status(200).json({
+        message: 'Success reset confirm password',
+        data,
+        success: true,
+      });
     } catch (error) {
       console.log(error);
       next(error);
