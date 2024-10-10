@@ -50,7 +50,7 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
         session.user.phone_number = token.phone_number as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
-        session.user.image = token.image_src as string;
+        session.user.image = token.image as string;
         session.user.user_role = token.user_role as string;
         session.user.access_token = token.access_token as string;
       }

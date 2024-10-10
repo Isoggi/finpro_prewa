@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
+import { Header } from '@/components/Header';
+import Footer from '@/components/Footer';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,6 +11,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <body>
+        <Header />
         <div className="flex h-screen">
           {/* Sidebar Drawer */}
           <input
@@ -40,7 +43,8 @@ const Layout = ({ children }: LayoutProps) => {
               </ul>
             </div>
           </div>
-        </div>{' '}
+        </div>
+        <Footer />
       </body>
     </html>
   );

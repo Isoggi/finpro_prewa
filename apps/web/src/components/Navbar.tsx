@@ -6,7 +6,7 @@ export default function Navbar() {
       <nav className="bg-[#ffffff] p-4 shadow-md">
         <div className="container max-w-screen-xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <img src="/prewa.jpg" alt="Rukita Logo" className="h-12" />
+            <img src="/prewa.jpg" alt="Prewa Logo" className="h-12" />
             <a href="#" className="text-sm   hidden md:block">
               Sewa
             </a>
@@ -41,11 +41,11 @@ export default function Navbar() {
           </div>
           <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
             <span className="text-sm ">
-              <input type="date" />
+              <input title="tanggal" type="date" />
             </span>
           </div>
           <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
-            <select id="category" className="text-sm">
+            <select title="pilih jenisnya" id="category" className="text-sm">
               <option value="apartemen">Apartemen</option>
               <option value="hotel">Hotel</option>
               <option value="vila">Vila</option>
