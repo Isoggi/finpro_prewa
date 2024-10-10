@@ -13,7 +13,7 @@ const GameSection: React.FC<GameSectionProps> = ({ title, games }) => {
   const gamesToShow = showAll ? games : games.slice(0, 6);
 
   return (
-    <div className="mb-8">
+    <div className="max-w-screen-xl mx-auto">
       <h2 className="text-xl font-semibold text-black mb-4">{title}</h2>
       <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {gamesToShow.map((game, index) => (
@@ -48,7 +48,7 @@ const GameSection: React.FC<GameSectionProps> = ({ title, games }) => {
 
 export default function Lodging() {
   return (
-    <div className="p-4 md:p-8 lg:p-12 min-h-screen">
+    <div className="p-4 md:p-8 lg:p-12 ">
       <GameSection title="Popular" games={gamesData.popular} />
     </div>
   );
