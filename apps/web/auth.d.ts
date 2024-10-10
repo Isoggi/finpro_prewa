@@ -26,7 +26,6 @@ declare module 'next-auth/jwt' {
     phone_number: string | undefined;
     email: string | undefined;
     name: string | undefined;
-    // gender: 'Pria' | 'Perempuan' | undefined;
     image?: string;
     user_role?: 'user' | 'tenant' | undefined;
     acces_token: string;

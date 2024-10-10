@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function IDPage() {
-  return <div>p</div>;
+export default function PropertyDetailPage() {
+  return <div></div>;
 }

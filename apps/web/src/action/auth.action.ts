@@ -2,6 +2,7 @@
 import { api } from '@/config/axios.config';
 import {
   loginSchema,
+  verifyForgetPasswordSchema,
   profileSchema,
   registerSchema,
 } from '@/schemas/auth.schema';
@@ -64,13 +65,31 @@ export const actionRegister = async (
     const res = await api.post('/auth/register', values);
 
     return {
-      message: 'Register Berhasil',
+      message: 'Daftar Berhasil',
     };
   } catch (error) {
     if (error instanceof AxiosError) {
       throw new Error(error.response?.data.message);
     }
-    throw new Error('Register Gagal');
+    throw new Error('Daftar Gagal');
+  }
+};
+
+export const actionConfirmVerifyPassword = async (
+  token: string,
+  password: string,
+) => {
+  try {
+    await api.patch('/auth/confirm-verify-password', { token, password });
+
+    return {
+      message: 'Verifikasi Berhasil',
+    };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error('Verifikasi Gagal');
   }
 };
 
