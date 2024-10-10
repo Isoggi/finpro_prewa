@@ -18,7 +18,6 @@ import {
   generateVerifyToken,
 } from '../libs/token.lib';
 import { FORGETPASSWORD_URL_PATH, WEB_URL } from '@/config';
-import { verify } from 'jsonwebtoken';
 
 export class AuthService {
   static async login(req: Request) {
