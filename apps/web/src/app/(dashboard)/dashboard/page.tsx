@@ -1,8 +1,8 @@
 // import EventCard from "@/components/Card.component";
 // // import Sidebar from "@/components/dashboard/Sidebar";
-// import SidebarFilter from "@/components/EventFilter.component";
-import Link from "next/link";
-import React from "react";
+import SidebarFilter from '@/components/EventFilter.component';
+import Link from 'next/link';
+import React from 'react';
 
 type Props = {};
 
@@ -36,7 +36,7 @@ export default function EventsPage({}: Props) {
               className="drawer-overlay"
             ></label>
             <ul className="menu text-base-content min-h-full w-80 p-4">
-              {/* <SidebarFilter /> */}
+              <SidebarFilter />
             </ul>
           </div>
         </div>
