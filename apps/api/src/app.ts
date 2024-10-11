@@ -12,6 +12,7 @@ import { PORT } from './config';
 // import { SampleRouter } from './routers/sample.router';
 import { AuthRouter } from './routers/auth.router';
 import { join } from 'path';
+import { TransactionRouter } from './routers/transaction.router';
 
 export default class App {
   private app: Express;
@@ -63,7 +64,7 @@ export default class App {
 
     // this.app.use('/api/samples', sampleRouter.getRouter());
     this.app.use('/api/auth', new AuthRouter().getRouter());
-    this.app.use('/api/order', new AuthRouter().getRouter());
+    this.app.use('/api/order', new TransactionRouter().getRouter());
   }
 
   public start(): void {

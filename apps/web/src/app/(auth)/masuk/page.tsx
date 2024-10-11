@@ -13,14 +13,11 @@ import { ErrorMessage } from '@hookform/error-message';
 // import { useSession } from 'next-auth/react';
 import { useFormState } from 'react-dom';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const MySwal = withReactContent(Swal);
 
 export default function Masuk() {
-  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
-  const [isLoginError, setIsLoginError] = useState<string | null>(null);
-  // const router = useRouter();
-  // const session = useSession();
   const Toast = MySwal.mixin({
     toast: true,
     position: 'top-end',
@@ -52,8 +49,6 @@ export default function Masuk() {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
       const res = await loginAction(values);
-      setIsLoginSuccess(true);
-      setIsLoginError(null);
       window.location.reload();
 
       // login berhasil
@@ -63,8 +58,6 @@ export default function Masuk() {
       });
     } catch (err) {
       if (err instanceof Error) {
-        setIsLoginError(err.message);
-        setIsLoginSuccess(false);
         // login gagal
         Toast.fire({
           icon: 'error',
@@ -79,7 +72,7 @@ export default function Masuk() {
       <div className="breadcrumbs text-sm py-4 px-6">
         <ul>
           <li>
-            <a href="/">Home</a>
+            <Link href="/">Home</Link>
           </li>
           <li>Masuk</li>
         </ul>
@@ -114,31 +107,29 @@ export default function Masuk() {
               <ErrorMessage errors={errors} name="password" />
             </div>
             <p className="text-sm  mb-4">
-              <a href="/lupapassword" className=" hover:underline">
+              <Link href="/lupapassword" className=" hover:underline">
                 Lupa password?
-              </a>
+              </Link>
             </p>
 
             <button
-              title="Login with Google"
+              title="Login with email"
               type="submit"
-              className="bg-[#128ede] text-white font-semibold py-2 px-4 rounded-md w-full hover:bg-gray-800"
-              disabled={
-                !isLoginError || isLoginSuccess || form.formState.isSubmitting
-              }
+              className="bg-[#128ede] text-white font-semibold py-2 px-4 rounded-md w-full hover:bg-gray-800 cursor-pointer disabled:cursor-not-allowed"
+              disabled={form.formState.isSubmitting}
             >
               Lanjut
             </button>
             <p className="text-sm text-center pt-5 mb-4">
               Belum punya akun?{' '}
-              <a href="/daftar" className="text-blue-600 hover:underline">
+              <Link href="/daftar" className="text-blue-600 hover:underline">
                 Daftar, yuk!
-              </a>
+              </Link>
             </p>
             <p className="text-sm text-center mb-4">
-              <a href="/" className=" hover:underline">
+              <Link href="/" className=" hover:underline">
                 Kembali ke Home
-              </a>
+              </Link>
             </p>
             <h3 className="text-xl font-semibold mb-4 text-center">atau</h3>
           </form>
@@ -147,7 +138,7 @@ export default function Masuk() {
               title="Login with Google"
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="w-full rounded-[25px] py-[12px] min-h-14  bg-[#e4002b]  shadow m-auto mb-[10px]"
+              className="w-65 h-65 rounded-[25px] py-[12px] min-h-14  bg-[#e4002b]  shadow m-auto mb-[10px]"
             >
               {form.formState.isSubmitting ? (
                 <svg
@@ -165,7 +156,6 @@ export default function Masuk() {
                     height={30}
                     className="w-[30px] h-[30px] mr-2"
                   />
-                  {' Masuk dengan Google'}
                 </>
               )}
             </button>

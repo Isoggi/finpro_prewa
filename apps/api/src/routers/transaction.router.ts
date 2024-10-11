@@ -14,7 +14,7 @@ export class TransactionRouter {
 
   private routes(): void {
     this.router.get(
-      '/',
+      '',
       // AuthMiddleware(),
       this.transactionController.get,
     );
