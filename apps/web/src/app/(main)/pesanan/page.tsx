@@ -3,7 +3,6 @@ import { api } from '@/config/axios.config';
 import React from 'react';
 
 export default async function OrderPage() {
-  const data = await api.get('/transactions');
   return (
     <div className="min-h-screen bg-base-200 p-6">
       <div className="container mx-auto">
@@ -16,7 +15,7 @@ export default async function OrderPage() {
         {/* <div className="tabs">
           <a className="tab tab-bordered tab-active">Pesanan Lama</a>
         </div> */}
-        {<OrderContainerComponent data={data} />}
+        {<OrderContainerComponent />}
       </div>
     </div>
   );
