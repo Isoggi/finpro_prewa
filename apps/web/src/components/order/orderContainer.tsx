@@ -6,8 +6,8 @@ import { api } from '@/config/axios.config';
 
 type Props = { data?: any };
 
-export default function OrderContainerComponent({ data }: Props) {
-  const cards = data as Order[];
+export default function OrderContainerComponent({ }: Props) {
+
 
   const [orderNumber, setOrderNumber] = useState<string>(''); // Order number filter
   const [startDate, setStartDate] = useState<string>(''); // Start date filter
@@ -26,7 +26,14 @@ export default function OrderContainerComponent({ data }: Props) {
     try {
       // Example API call, replace with your API URL
       const response = await api.get(
-        `/transactions?orderNumber=${orderNumber}&startDate=${startDate}&endDate=${endDate}`,
+        `/order`,
+        {
+          params:{
+            orderNumber,
+            startDate,
+            endDate
+          }
+        }
       );
       const data = await response.data.data;
 
@@ -62,41 +69,41 @@ export default function OrderContainerComponent({ data }: Props) {
     <>
       {/* Filter and Sort */}
       <div className="flex space-x-4 my-4">
-          {/* Order Number Input */}
-          <input
-            type="text"
-            title='Order Number'
-            placeholder="Order No."
-            className="input input-bordered w-full max-w-xs"
-            value={orderNumber}
-            onChange={(e) => setOrderNumber(e.target.value)} // Update order number state
-          />
-          
-          {/* Start Date Picker */}
-          <input
-            type="date"
-            title='Start Date'
-            placeholder='Tanggal Mulai'
-            className="input input-bordered"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)} // Update start date
-          />
-          
-          {/* End Date Picker */}
-          <input
-            type="date"
-                       title='End Date'
-            placeholder='Tanggal Selesai'
-            className="input input-bordered"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)} // Update end date
-          />
-        </div>
+        {/* Order Number Input */}
+        <input
+          type="text"
+          title="Order Number"
+          placeholder="Order No."
+          className="input input-bordered w-full max-w-xs"
+          value={orderNumber}
+          onChange={(e) => setOrderNumber(e.target.value)} // Update order number state
+        />
+
+        {/* Start Date Picker */}
+        <input
+          type="date"
+          title="Start Date"
+          placeholder="Tanggal Mulai"
+          className="input input-bordered"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)} // Update start date
+        />
+
+        {/* End Date Picker */}
+        <input
+          type="date"
+          title="End Date"
+          placeholder="Tanggal Selesai"
+          className="input input-bordered"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)} // Update end date
+        />
+      </div>
 
       {/* Booking History Cards */}
       <div className="space-y-4">
-        {cards.length
-          ? cards.map((order, index) => (
+        {bookings.length
+          ? bookings.map((order, index) => (
               <OrderCardComponent
                 key={index}
                 name={order.name}

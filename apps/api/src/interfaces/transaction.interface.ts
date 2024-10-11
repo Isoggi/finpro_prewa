@@ -2,6 +2,7 @@ import {
   transaction_items_status,
   transactions_payment_method,
   transactions_status,
+  properties_rooms_peakseasonrate_rateCategory,
 } from '@prisma/client';
 
 export interface Transaction {
@@ -27,4 +28,13 @@ export interface TransactionItems {
   status: transaction_items_status;
   created_at?: Date;
   updated_at?: Date;
+}
+export interface Order {
+  id: number;
+  category: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: transactions_status;
 }
