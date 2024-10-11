@@ -2,16 +2,8 @@ import OrderContainerComponent from '@/components/order/orderContainer';
 import { api } from '@/config/axios.config';
 import React from 'react';
 
-type Props = { data: any };
-
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const res = await api.get('/transactions');
-  // Pass data to the page via props
-  return { props: { data: res.data.data } };
-}
-
-export default function OrderPage({ data }: Props) {
+export default async function OrderPage() {
+  const data = await api.get('/transactions');
   return (
     <div className="min-h-screen bg-base-200 p-6">
       <div className="container mx-auto">
@@ -21,9 +13,9 @@ export default function OrderPage({ data }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="tabs">
+        {/* <div className="tabs">
           <a className="tab tab-bordered tab-active">Pesanan Lama</a>
-        </div>
+        </div> */}
         {<OrderContainerComponent data={data} />}
       </div>
     </div>
