@@ -6,7 +6,7 @@ import { users_role } from './interfaces/user.interface';
 // This function can be marked `async` if using `await` inside
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  const { redirect, next } = NextResponse;
   const session = await auth();
   const user = session?.user;
   const { pathname } = request.nextUrl;
@@ -17,28 +17,36 @@ export async function middleware(request: NextRequest) {
       users_role[Number(user?.user_role)] === 'tenant',
     );
     if (users_role[Number(user?.user_role)] === 'tenant') {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return redirect(new URL('/dashboard', request.url));
     }
-    return NextResponse.redirect(new URL('/', request.url));
+    return redirect(new URL('/', request.url));
   }
   if (
     (user?.id && pathname.includes('/dashboard/')) ||
     pathname.endsWith('/dashboard')
   ) {
     if (users_role[Number(user?.user_role)] !== 'tenant') {
-      return NextResponse.redirect(new URL('/', request.url));
+      return redirect(new URL('/', request.url));
     }
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-pathname', pathname);
+
+    return next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
   if (
     !user &&
-    (pathname.includes('/properti/') || pathname.endsWith('/properti'))
+    (pathname.includes('/pesanan/') || pathname.endsWith('/pesanan'))
   ) {
-    return NextResponse.redirect(new URL('/masuk', request.url));
+    return redirect(new URL('/masuk', request.url));
   }
-  return response;
+  return next();
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/masuk', '/daftar', '/e/:path*', '/properti/:path*'],
+  matcher: ['/masuk', '/daftar', '/dashboard/:path*', '/pesanan/:path*'],
 };

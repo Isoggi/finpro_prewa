@@ -13,7 +13,7 @@ const MySwal = withReactContent(Swal);
 
 enum RoleEnum {
   User,
-  tenant,
+  Tenant,
 }
 export default function Daftar() {
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -26,15 +26,7 @@ export default function Daftar() {
     formState: { errors },
     handleSubmit,
   } = form;
-
-  const [termCheck, setTermCheck] = React.useState(false);
-
-  const handleTermCheck = (checked: boolean) => {
-    setTermCheck(checked);
-  };
-
   const router = useRouter();
-
   const Toast = MySwal.mixin({
     toast: true,
     position: 'top-end',
@@ -49,39 +41,42 @@ export default function Daftar() {
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
+      console.log('regis:', values);
       const res = await actionRegister(values);
       form.reset();
-      router.push('/konfirmasi-email');
+      router.push(
+        `/konfirmasi-email?email=${encodeURIComponent(values.email)}`,
+      );
 
       Toast.fire({
         icon: 'success',
-        title: 'Register Berhasil',
+        title: res.message || 'Daftar Berhasil',
       });
     } catch (err) {
       if (err instanceof Error) {
         Toast.fire({
           icon: 'error',
-          title: `Registration failed: ${err.message}`,
+          title: `Daftar gagal: ${err.message}`,
         });
       }
     }
   };
 
-  const [phone, setPhone] = useState<string>('');
-  const [role, setRole] = useState<string>('');
+  // const [phone, setPhone] = useState<string>('');
+  // const [role, setRole] = useState<string>('');
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
-  };
+  // const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPhone(e.target.value);
+  // };
 
-  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRole(e.target.value);
-  };
+  // const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setRole(e.target.value);
+  // };
 
-  const handleSubmitt = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(`Phone: ${phone}, Role: ${role}`);
-  };
+  // const handleSubmitt = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   console.log(`Phone: ${phone}, Role: ${role}`);
+  // };
 
   return (
     <div>
@@ -106,6 +101,7 @@ export default function Daftar() {
                   type="text"
                   placeholder="Full Name"
                   {...register('name')}
+                  required
                 />
                 <div className="text-red-500 text-sm mt-1">
                   <ErrorMessage errors={errors} name="name" />
@@ -117,6 +113,7 @@ export default function Daftar() {
                   type="text"
                   placeholder="Phone Number"
                   {...register('phone_number')}
+                  required
                 />
                 <div className="text-red-500 text-sm mt-1">
                   <ErrorMessage errors={errors} name="phone_number" />
@@ -130,6 +127,7 @@ export default function Daftar() {
                 type="email"
                 placeholder="Email"
                 {...register('email')}
+                required
               />
               <div className="text-red-500 text-sm mt-1">
                 <ErrorMessage errors={errors} name="email" />
@@ -143,7 +141,7 @@ export default function Daftar() {
                 {...register('role')}
               >
                 <option disabled value={''}>
-                  Select a role
+                  Daftar sebagai...
                 </option>
                 {(Object.keys(RoleEnum) as Array<keyof typeof RoleEnum>).map(
                   (role) =>
@@ -162,7 +160,7 @@ export default function Daftar() {
             <button
               className="w-full py-2 px-4 bg-[#128ede] text-white rounded-md hover:bg-purple-700 transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
               type="submit"
-              disabled={form.formState.isSubmitting || !termCheck}
+              disabled={form.formState.isSubmitting}
             >
               Lanjut
             </button>

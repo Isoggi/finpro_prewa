@@ -150,6 +150,7 @@ CREATE TABLE `transaction_items` (
 CREATE TABLE `transactions` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
+    `invoice_number` VARCHAR(255) NULL,
     `amount` DECIMAL(10, 0) NOT NULL,
     `payment_method` ENUM('manual', 'doku', 'midtrans', 'other') NOT NULL,
     `payment_proof` VARCHAR(255) NULL,

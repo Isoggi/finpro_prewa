@@ -1,6 +1,7 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from 'tailwindcss';
 import daisyui from 'daisyui';
-module.exports = {
+
+const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,7 +11,12 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      zIndex: {
+        '1': '1', // Define your custom z-1 class
+      },
+    },
   },
   plugins: [daisyui],
 };
+export default config;

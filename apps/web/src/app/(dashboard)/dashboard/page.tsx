@@ -14,7 +14,7 @@ export default function EventsPage({}: Props) {
           <li>
             <Link href="/">Home</Link>
           </li>
-          <li>Events</li>
+          <li>Dashboard</li>
         </ul>
       </div>
       <div className="bg-white dark:bg-black">
@@ -22,7 +22,7 @@ export default function EventsPage({}: Props) {
           htmlFor="my-drawer-2"
           className="btn btn-primary drawer-button lg:hidden"
         >
-          Filter
+          Menu
         </label>
         <div className="drawer lg:drawer-open">
           <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />

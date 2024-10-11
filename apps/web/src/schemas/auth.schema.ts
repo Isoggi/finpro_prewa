@@ -1,35 +1,28 @@
 import { z } from 'zod';
 import validator from 'validator';
-export const registerSchema = z
-  .object({
-    name: z.string().min(5, {
-      message: 'Silahkan masukan nama lengkap anda',
+export const registerSchema = z.object({
+  name: z.string().min(5, {
+    message: 'Silahkan masukan nama lengkap anda',
+  }),
+  phone_number: z
+    .string({ message: 'Masukkan no handphone anda' })
+    .min(9, {
+      message:
+        'Harap masukkan nomor telepon yang valid mulai dengan 0 atau 62 dan minimum 9 digit.',
+    })
+    .refine(validator.isMobilePhone, {
+      message: 'Nomor telepon tidak valid',
     }),
-    phone_number: z
-      .string({ message: 'Masukkan no handphone anda' })
-      .min(9, {
-        message:
-          'Harap masukkan nomor telepon yang valid mulai dengan 0 atau 62 dan minimum 9 digit.',
-      })
-      .refine(validator.isMobilePhone, {
-        message: 'Nomor telepon tidak valid',
-      }),
+  email: z.string().email().min(5, {
+    message: 'silahkan masukan email anda',
+  }),
+  role: z.enum(['User', 'Organizer'], {
+    message: 'silahkan pilih role anda',
+  }),
+});
 
-    // date: z.number({ message: "Masukan Tanggal Lahir" }).min(1).max(31),
-    // month: z
-    //   .number({ message: "Masukan Bulan Lahir" })
-    //   .max(12, { message: "invalid month" })
-    //   .min(1),
-    // year: z
-    //   .number({ message: "Masukan Tahun Lahir" })
-    //   .max(new Date().getFullYear(), { message: "invalid year" })
-    //   .min(1960),
-    email: z.string().email().min(5, {
-      message: 'silahkan masukan email anda',
-    }),
-    role: z.enum(['User', 'Organizer'], {
-      message: 'silahkan pilih role anda',
-    }),
+export const verifyForgetPasswordSchema = z
+  .object({
     password: z
       .string({ message: 'Mohon masukan kata sandi Anda.' })
       .min(6, {
@@ -58,13 +51,9 @@ export const registerSchema = z
   );
 
 export const loginSchema = z.object({
-  phone_number: z
-    .string({ message: 'Masukkan no handphone anda' })
-    .min(9, {
-      message:
-        'Harap masukkan nomor telepon yang valid mulai dengan 0 atau 62 dan minimum 9 digit.',
-    })
-    .refine(validator.isMobilePhone),
+  email: z.string().email().min(5, {
+    message: 'silahkan masukan email anda',
+  }),
   password: z
     .string({ message: 'Mohon masukan kata sandi Anda.' })
     .min(6, {
