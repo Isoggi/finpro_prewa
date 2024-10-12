@@ -298,4 +298,9 @@ export class AuthService {
       throw new ErrorHandler('Unauthorized', 401);
     }
   }
+
+  static async refreshJWT(req: Request) {
+    const { user } = req;
+    return generateToken(user, '3h');
+  }
 }

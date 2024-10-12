@@ -1,22 +1,12 @@
-// import EventCard from "@/components/Card.component";
-// // import Sidebar from "@/components/dashboard/Sidebar";
-import SidebarFilter from '@/components/EventFilter.component';
-import Link from 'next/link';
-import React from 'react';
+
+import SidebarComponent from '@/components/Sidebar.component';
+
 
 type Props = {};
 
-export default function EventsPage({}: Props) {
+export default function DashboardPage({}: Props) {
   return (
     <div className="px-2 py-2 mx-auto max-w-screen-xl">
-      <div className="breadcrumbs text-sm px-2">
-        <ul>
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>Dashboard</li>
-        </ul>
-      </div>
       <div className="bg-white dark:bg-black">
         <label
           htmlFor="my-drawer-2"
@@ -36,7 +26,7 @@ export default function EventsPage({}: Props) {
               className="drawer-overlay"
             ></label>
             <ul className="menu text-base-content min-h-full w-80 p-4">
-              <SidebarFilter />
+              <SidebarComponent />
             </ul>
           </div>
         </div>

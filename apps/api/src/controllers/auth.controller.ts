@@ -101,4 +101,15 @@ export class AuthController {
       next(error);
     }
   }
+  async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await AuthService.refreshJWT(req);
+      return res
+        .status(200)
+        .json({ message: 'Update Token Success', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }
