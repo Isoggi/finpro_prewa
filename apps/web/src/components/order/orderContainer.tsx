@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import OrderCardComponent from './orderCard';
 import { Order } from '@/interfaces/order.interface';
 import { api } from '@/config/axios.config';
+import { useSession } from 'next-auth/react';
+import { User } from 'next-auth';
 
-type Props = { data?: any };
+type Props = { url?: string };
 
-export default function OrderContainerComponent({ }: Props) {
-
-
+export default function OrderContainerComponent({ url }: Props) {
   const [orderNumber, setOrderNumber] = useState<string>(''); // Order number filter
   const [startDate, setStartDate] = useState<string>(''); // Start date filter
   const [endDate, setEndDate] = useState<string>(''); // End date filter
@@ -16,7 +16,12 @@ export default function OrderContainerComponent({ }: Props) {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
   ); // Timeout ID for debounce
+  const session = useSession();
 
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    if (session.data?.user) setUser(session.data?.user);
+  }, [session]);
   // Function to fetch bookings from API
   const fetchBookings = async (
     orderNumber: string,
@@ -24,17 +29,19 @@ export default function OrderContainerComponent({ }: Props) {
     endDate: string,
   ) => {
     try {
+      console.log(url, session.data?.user);
       // Example API call, replace with your API URL
-      const response = await api.get(
-        `/order`,
-        {
-          params:{
-            orderNumber,
-            startDate,
-            endDate
-          }
-        }
-      );
+      const response = await api.get(`${url ? url : '/order'}`, {
+        params: {
+          orderNumber,
+          startDate,
+          endDate,
+        },
+
+        headers: {
+          Authorization: `Bearer ${user?.access_token}`,
+        },
+      });
       const data = await response.data.data;
 
       // Update bookings state

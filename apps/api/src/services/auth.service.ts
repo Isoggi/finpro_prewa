@@ -88,7 +88,7 @@ export class AuthService {
 
     sendVerifyMail(data.email, {
       email: data.email,
-      verification_url: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
+      verification_url: `${WEB_URL}${VERIFICATION_URL_PATH}${token}`,
     });
 
     return 'Email Send';
@@ -297,5 +297,10 @@ export class AuthService {
     } else {
       throw new ErrorHandler('Unauthorized', 401);
     }
+  }
+
+  static async refreshJWT(req: Request) {
+    const { user } = req;
+    return generateToken(user, '3h');
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import NavbarProfileComponent from './auth/navbarProfile';
 export default function Navbar() {
   return (
     <>
@@ -21,15 +22,7 @@ export default function Navbar() {
             </a>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="/masuk" className="text-xs md:text-sm lg:text-base">
-              Masuk
-            </Link>
-            <Link href="/daftar" className="text-xs md:text-sm lg:text-base">
-              Daftar
-            </Link>
-            <Link href="/dashboard" className="text-xs md:text-sm lg:text-base">
-              Dashboard
-            </Link>
+            <NavbarProfileComponent />
           </div>
         </div>
       </nav>

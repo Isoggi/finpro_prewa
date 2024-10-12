@@ -16,7 +16,7 @@ export const registerSchema = z.object({
   email: z.string().email().min(5, {
     message: 'silahkan masukan email anda',
   }),
-  role: z.enum(['User', 'Organizer'], {
+  role: z.enum(['User', 'Tenant'], {
     message: 'silahkan pilih role anda',
   }),
 });
