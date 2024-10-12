@@ -1,5 +1,4 @@
 import OrderContainerComponent from '@/components/order/orderContainer';
-import { api } from '@/config/axios.config';
 import React from 'react';
 
 export default async function OrderPage() {

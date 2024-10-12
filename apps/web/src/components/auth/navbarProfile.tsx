@@ -45,18 +45,27 @@ export default function NavbarProfileComponent() {
   };
 
   return (
-    <div className=" items-center justify-between  ">
+    <div className="bg-white dark:bg-gray-700 items-center justify-between">
       <div className="flex items-center space-x-4">
         {user ? (
           <>
-            <Link
-              href="/pesanan"
-              className="text-2xl text-white transition-colors flex items-center justify-center hover:text-gray-400"
-              title="CartButton"
-            >
-              {/* <FaShoppingCart /> */}
-              Pesanan
-            </Link>
+            {user.user_role === 'tenant' ? (
+              <Link
+                href="/dashboard"
+                className="text-2xl text-white transition-colors flex items-center justify-center hover:text-gray-400"
+                title="CartButton"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/pesanan"
+                className="text-2xl text-white transition-colors flex items-center justify-center hover:text-gray-400"
+                title="CartButton"
+              >
+                <FaShoppingCart />
+              </Link>
+            )}
 
             <Link href="/profile" title="Profile">
               {user.image ? (
