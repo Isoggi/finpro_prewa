@@ -25,7 +25,8 @@ export async function middleware(request: NextRequest) {
     (user?.id && pathname.includes('/dashboard/')) ||
     pathname.endsWith('/dashboard')
   ) {
-    if (users_role[Number(user?.user_role)] !== 'tenant') {
+    console.log('accessing dashboard:', user?.user_role);
+    if (user?.user_role !== 'tenant') {
       return redirect(new URL('/', request.url));
     }
     const requestHeaders = new Headers(request.headers);

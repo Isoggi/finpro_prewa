@@ -54,6 +54,12 @@ export class AuthRouter {
       uploader('AVATAR', 'avatars').single('image'),
       this.authController.updateProfile,
     );
+
+    this.router.post(
+      '/refresh-token',
+      AuthMiddleware,
+      this.authController.refreshToken,
+    );
   }
   public getRouter(): Router {
     return this.router;
