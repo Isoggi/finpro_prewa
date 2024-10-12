@@ -1,20 +1,24 @@
 'use client';
-import React, { useState } from 'react';
-import { actionRegister } from '@/action/auth.action';
-import { registerSchema } from '@/schemas/auth.schema';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ErrorMessage } from '@hookform/error-message';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ErrorMessage } from '@hookform/error-message';
+import { registerSchema } from '@/schemas/auth.schema';
+import { actionRegister } from '@/action/auth.action';
+import { z } from 'zod';
+import { useRouter } from 'next/navigation';
+import { MdOutlineMail } from 'react-icons/md';
+import Link from 'next/link';
+
 const MySwal = withReactContent(Swal);
 
 enum RoleEnum {
   User,
   Tenant,
 }
+
 export default function Daftar() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -41,7 +45,6 @@ export default function Daftar() {
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
-      console.log('regis:', values);
       const res = await actionRegister(values);
       form.reset();
       router.push(
@@ -62,68 +65,58 @@ export default function Daftar() {
     }
   };
 
-  // const [phone, setPhone] = useState<string>('');
-  // const [role, setRole] = useState<string>('');
-
-  // const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPhone(e.target.value);
-  // };
-
-  // const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setRole(e.target.value);
-  // };
-
-  // const handleSubmitt = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log(`Phone: ${phone}, Role: ${role}`);
-  // };
-
   return (
-    <div>
-      <div className="breadcrumbs text-sm py-4 px-6">
+    <div
+      className="min-h-screen flex flex-col"
+      style={{
+        backgroundImage:
+          'url("https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="breadcrumbs text-sm py-4 px-6 text-white">
         <ul>
           <li>
-            <a href="/">Home</a>
+            <Link href="/">Home</Link>
           </li>
           <li>Daftar</li>
         </ul>
       </div>
-      <div className="flex items-center justify-center px-4 min-h-screen bg-gray-100">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-          <h2 className="text-2xl font-semibold mb-4 text-center">
-            Masukkan Email Kamu
-          </h2>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <input
-                  className="w-full p-2 border-gray-300 rounded-md"
-                  type="text"
-                  placeholder="Full Name"
-                  {...register('name')}
-                  required
-                />
-                <div className="text-red-500 text-sm mt-1">
-                  <ErrorMessage errors={errors} name="name" />
-                </div>
-              </div>
-              <div>
-                <input
-                  className="w-full p-2 border-gray-300 rounded-md"
-                  type="text"
-                  placeholder="Phone Number"
-                  {...register('phone_number')}
-                  required
-                />
-                <div className="text-red-500 text-sm mt-1">
-                  <ErrorMessage errors={errors} name="phone_number" />
-                </div>
-              </div>
-            </div>
 
+      <div className="flex-grow flex items-center justify-center px-4">
+        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border border-white sm:mx-4">
+          <h1 className="text-white text-2xl font-bold mb-6">
+            Daftar Sekarang
+          </h1>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <input
-                className="w-full p-2 border-gray-300 rounded-md"
+                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                type="text"
+                placeholder="Full Name"
+                {...register('name')}
+                required
+              />
+              <div className="text-red-500 text-sm mt-1">
+                <ErrorMessage errors={errors} name="name" />
+              </div>
+            </div>
+            <div className="mb-4">
+              <input
+                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                type="text"
+                placeholder="Phone Number"
+                {...register('phone_number')}
+                required
+              />
+              <div className="text-red-500 text-sm mt-1">
+                <ErrorMessage errors={errors} name="phone_number" />
+              </div>
+            </div>
+            <div className="mb-4">
+              <input
+                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
                 type="email"
                 placeholder="Email"
                 {...register('email')}
@@ -135,13 +128,13 @@ export default function Daftar() {
             </div>
             <div className="mb-4">
               <select
-                className="w-full p-2 border-gray-300  rounded-md"
+                className="w-full p-3 border rounded-lg text-slate-500 bg-transparent"
                 required
-                defaultValue={''}
+                defaultValue=""
                 {...register('role')}
               >
                 <option disabled value={''}>
-                  Daftar sebagai...
+                  Daftar sebagai
                 </option>
                 {(Object.keys(RoleEnum) as Array<keyof typeof RoleEnum>).map(
                   (role) =>
@@ -158,13 +151,20 @@ export default function Daftar() {
             </div>
 
             <button
-              className="w-full py-2 px-4 bg-[#128ede] text-white rounded-md hover:bg-purple-700 transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
+              className="w-full py-3 bg-white text-black rounded-full flex items-center justify-center mb-4"
               type="submit"
               disabled={form.formState.isSubmitting}
             >
               Lanjut
             </button>
           </form>
+
+          <p className="text-gray-300">
+            Sudah memiliki akun?{' '}
+            <Link href="/masuk" className="text-white font-semibold">
+              Masuk
+            </Link>
+          </p>
         </div>
       </div>
     </div>
