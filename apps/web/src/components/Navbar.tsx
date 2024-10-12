@@ -1,6 +1,46 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { SessionContextValue } from 'next-auth/react';
+import { actionLogOut } from '@/action/auth.action';
+import { FaShoppingCart, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 export default function Navbar() {
+  const [isLogoutSuccess, setIsLogoutSuccess] = useState(false);
+  const [isLogoutError, setIsLogoutError] = useState(false);
+
+  const Toast = MySwal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer);
+      toast.addEventListener('mouseleave', Swal.resumeTimer);
+    },
+  });
+
+  const logout = async () => {
+    try {
+      await actionLogOut();
+      setIsLogoutSuccess(true);
+      Toast.fire({
+        icon: 'success',
+        title: 'Logout Berhasil',
+      });
+    } catch (error) {
+      setIsLogoutError(true);
+      Toast.fire({
+        icon: 'error',
+        title: 'Error, Logout Gagal',
+      });
+    }
+  };
+
   return (
     <>
       <nav className="bg-[#ffffff] p-4 shadow-md">
@@ -30,6 +70,14 @@ export default function Navbar() {
             <Link href="/dashboard" className="text-xs md:text-sm lg:text-base">
               Dashboard
             </Link>
+            <button
+              type="button"
+              title="Logout"
+              className="text-red-700 hover:text-red-900 transition-colors"
+              onClick={logout}
+            >
+              <FaSignOutAlt className="text-2xl" />
+            </button>
           </div>
         </div>
       </nav>
