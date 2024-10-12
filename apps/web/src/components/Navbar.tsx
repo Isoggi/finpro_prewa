@@ -1,41 +1,7 @@
-'use client';
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
 import NavbarProfileComponent from './auth/navbarProfile';
 
 export default function Navbar() {
-  const [isLogoutSuccess, setIsLogoutSuccess] = useState(false);
-  const [isLogoutError, setIsLogoutError] = useState(false);
-
-  const Toast = MySwal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
-
-  const logout = async () => {
-    try {
-      await actionLogOut();
-      setIsLogoutSuccess(true);
-      Toast.fire({
-        icon: 'success',
-        title: 'Logout Berhasil',
-      });
-    } catch (error) {
-      setIsLogoutError(true);
-      Toast.fire({
-        icon: 'error',
-        title: 'Error, Logout Gagal',
-      });
-    }
-  };
-
   return (
     <>
       <nav className="bg-[#ffffff] p-4 shadow-md">

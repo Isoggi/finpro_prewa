@@ -1,14 +1,17 @@
+'use client';
 import Link from 'next/link';
 import React from 'react';
-import { headers } from 'next/headers';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const SidebarComponent: React.FC = () => {
-  const headersList = headers();
-  // read the custom x-url header
-  const header_url = headersList.get('x-pathname') || '';
-  // Function to return active class if the route matches the current path
+  const [activeUrl, setActiveUrl] = React.useState<string>('dashboard');
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  React.useEffect(() => {
+    setActiveUrl(pathname);
+  }, [pathname, searchParams]);
   const isActive = (path: string) => {
-    return header_url === path ? 'bg-primary text-white' : '';
+    return activeUrl === path ? 'bg-primary text-white' : '';
   };
   return (
     <>
