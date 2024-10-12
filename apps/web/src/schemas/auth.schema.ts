@@ -72,12 +72,6 @@ export const loginSchema = z.object({
 });
 
 export const profileSchema = z.object({
-  gender: z.enum(['pria', 'wanita'], {
-    message: 'Silahkan Pilih Jenis Kelamin',
-  }),
-  birthDate: z.string({ message: 'Masukan Tanggal Lahir' }).min(1, {
-    message: 'Masukan Tanggal Lahir',
-  }),
   name: z.string().min(5, {
     message: 'Silahkan masukan nama lengkap anda',
   }),
