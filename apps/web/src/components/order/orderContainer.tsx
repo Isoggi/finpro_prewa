@@ -5,6 +5,7 @@ import { Order } from '@/interfaces/order.interface';
 import { api } from '@/config/axios.config';
 import { useSession } from 'next-auth/react';
 import { User } from 'next-auth';
+import NavbarPaginationComponent from '../pagination/navbar';
 
 type Props = { url?: string };
 
@@ -13,6 +14,7 @@ export default function OrderContainerComponent({ url }: Props) {
   const [startDate, setStartDate] = useState<string>(''); // Start date filter
   const [endDate, setEndDate] = useState<string>(''); // End date filter
   const [bookings, setBookings] = useState<Order[]>([]); // Filtered booking results
+  const [totalPages, setTotalPages] = useState(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
   ); // Timeout ID for debounce
@@ -24,9 +26,11 @@ export default function OrderContainerComponent({ url }: Props) {
   }, [session]);
   // Function to fetch bookings from API
   const fetchBookings = async (
-    orderNumber: string,
-    startDate: string,
-    endDate: string,
+    orderNumber?: string,
+    startDate?: string,
+    endDate?: string,
+    page = 1,
+    size = 8,
   ) => {
     try {
       console.log(url, session.data?.user);
@@ -36,8 +40,9 @@ export default function OrderContainerComponent({ url }: Props) {
           orderNumber,
           startDate,
           endDate,
+          page,
+          size,
         },
-
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
@@ -45,7 +50,8 @@ export default function OrderContainerComponent({ url }: Props) {
       const data = await response.data.data;
 
       // Update bookings state
-      setBookings(data);
+      setBookings(data.data);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error('Failed to fetch bookings', error);
     }
@@ -123,6 +129,12 @@ export default function OrderContainerComponent({ url }: Props) {
             ))
           : 'No data'}
       </div>
+      <NavbarPaginationComponent
+        totalPages={totalPages}
+        onPageChange={(page) =>
+          fetchBookings(orderNumber, startDate, endDate, page)
+        }
+      />
     </>
   );
 }

@@ -10,49 +10,75 @@ export class TenantService {
     console.log('access tenant transaction:', user?.name);
     const { page = 1, size = 8, orderNumber, startDate, endDate } = req.query;
     // if (!user) throw new ErrorHandler('Unauthorized', 401);
-    const result = await prisma.transactions.findMany({
-      where: {
-        transactionItems: {
-          some: {
-            start_date: startDate ? new Date(startDate.toString()) : undefined,
-            end_date: endDate ? new Date(endDate.toString()) : undefined,
-            room: {
-              is: {
-                // property: { is: { tenant_id: user?.id } },
-                property: { is: { tenant_id: 2 } },
+    const [result, totalCount] = await Promise.all([
+      prisma.transactions.findMany({
+        where: {
+          transactionItems: {
+            some: {
+              start_date: startDate
+                ? new Date(startDate.toString())
+                : undefined,
+              end_date: endDate ? new Date(endDate.toString()) : undefined,
+              room: {
+                is: {
+                  // property: { is: { tenant_id: user?.id } },
+                  property: { is: { tenant_id: 2 } },
+                },
+              },
+            },
+          },
+          invoice_number: {
+            contains: orderNumber ? orderNumber?.toString() : undefined,
+          },
+        },
+        include: {
+          transactionItems: {
+            select: {
+              id: true,
+              total_price: true,
+              start_date: true,
+              end_date: true,
+              status: true,
+              room: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  property: {
+                    select: {
+                      category: true,
+                      name: true,
+                    },
+                  },
+                },
+              }, // You can select specific room fields here
+            },
+          },
+        },
+        take: Number(size),
+        skip: (Number(page) - 1) * Number(size),
+        orderBy: { created_at: 'desc' },
+      }),
+      prisma.transactions.count({
+        where: {
+          transactionItems: {
+            some: {
+              start_date: startDate
+                ? new Date(startDate.toString())
+                : undefined,
+              end_date: endDate ? new Date(endDate.toString()) : undefined,
+              room: {
+                is: {
+                  // property: { is: { tenant_id: user?.id } },
+                  property: { is: { tenant_id: 2 } },
+                },
               },
             },
           },
         },
-      },
-      include: {
-        transactionItems: {
-          select: {
-            id: true,
-            total_price: true,
-            start_date: true,
-            end_date: true,
-            status: true,
-            room: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                property: {
-                  select: {
-                    category: true,
-                    name: true,
-                  },
-                },
-              },
-            }, // You can select specific room fields here
-          },
-        },
-      },
-      take: Number(size),
-      skip: (Number(page) - 1) * Number(size),
-      orderBy: { created_at: 'desc' },
-    });
+      }),
+    ]);
+    // const result = await
     const data = result.map((order) => {
       let _res: Order = {
         id: order.id,
@@ -66,6 +92,12 @@ export class TenantService {
       return _res;
     });
     console.log(data);
-    return data;
+    return {
+      data: data,
+      page,
+      size,
+      totalCount,
+      totalPages: Math.ceil(totalCount / Number(size)),
+    };
   }
 }
