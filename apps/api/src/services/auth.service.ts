@@ -11,6 +11,7 @@ import {
 } from '../libs/nodemailer.lib';
 import {
   decodeGeneralToken,
+  decodeToken,
   decodeVerifyToken,
   generateForgetPaswordToken,
   generateGeneralToken,
@@ -300,7 +301,12 @@ export class AuthService {
   }
 
   static async refreshJWT(req: Request) {
-    const { user } = req;
-    return generateToken(user, '3h');
+    const { user, body } = req;
+    const { token } = body;
+    delete user?.password;
+    if (user) return generateToken(user, '3h');
+    else {
+      return generateToken(decodeToken(token), '3h');
+    }
   }
 }

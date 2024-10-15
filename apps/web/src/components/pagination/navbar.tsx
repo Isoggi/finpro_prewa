@@ -30,8 +30,9 @@ export default function NavbarPaginationComponent({
       {[...Array(totalPages)].map((_, index) => (
         <button
           key={index + 1}
-          className={`join-item selection:btn ${currentPage === index + 1 ? 'btn-active' : ''}`}
+          className={`join-item btn ${currentPage === index + 1 ? 'btn-active' : ''}`}
           onClick={() => handleClick(index + 1)}
+          disabled={currentPage === index + 1}
         >
           {index + 1}
         </button>

@@ -9,20 +9,22 @@ export class TenantService {
 
     console.log('access tenant transaction:', user?.name);
     const { page = 1, size = 8, orderNumber, startDate, endDate } = req.query;
-    // if (!user) throw new ErrorHandler('Unauthorized', 401);
+    if (!user) throw new ErrorHandler('Unauthorized', 401);
     const [result, totalCount] = await Promise.all([
       prisma.transactions.findMany({
         where: {
           transactionItems: {
             some: {
               start_date: startDate
-                ? new Date(startDate.toString())
+                ? { gte: new Date(startDate.toString()) }
                 : undefined,
-              end_date: endDate ? new Date(endDate.toString()) : undefined,
+              end_date: endDate
+                ? { lte: new Date(endDate.toString()) }
+                : undefined,
               room: {
                 is: {
-                  // property: { is: { tenant_id: user?.id } },
-                  property: { is: { tenant_id: 2 } },
+                  property: { is: { tenant_id: user?.id } },
+                  // property: { is: { tenant_id: 2 } },
                 },
               },
             },
@@ -64,9 +66,11 @@ export class TenantService {
           transactionItems: {
             some: {
               start_date: startDate
-                ? new Date(startDate.toString())
+                ? { gte: new Date(startDate.toString()) }
                 : undefined,
-              end_date: endDate ? new Date(endDate.toString()) : undefined,
+              end_date: endDate
+                ? { lte: new Date(endDate.toString()) }
+                : undefined,
               room: {
                 is: {
                   // property: { is: { tenant_id: user?.id } },

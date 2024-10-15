@@ -7,7 +7,7 @@ export class TransactionService {
   static async get(req: Request) {
     const { user } = req;
     const { page = 1, size = 8, orderNumber, startDate, endDate } = req.query;
-    // if (!user) throw new ErrorHandler('Unauthorized', 401);
+    if (!user) throw new ErrorHandler('Unauthorized', 401);
     const [data, totalCount] = await Promise.all([
       prisma.transactions.findMany({
         where: {
@@ -55,8 +55,8 @@ export class TransactionService {
       }),
       prisma.transactions.count({
         where: {
-          // user_id: user?.id,
-          user_id: 1,
+          user_id: user?.id,
+          // user_id: 1,
           invoice_number: {
             contains: orderNumber ? orderNumber?.toString() : undefined,
           },

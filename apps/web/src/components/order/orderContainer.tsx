@@ -6,6 +6,8 @@ import { api } from '@/config/axios.config';
 import { useSession } from 'next-auth/react';
 import { User } from 'next-auth';
 import NavbarPaginationComponent from '../pagination/navbar';
+import OrderCardLoader from './orderCardLoader';
+import { useSearchParams } from 'next/navigation';
 
 type Props = { url?: string };
 
@@ -13,15 +15,17 @@ export default function OrderContainerComponent({ url }: Props) {
   const [orderNumber, setOrderNumber] = useState<string>(''); // Order number filter
   const [startDate, setStartDate] = useState<string>(''); // Start date filter
   const [endDate, setEndDate] = useState<string>(''); // End date filter
-  const [bookings, setBookings] = useState<Order[]>([]); // Filtered booking results
+  const [bookings, setBookings] = useState<Order[] | null>(null); // Filtered booking results
   const [totalPages, setTotalPages] = useState(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
   ); // Timeout ID for debounce
+  const searchParams = useSearchParams();
   const session = useSession();
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
+    if (user) return;
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
   // Function to fetch bookings from API
@@ -31,10 +35,11 @@ export default function OrderContainerComponent({ url }: Props) {
     endDate?: string,
     page = 1,
     size = 8,
+    userData = user,
   ) => {
     try {
-      console.log(url, session.data?.user);
-      // Example API call, replace with your API URL
+      console.log(url, userData);
+      setBookings(null);
       const response = await api.get(`${url ? url : '/order'}`, {
         params: {
           orderNumber,
@@ -44,7 +49,7 @@ export default function OrderContainerComponent({ url }: Props) {
           size,
         },
         headers: {
-          Authorization: `Bearer ${user?.access_token}`,
+          Authorization: `Bearer ${userData?.access_token}`,
         },
       });
       const data = await response.data.data;
@@ -76,12 +81,12 @@ export default function OrderContainerComponent({ url }: Props) {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [orderNumber, startDate, endDate]); // Re-run effect when these dependencies change
+  }, [orderNumber, startDate, endDate, user]); // Re-run effect when these dependencies change
 
   return (
     <>
       {/* Filter and Sort */}
-      <div className="flex space-x-4 my-4">
+      <div className="flex flex-col lg:flex-row space-x-4 my-4">
         {/* Order Number Input */}
         <input
           type="text"
@@ -114,9 +119,10 @@ export default function OrderContainerComponent({ url }: Props) {
       </div>
 
       {/* Booking History Cards */}
-      <div className="space-y-4">
-        {bookings.length
-          ? bookings.map((order, index) => (
+      <div className="space-y-4 my-4">
+        {bookings ? (
+          bookings.length ? (
+            bookings.map((order, index) => (
               <OrderCardComponent
                 key={index}
                 name={order.name}
@@ -127,14 +133,21 @@ export default function OrderContainerComponent({ url }: Props) {
                 status={order.status}
               />
             ))
-          : 'No data'}
+          ) : (
+            'No data'
+          )
+        ) : (
+          <OrderCardLoader />
+        )}
       </div>
-      <NavbarPaginationComponent
-        totalPages={totalPages}
-        onPageChange={(page) =>
-          fetchBookings(orderNumber, startDate, endDate, page)
-        }
-      />
+      {bookings && (
+        <NavbarPaginationComponent
+          totalPages={totalPages}
+          onPageChange={(page) =>
+            fetchBookings(orderNumber, startDate, endDate, page)
+          }
+        />
+      )}
     </>
   );
 }
