@@ -110,7 +110,7 @@ export default function Masuk() {
             </div>
           </div>
           <p className="text-sm mb-4">
-            <Link href="/lupapassword" className="text-white hover:underline">
+            <Link href="/forgetpassword" className="text-white hover:underline">
               Lupa password?
             </Link>
           </p>

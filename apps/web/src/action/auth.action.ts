@@ -93,6 +93,39 @@ export const actionConfirmVerifyPassword = async (
   }
 };
 
+export const forgetPassword = async (email: string) => {
+  try {
+    const res = await api.post('/auth/forget-password', { email });
+    return {
+      message: 'Link untuk reset password telah dikirimkan ke email',
+    };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage =
+        error.response?.data?.message || 'Kesalahan tidak diketahui';
+      throw new Error(errorMessage);
+    }
+    throw new Error('Permintaan reset password gagal');
+  }
+};
+
+export const actionConfirmForgetPassword = async (
+  token: string,
+  password: string,
+) => {
+  try {
+    await api.post('/auth/confirm-forget-password', { token, password });
+    return {
+      message: 'Reset Password Berhasil',
+    };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error('Reset Password Gagal');
+  }
+};
+
 export const actionLogOut = async () => {
   try {
     return await signOut({ redirect: false, redirectTo: '/masuk' });

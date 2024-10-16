@@ -11,7 +11,7 @@ const SidebarComponent: React.FC = () => {
     setActiveUrl(pathname);
   }, [pathname, searchParams]);
   const isActive = (path: string) => {
-    return activeUrl === path ? 'bg-primary text-white' : '';
+    return activeUrl === path ? 'bg-[#00A9FF] text-white' : '';
   };
   return (
     <>
