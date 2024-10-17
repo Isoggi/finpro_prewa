@@ -131,10 +131,15 @@ export default function OrderContainerComponent({ url }: Props) {
                 startDate={order.startDate}
                 endDate={order.endDate}
                 status={order.status}
+                image={order.image}
+                payment_type={order.payment_type}
+                user_role={user?.user_role as string}
               />
             ))
           ) : (
-            'No data'
+            <div className="flex justify-center items-center w-full">
+              <p className="text-right ml-auto w-full">Tidak ada transaksi</p>
+            </div>
           )
         ) : (
           <OrderCardLoader />

@@ -29,4 +29,16 @@ export class TransactionController {
       next(error);
     }
   }
+
+  async uploadProof(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await TransactionService.uploadProof(req);
+      return res
+        .status(200)
+        .json({ message: 'Upload Proof', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }

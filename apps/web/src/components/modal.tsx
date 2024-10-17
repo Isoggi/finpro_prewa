@@ -18,7 +18,8 @@ export default function ModalComponent({
     <div>
       <div
         className="hover:cursor-pointer hover:text-red-500"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           if (dialog) dialog.showModal();
         }}
       >

@@ -2,6 +2,7 @@ import { ErrorHandler } from '@/helpers/response.helper';
 import { Request } from 'express';
 import prisma from '@/prisma';
 import { Order } from '@/interfaces/transaction.interface';
+import { transaction_items_status, transactions_status } from '@prisma/client';
 
 export class TenantService {
   static async getTransactions(req: Request) {
@@ -103,5 +104,34 @@ export class TenantService {
       totalCount,
       totalPages: Math.ceil(totalCount / Number(size)),
     };
+  }
+
+  static async cancelOrder(req: Request) {
+    const { user } = req;
+    if (!user) throw new ErrorHandler('Unauthorized', 401);
+    const { id } = req.body;
+    if (!id) throw new ErrorHandler('Invalid request', 400);
+    await prisma.$transaction(async (trx) => {
+      const transaction = await trx.transactions.update({
+        where: {
+          id,
+          user_id: user?.id,
+        },
+        data: {
+          status: transactions_status.failed,
+          transactionItems: {
+            updateMany: {
+              where: { transaction_id: id },
+              data: {
+                status: transaction_items_status.cancelled,
+                updated_at: new Date(),
+              },
+            },
+          },
+        },
+      });
+      return transaction;
+    });
+    return true;
   }
 }

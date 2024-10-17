@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { TransactionController } from '../controllers/transaction.controller';
 // import { validateAuth } from "../middlewares/authValidator.middleware";
 // import { loginSchema, registerSchema } from "../schemas/auth.schema";
-import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 // import { uploader } from "../libs/uploader.lib";
 
 export class TransactionRouter {
@@ -13,10 +13,12 @@ export class TransactionRouter {
   }
 
   private routes(): void {
-    this.router.get(
-      '',
+    this.router.get('', AuthMiddleware, this.transactionController.get);
+
+    this.router.post(
+      '/upload-payment-proof',
       AuthMiddleware,
-      this.transactionController.get,
+      this.transactionController.uploadProof,
     );
   }
   public getRouter(): Router {

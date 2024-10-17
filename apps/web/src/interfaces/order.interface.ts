@@ -5,4 +5,6 @@ export interface Order {
   startDate: string;
   endDate: string;
   status: 'pending' | 'confirmed' | 'cancelled';
+  image?: string;
+  payment_type: 'midtrans' | 'doku' | 'manual' | 'other';
 }

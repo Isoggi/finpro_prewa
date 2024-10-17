@@ -1,14 +1,10 @@
 import React from 'react';
 import ModalComponent from '../modal';
+import { Order } from '@/interfaces/order.interface';
 
-type Props = {
-  category: 'apartemen' | 'hotel' | 'kos' | undefined;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
-};
+interface Props extends Order {
+  user_role: string;
+}
 
 export default function OrderCardComponent({
   name,
@@ -17,6 +13,9 @@ export default function OrderCardComponent({
   startDate,
   endDate,
   status,
+  image,
+  payment_type,
+  user_role,
 }: Props) {
   return (
     <div className="card w-full bg-base-100 shadow-md">
@@ -24,9 +23,18 @@ export default function OrderCardComponent({
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <div className="bg-primary p-3 rounded-lg mr-3">
-              <span className="text-white text-2xl">{category}</span>
+              {image ? (
+                <img
+                  src={`${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`}
+                  alt="image"
+                  className="w-12 h-12 object-cover"
+                />
+              ) : (
+                'Data'
+              )}
             </div>
             <div>
+              <span className="text-white badge badge-info">{category}</span>
               <h2 className="card-title">{name}</h2>
               <p className="text-sm">{description}</p>
               <p className="text-sm text-gray-500">
@@ -38,44 +46,48 @@ export default function OrderCardComponent({
             className={`badge ${status === 'confirmed' ? 'badge-success' : 'badge-warning'}`}
           >
             {status}
-          </span>
-          {status === 'pending' && (
-            <div className="dropdown">
-              <div tabIndex={0} role="button" className="btn m-1">
-                ...
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-              >
-                <li>
-                  <ModalComponent
-                    id="cancel_order_modal"
-                    btnTitle="Ajukan pembatalan"
-                    modalTitle="Ajukan pembatalan?"
-                    modalDesc="Ingin mengajukan pembatalan?"
-                  />
-                  {/* <div
-                    className="hover:cursor-pointer hover:text-red-500"
-                    onClick={() =>
-                      document.getElementById('cancel_order_modal')?.showModal()
-                    }
-                  >
-                    Ajukan pembatalan
-                  </div>
-                  <dialog id="cancel_order_modal" className="modal">
-                    <div className="modal-box">
-                      <h3 className="font-bold text-lg">Hello!</h3>
-                      <p className="py-4">Ingin mengajukan pembatalan?</p>
+            {user_role === 'tenant'
+              ? status === 'pending' && (
+                  <div className="dropdown">
+                    <div tabIndex={0} role="button" className="btn m-1">
+                      ...
                     </div>
-                    <form method="dialog" className="modal-backdrop">
-                      <button>close</button>
-                    </form>
-                  </dialog> */}
-                </li>
-              </ul>
-            </div>
-          )}
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                    >
+                      <li>
+                        <ModalComponent
+                          id="cancel_order_modal"
+                          btnTitle="Ajukan pembatalan?"
+                          modalTitle="Ajukan pembatalan?"
+                          modalDesc="Ingin mengajukan pembatalan?"
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                )
+              : status === 'pending' && (
+                  <div className="dropdown">
+                    <div tabIndex={0} role="button" className="btn m-1">
+                      ...
+                    </div>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                    >
+                      <li>
+                        <ModalComponent
+                          id="cancel_order_modal"
+                          btnTitle="Ajukan pembatalan?"
+                          modalTitle="Ajukan pembatalan?"
+                          modalDesc="Ingin mengajukan pembatalan?"
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                )}
+          </span>
         </div>
       </div>
     </div>

@@ -1,6 +1,11 @@
 import { ErrorHandler } from '@/helpers/response.helper';
 import { Order } from '@/interfaces/transaction.interface';
 import prisma from '@/prisma';
+import {
+  transaction_items_status,
+  transactions_payment_method,
+  transactions_status,
+} from '@prisma/client';
 import { Request, Response } from 'express';
 
 export class TransactionService {
@@ -90,5 +95,41 @@ export class TransactionService {
       totalCount,
       totalPages: Math.ceil(totalCount / Number(size)),
     };
+  }
+
+  static async uploadProof(req: Request) {
+    const data = req.body;
+    if (req.file) {
+      data.image = req.file.filename;
+    }
+    if (req.user) {
+      const { id } = req.user;
+
+      const exist = await prisma.transactions.findUnique({
+        where: { id: data.id, user_id: id },
+      });
+      if (!exist) {
+        throw new ErrorHandler('User not found', 404);
+      }
+      await prisma.$transaction(async (trx) => {
+        await trx.transactions.update({
+          where: { id: data.id, user_id: id },
+          data: {
+            payment_proof: data.image,
+            payment_method: transactions_payment_method.manual,
+            status: transactions_status.completed,
+            transactionItems: {
+              updateMany: {
+                where: { transaction_id: data.id },
+                data: { status: transaction_items_status.waitingpayment },
+              },
+            },
+          },
+        });
+      });
+      return 'Upload success';
+    } else {
+      throw new ErrorHandler('Unauthorized', 401);
+    }
   }
 }
