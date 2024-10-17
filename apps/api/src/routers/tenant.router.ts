@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { TenantController } from '../controllers/tenant.controller';
 // import { validateAuth } from "../middlewares/authValidator.middleware";
 // import { loginSchema, registerSchema } from "../schemas/auth.schema";
-// import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 // import { uploader } from "../libs/uploader.lib";
 
 export class TenantRouter {
@@ -15,7 +15,7 @@ export class TenantRouter {
   private routes(): void {
     this.router.get(
       '/transaction',
-      // AuthMiddleware(),
+      AuthMiddleware,
       this.tenantController.getTransactions,
     );
   }

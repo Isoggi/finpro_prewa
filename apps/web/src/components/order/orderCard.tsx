@@ -1,13 +1,10 @@
 import React from 'react';
+import ModalComponent from '../modal';
+import { Order } from '@/interfaces/order.interface';
 
-type Props = {
-  category: 'apartemen' | 'hotel' | 'kos' | undefined;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  status: 'waitingpayment' | 'confirmed' | 'cancelled';
-};
+interface Props extends Order {
+  user_role: string;
+}
 
 export default function OrderCardComponent({
   name,
@@ -16,22 +13,31 @@ export default function OrderCardComponent({
   startDate,
   endDate,
   status,
+  image,
+  payment_type,
+  user_role,
 }: Props) {
   return (
     <div className="card w-full bg-base-100 shadow-md">
       <div className="card-body">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0">
-          <div className="flex items-center w-full">
-            <div
-              className="p-3 rounded-lg mr-3"
-              style={{ backgroundColor: '#00A9FF' }}
-            >
-              <span className="text-white text-2xl">{category}</span>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="bg-primary p-3 rounded-lg mr-3">
+              {image ? (
+                <img
+                  src={`${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`}
+                  alt="image"
+                  className="w-12 h-12 object-cover"
+                />
+              ) : (
+                'Data'
+              )}
             </div>
             <div>
-              <h2 className="card-title text-lg md:text-xl">{name}</h2>
-              <p className="text-sm md:text-base">{description}</p>
-              <p className="text-xs md:text-sm text-gray-500">
+              <span className="text-white badge badge-info">{category}</span>
+              <h2 className="card-title">{name}</h2>
+              <p className="text-sm">{description}</p>
+              <p className="text-sm text-gray-500">
                 {startDate} - {endDate}
               </p>
             </div>
@@ -40,6 +46,47 @@ export default function OrderCardComponent({
             className={`badge ${status === 'confirmed' ? 'badge-success' : 'badge-error'} text-xs md:text-sm ml-auto`}
           >
             {status}
+            {user_role === 'tenant'
+              ? status === 'pending' && (
+                  <div className="dropdown">
+                    <div tabIndex={0} role="button" className="btn m-1">
+                      ...
+                    </div>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                    >
+                      <li>
+                        <ModalComponent
+                          id="cancel_order_modal"
+                          btnTitle="Ajukan pembatalan?"
+                          modalTitle="Ajukan pembatalan?"
+                          modalDesc="Ingin mengajukan pembatalan?"
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                )
+              : status === 'pending' && (
+                  <div className="dropdown">
+                    <div tabIndex={0} role="button" className="btn m-1">
+                      ...
+                    </div>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                    >
+                      <li>
+                        <ModalComponent
+                          id="cancel_order_modal"
+                          btnTitle="Ajukan pembatalan?"
+                          modalTitle="Ajukan pembatalan?"
+                          modalDesc="Ingin mengajukan pembatalan?"
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                )}
           </span>
         </div>
       </div>
