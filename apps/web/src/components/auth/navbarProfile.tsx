@@ -2,7 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { SessionContextValue, useSession } from 'next-auth/react';
 
-import { FaShoppingCart, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import {
+  FaShoppingCart,
+  FaSignOutAlt,
+  FaUser,
+  FaChartArea,
+} from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Link from 'next/link';
@@ -52,15 +57,15 @@ export default function NavbarProfileComponent() {
             {user.user_role === 'tenant' ? (
               <Link
                 href="/dashboard"
-                className="text-2xl text-white transition-colors flex items-center justify-center hover:text-gray-400"
-                title="CartButton"
+                className="text-2xl text-zinc-400  transition-colors flex items-center justify-center hover:text-gray-700"
+                title="Dashboard"
               >
-                Dashboard
+                <FaChartArea />
               </Link>
             ) : (
               <Link
                 href="/pesanan"
-                className="text-2xl text-white transition-colors flex items-center justify-center hover:text-gray-400"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-400"
                 title="CartButton"
               >
                 <FaShoppingCart />
@@ -78,11 +83,11 @@ export default function NavbarProfileComponent() {
                   />
                 </div>
               ) : (
-                <FaUser className="text-gray-500 text-2xl hover:text-gray-700 transition-colors" />
+                <FaUser className="text-zinc-400 text-2xl hover:text-gray-700 transition-colors" />
               )}
             </Link>
 
-            <div className="text-white text-sm">
+            <div className="text-black text-sm">
               <span className="truncate">Hi, {user.name}</span>
             </div>
 
@@ -96,16 +101,12 @@ export default function NavbarProfileComponent() {
             </button>
           </>
         ) : (
-          //   <div className="text-white">Loading...</div>
           <>
             <Link href="/masuk" className="text-xs md:text-sm lg:text-base">
               Masuk
             </Link>
             <Link href="/daftar" className="text-xs md:text-sm lg:text-base">
               Daftar
-            </Link>
-            <Link href="/dashboard" className="text-xs md:text-sm lg:text-base">
-              Dashboard
             </Link>
           </>
         )}

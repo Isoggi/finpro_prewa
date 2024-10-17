@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { verifyForgetPasswordSchema } from '@/schemas/auth.schema';
 import { actionConfirmVerifyPassword } from '@/action/auth.action';
+import { actionConfirmForgetPassword } from '@/action/auth.action';
 const MySwal = withReactContent(Swal);
 
 const VerifyEmail = () => {

@@ -14,7 +14,7 @@ export default async function OrderPage() {
         {/* <div className="tabs">
           <a className="tab tab-bordered tab-active">Pesanan Lama</a>
         </div> */}
-        {<OrderContainerComponent url='/tenant/transaction' />}
+        {<OrderContainerComponent url="/tenant/transaction" />}
       </div>
     </div>
   );

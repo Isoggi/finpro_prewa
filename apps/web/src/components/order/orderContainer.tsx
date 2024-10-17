@@ -22,6 +22,7 @@ export default function OrderContainerComponent({ url }: Props) {
   useEffect(() => {
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
+
   // Function to fetch bookings from API
   const fetchBookings = async (
     orderNumber: string,
@@ -37,7 +38,6 @@ export default function OrderContainerComponent({ url }: Props) {
           startDate,
           endDate,
         },
-
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
@@ -53,37 +53,33 @@ export default function OrderContainerComponent({ url }: Props) {
 
   // Effect to trigger fetch after input changes
   useEffect(() => {
-    // Clear the previous timeout if it's set
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
     }
 
-    // Set a new timeout to delay the API call
     const timeoutId = setTimeout(() => {
       fetchBookings(orderNumber, startDate, endDate);
     }, 500); // Delay of 500ms
 
-    // Save the timeout ID to the state
     setDebounceTimeout(timeoutId);
 
-    // Cleanup the timeout if the component is unmounted or inputs change before 500ms
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [orderNumber, startDate, endDate]); // Re-run effect when these dependencies change
+  }, [orderNumber, startDate, endDate]);
 
   return (
     <>
       {/* Filter and Sort */}
-      <div className="flex space-x-4 my-4">
+      <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 my-4">
         {/* Order Number Input */}
         <input
           type="text"
           title="Order Number"
           placeholder="Order No."
-          className="input input-bordered w-full max-w-xs"
+          className="input input-bordered w-full md:max-w-xs"
           value={orderNumber}
-          onChange={(e) => setOrderNumber(e.target.value)} // Update order number state
+          onChange={(e) => setOrderNumber(e.target.value)}
         />
 
         {/* Start Date Picker */}
@@ -91,9 +87,9 @@ export default function OrderContainerComponent({ url }: Props) {
           type="date"
           title="Start Date"
           placeholder="Tanggal Mulai"
-          className="input input-bordered"
+          className="input input-bordered w-full md:max-w-xs"
           value={startDate}
-          onChange={(e) => setStartDate(e.target.value)} // Update start date
+          onChange={(e) => setStartDate(e.target.value)}
         />
 
         {/* End Date Picker */}
@@ -101,27 +97,29 @@ export default function OrderContainerComponent({ url }: Props) {
           type="date"
           title="End Date"
           placeholder="Tanggal Selesai"
-          className="input input-bordered"
+          className="input input-bordered w-full md:max-w-xs"
           value={endDate}
-          onChange={(e) => setEndDate(e.target.value)} // Update end date
+          onChange={(e) => setEndDate(e.target.value)}
         />
       </div>
 
       {/* Booking History Cards */}
       <div className="space-y-4">
-        {bookings.length
-          ? bookings.map((order, index) => (
-              <OrderCardComponent
-                key={index}
-                name={order.name}
-                category={order.category}
-                description={order.description}
-                startDate={order.startDate}
-                endDate={order.endDate}
-                status={order.status}
-              />
-            ))
-          : 'No data'}
+        {bookings.length ? (
+          bookings.map((order, index) => (
+            <OrderCardComponent
+              key={index}
+              name={order.name}
+              category={order.category}
+              description={order.description}
+              startDate={order.startDate}
+              endDate={order.endDate}
+              status={order.status}
+            />
+          ))
+        ) : (
+          <p className="text-center w-full">No data</p>
+        )}
       </div>
     </>
   );
