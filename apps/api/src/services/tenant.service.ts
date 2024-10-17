@@ -51,6 +51,7 @@ export class TenantService {
                     select: {
                       category: true,
                       name: true,
+                      image: true,
                     },
                   },
                 },
@@ -93,6 +94,8 @@ export class TenantService {
         startDate: order.transactionItems[0].start_date.toDateString(),
         endDate: order.transactionItems[0].end_date.toDateString(),
         status: order.status,
+        payment_method: order.payment_method,
+        image: order.transactionItems[0].room.property.image,
       };
       return _res;
     });

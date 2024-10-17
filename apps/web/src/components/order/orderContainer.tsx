@@ -53,7 +53,7 @@ export default function OrderContainerComponent({ url }: Props) {
         },
       });
       const data = await response.data.data;
-
+      console.log(data.data);
       // Update bookings state
       setBookings(data.data);
       setTotalPages(data.totalPages);
@@ -132,7 +132,7 @@ export default function OrderContainerComponent({ url }: Props) {
                 endDate={order.endDate}
                 status={order.status}
                 image={order.image}
-                payment_type={order.payment_type}
+                payment_method={order.payment_method}
                 user_role={user?.user_role as string}
               />
             ))
