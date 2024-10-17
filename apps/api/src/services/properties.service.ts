@@ -10,12 +10,12 @@ export class PropertiesService {
     const {
       startDate,
       endDate,
-      sortBy,
       name,
       location,
       category,
       page = 1,
       size = 8,
+      sortBy = 'desc',
     } = req.query;
 
     type sortByList = 'name' | 'price';
@@ -151,7 +151,7 @@ export class PropertiesService {
             ],
           },
           orderBy: {
-            price: 'asc',
+            price: sortBy as unknown as 'asc' | 'desc',
           },
           select: {
             name: true,
