@@ -55,7 +55,8 @@ export class AuthController {
 
   async forgetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await AuthService.forgetPassword(req);
+      console.log('forget password:');
+      const data = await AuthService.sendForgetPasswordEmail(req);
       return res
         .status(200)
         .json({ message: 'Success confirm password', data, success: true });
@@ -66,7 +67,7 @@ export class AuthController {
   }
   async confirmForgetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await AuthService.confirmPassword(req);
+      const data = await AuthService.forgetPassword(req);
       return res.status(200).json({
         message: 'Success reset confirm password',
         data,

@@ -10,6 +10,7 @@ import {
   sendVerificationEmail as sendVerifyMail,
 } from '../libs/nodemailer.lib';
 import {
+  decodeForgetPasswordToken,
   decodeGeneralToken,
   decodeToken,
   decodeVerifyToken,
@@ -168,7 +169,6 @@ export class AuthService {
         });
         return 'Verify success';
       }
-
       throw new ErrorHandler('Invalid Token', 400);
     }
     throw new ErrorHandler('User not found', 404);
@@ -176,26 +176,33 @@ export class AuthService {
 
   static async sendForgetPasswordEmail(req: Request) {
     try {
-      if (req.user) {
-        const { user } = req;
+      const { email } = req.body;
+      console.log('cek email lupa passwor:', email);
+      if (email) {
+        const user = await prisma.users.findUnique({
+          where: { email: email },
+        });
+        if (!user) {
+          throw new ErrorHandler('User not found', 404);
+        }
         const token = generateForgetPaswordToken({
           id: generateGeneralToken(user.id.toString()),
-          email: generateGeneralToken(user.email),
+          email: generateGeneralToken(email),
         });
-
+        console.log('token:', token);
         await prisma.$transaction(async (trx) => {
-          return await trx.users.update({
-            where: { id: user.id },
+          await trx.users.update({
+            where: { email: email },
             data: { forget_password_token: token },
           });
         });
-        sendFPMail(user.name, {
-          email: user.email,
+        sendFPMail(email, {
+          email,
           forgetPasswordUrl: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
         });
         return true;
       } else {
-        throw new ErrorHandler('Unauthorized', 401);
+        throw new ErrorHandler('Bad Request: Email is required', 400);
       }
     } catch (error) {
       throw new ErrorHandler(error, 500);
@@ -203,37 +210,37 @@ export class AuthService {
   }
 
   static async forgetPassword(req: Request) {
-    if (!req.user) {
-      throw new ErrorHandler('Unauthorized', 401);
-    }
     const { password, token } = req.body;
-    const userData = decodeVerifyToken(token);
+    const userData = decodeForgetPasswordToken(token);
     if (!userData) {
       throw new ErrorHandler('Invalid token', 400);
     }
-    if (req.user.id != Number(decodeGeneralToken(userData.id))) {
-      throw new ErrorHandler('Unauthorized', 401);
-    }
+    const userId = Number(decodeGeneralToken(userData.id));
     const data = await prisma.users.findUnique({
-      where: { id: decodeGeneralToken(userData.id) },
+      where: { id: userId },
       select: {
         id: true,
         forget_password_token: true,
       },
     });
+
     if (data) {
-      const isMatch = token == data.forget_password_token;
+      const isMatch = token === data.forget_password_token;
       if (isMatch) {
         const hashPassword = await hash(password, 10);
         await prisma.$transaction(async (trx) => {
           return await trx.users.update({
             where: { id: data.id },
-            data: { password: isMatch ? hashPassword : undefined },
+            data: { password: hashPassword },
           });
         });
-      } else throw new ErrorHandler('Invalid token', 400);
+      } else {
+        throw new ErrorHandler('Invalid token', 400);
+      }
+    } else {
+      throw new ErrorHandler('User not found', 404);
     }
-    return 'Success Change Password';
+    return 'Password changed successfully';
   }
 
   static async getProfile(req: Request) {

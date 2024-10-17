@@ -21,6 +21,12 @@ export const registerSchema = z.object({
   }),
 });
 
+export const forgetPasswordSchema = z.object({
+  email: z.string().email().min(5, {
+    message: 'silahkan masukan email anda',
+  }),
+});
+
 export const verifyForgetPasswordSchema = z
   .object({
     password: z

@@ -43,7 +43,7 @@ export default function OrderCardComponent({
             </div>
           </div>
           <span
-            className={`badge ${status === 'confirmed' ? 'badge-success' : 'badge-warning'}`}
+            className={`badge ${status === 'confirmed' ? 'badge-success' : 'badge-error'} text-xs md:text-sm ml-auto`}
           >
             {status}
             {user_role === 'tenant'
