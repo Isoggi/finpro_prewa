@@ -114,7 +114,7 @@ export const actionConfirmForgetPassword = async (
   password: string,
 ) => {
   try {
-    await api.post('/auth/confirm-forget-password', { token, password });
+    await api.patch('/auth/confirm-forget-password', { token, password });
     return {
       message: 'Reset Password Berhasil',
     };

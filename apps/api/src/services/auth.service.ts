@@ -176,6 +176,7 @@ export class AuthService {
   static async sendForgetPasswordEmail(req: Request) {
     try {
       const { email } = req.body;
+      console.log('cek email lupa passwor:', email);
       if (email) {
         const user = await prisma.users.findUnique({
           where: { email: email },
@@ -187,13 +188,14 @@ export class AuthService {
           id: generateGeneralToken(user.id.toString()),
           email: generateGeneralToken(email),
         });
+        console.log('token:', token);
         await prisma.$transaction(async (trx) => {
           await trx.users.update({
             where: { email: email },
             data: { forget_password_token: token },
           });
         });
-        sendFPMail(user.name, {
+        sendFPMail(email, {
           email,
           forgetPasswordUrl: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
         });
