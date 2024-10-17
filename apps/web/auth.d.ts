@@ -10,7 +10,9 @@ declare module 'next-auth' {
 
     image?: string | undefined;
     access_token?: string | undefined;
+    access_token_expires?: number | undefined;
     user_role?: string | undefined;
+    error: string | undefined;
   }
 
   interface Session {
@@ -28,6 +30,8 @@ declare module 'next-auth/jwt' {
     name: string | undefined;
     image?: string;
     user_role?: 'user' | 'tenant' | undefined;
-    acces_token: string;
+    access_token: string;
+    access_token_expires?: number | undefined;
+    error: string | undefined;
   }
 }
