@@ -4,5 +4,7 @@ export interface Order {
   description: string;
   startDate: string;
   endDate: string;
-  status: 'waitingpayment' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled';
+  image?: string;
+  payment_type: 'midtrans' | 'doku' | 'manual' | 'other';
 }

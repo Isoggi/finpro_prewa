@@ -2,7 +2,45 @@ import prisma from '@/prisma';
 import { Request } from 'express';
 export class PropertiesService {
   static async get(req: Request) {
-    const { id } = req.params;
+    const { slug } = req.params;
+    const data = await prisma.properties.findUnique({
+      where: {
+        slug_address: slug,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        image: true,
+        rooms: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            image: true,
+          },
+        },
+        address: {
+          select: {
+            id: true,
+            lng: true,
+            lat: true,
+            provinces: {
+              select: {
+                name: true,
+              },
+            },
+            district: {
+              select: {
+                name: true,
+              },
+            },
+            detail: true,
+          },
+        },
+        tenant: { select: { id: true, name: true } },
+      },
+    });
 
     return true;
   }
