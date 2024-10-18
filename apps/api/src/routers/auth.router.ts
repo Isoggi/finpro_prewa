@@ -2,43 +2,27 @@ import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
 import { uploader } from '@/libs/uploader.lib';
-// import { validateAuth } from "../middlewares/authValidator.middleware";
-// import { loginSchema, registerSchema } from "../schemas/auth.schema";
-// import { uploader } from "../libs/uploader.lib";
 
 export class AuthRouter {
   private router: Router = Router();
   private authController = new AuthController();
+
   constructor() {
     this.routes();
   }
 
   private routes(): void {
-    this.router.post(
-      '/login',
-      //   validateAuth(loginSchema),
-      this.authController.login,
-    );
-    this.router.post(
-      '/register',
-      //   validateAuth(registerSchema),
-      this.authController.register,
-    );
+    this.router.post('/login', this.authController.login);
+    this.router.post('/register', this.authController.register);
 
     this.router.patch('/verify-password', this.authController.verifyPassword);
     this.router.patch(
       '/confirm-verify-password',
       this.authController.confirmPassword,
     );
-    this.router.get(
-      '/forget-password',
-      AuthMiddleware,
-      this.authController.forgetPassword,
-    );
-
+    this.router.post('/forget-password', this.authController.forgetPassword);
     this.router.patch(
       '/confirm-forget-password',
-      AuthMiddleware,
       this.authController.confirmForgetPassword,
     );
     this.router.get('/profile', AuthMiddleware, this.authController.profile);
@@ -61,6 +45,7 @@ export class AuthRouter {
       this.authController.refreshToken,
     );
   }
+
   public getRouter(): Router {
     return this.router;
   }
