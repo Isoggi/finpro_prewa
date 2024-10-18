@@ -67,12 +67,10 @@ export default function Daftar() {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col bg-cover bg-center bg-[image:url]"
       style={{
         backgroundImage:
           'url("https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
       }}
     >
       <div className="breadcrumbs text-sm py-4 px-6 text-white">
@@ -85,14 +83,14 @@ export default function Daftar() {
       </div>
 
       <div className="flex-grow flex items-center justify-center px-4">
-        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border border-white sm:mx-4">
-          <h1 className="text-white text-2xl font-bold mb-6">
+        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border bg-white border-white sm:mx-4">
+          <h1 className="text-black text-2xl font-bold mb-6">
             Daftar Sekarang
           </h1>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-gray-300 rounded-lg text-black  placeholder-gray-300"
                 type="text"
                 placeholder="Full Name"
                 {...register('name')}

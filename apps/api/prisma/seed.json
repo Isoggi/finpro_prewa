@@ -64,7 +64,8 @@
       "description": "A lovely place to stay near your office, with access to The Breeze and ICE BSD. Feel the luxury amid hustle.",
       "category_id": 1,
       "address_id": 1,
-      "slug_address": "hotel-gop-9"
+      "slug_address": "hotel-gop-9",
+      "image": "https://images.rukita.co/buildings/building/da341564-433.jpg?tr=c-at_max%2Cw-640"
     }
   ],
   "Rooms": [
@@ -75,7 +76,8 @@
       "description": "A cozy room with a great view.",
       "price": 500000,
       "capacity": 2,
-      "created_at": "2024-01-01T00:00:00Z"
+      "created_at": "2024-01-01T00:00:00Z",
+      "image": "https://images.rukita.co/buildings/building/da341564-433.jpg?tr=c-at_max%2Cw-640"
     },
     {
       "id": 2,
@@ -84,7 +86,8 @@
       "description": "A spacious room with a private bathroom.",
       "price": 700000,
       "capacity": 3,
-      "created_at": "2024-02-01T00:00:00Z"
+      "created_at": "2024-02-01T00:00:00Z",
+      "image": "https://images.rukita.co/buildings/building/da341564-433.jpg?tr=c-at_max%2Cw-640"
     }
   ],
   "Availability": [
