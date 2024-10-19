@@ -37,7 +37,7 @@ export interface Order {
   startDate: string;
   endDate: string;
   status: transactions_status;
-  payment_method: transactions_payment_method;
+  payment_method?: transactions_payment_method;
   image?: string | null | undefined;
   items?: TransactionItems[] | null | undefined;
 }

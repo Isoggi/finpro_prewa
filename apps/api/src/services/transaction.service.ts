@@ -135,4 +135,43 @@ export class TransactionService {
       throw new ErrorHandler('Unauthorized', 401);
     }
   }
+
+  static async getById(req: Request) {
+    const user = req.user;
+    const { id } = req.params;
+    const result = await prisma.transactions.findUnique({
+      include: {
+        transactionItems: {
+          select: {
+            id: true,
+            total_price: true,
+            start_date: true,
+            end_date: true,
+            status: true,
+            room: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                property: {
+                  select: {
+                    category: true,
+                    name: true,
+                    image: true,
+                  },
+                },
+              },
+            }, // You can select specific room fields here
+          },
+        },
+      },
+      where: {
+        id: Number(id),
+        user_id: user?.id,
+      },
+    });
+    if (!result) throw new ErrorHandler('Unaothorized tenant access', 401);
+
+    return result;
+  }
 }

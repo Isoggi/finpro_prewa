@@ -14,7 +14,7 @@ export default function SearchBarComponent({}: Props) {
   return (
     <div>
       {user?.user_role === 'user' && (
-        <div className="bg-[#e6f2fe] p-6 shadow-md">
+        <div className="bg-[#e6f2fe] dark:bg-base-100 p-6 shadow-md">
           <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-full shadow-lg">
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <span className="text-sm ">Indonesia</span>

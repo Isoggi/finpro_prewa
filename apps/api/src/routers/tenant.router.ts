@@ -18,6 +18,16 @@ export class TenantRouter {
       AuthMiddleware,
       this.tenantController.getTransactions,
     );
+    this.router.get(
+      '/transaction/:id',
+      AuthMiddleware,
+      this.tenantController.getTransactionById,
+    );
+    this.router.post(
+      '/transaction/cancel',
+      AuthMiddleware,
+      this.tenantController.cancelOrder,
+    );
   }
   public getRouter(): Router {
     return this.router;

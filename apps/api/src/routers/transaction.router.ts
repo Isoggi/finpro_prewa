@@ -14,6 +14,7 @@ export class TransactionRouter {
 
   private routes(): void {
     this.router.get('', AuthMiddleware, this.transactionController.get);
+    this.router.get('/:id', AuthMiddleware, this.transactionController.getById);
 
     this.router.post(
       '/upload-payment-proof',
