@@ -9,7 +9,6 @@ import { registerSchema } from '@/schemas/auth.schema';
 import { actionRegister } from '@/action/auth.action';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { MdOutlineMail } from 'react-icons/md';
 import Link from 'next/link';
 
 const MySwal = withReactContent(Swal);
@@ -66,16 +65,8 @@ export default function Daftar() {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{
-        backgroundImage:
-          'url("https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      <div className="breadcrumbs text-sm py-4 px-6 text-white">
+    <div className="min-h-screen items-center justify-center px-4 bg-[#e6f2fe] relative">
+      <div className="breadcrumbs text-sm py-4 px-6  text-black">
         <ul>
           <li>
             <Link href="/">Home</Link>
@@ -84,15 +75,18 @@ export default function Daftar() {
         </ul>
       </div>
 
-      <div className="flex-grow flex items-center justify-center px-4">
-        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border border-white sm:mx-4">
-          <h1 className="text-white text-2xl font-bold mb-6">
-            Daftar Sekarang
-          </h1>
+      <div className="flex-grow flex py-8 items-center justify-center px-4">
+        <div className="p-8 rounded-lg py-8 shadow-lg text-center max-w-sm w-full border bg-white border-white sm:mx-4">
+          <img src="/prewa.jpg" alt="Logo" className="h-16 mx-auto mb-8 " />
+
+          <h1 className="text-black text-2xl font-bold mb-6">Selamat Datang</h1>
+          <h5 className="text-black mb-4">
+            Mohon masukkan data anda untuk Daftar
+          </h5>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-black rounded-lg text-black  placeholder-gray-300"
                 type="text"
                 placeholder="Full Name"
                 {...register('name')}
@@ -104,7 +98,7 @@ export default function Daftar() {
             </div>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-black rounded-lg text-white bg-transparent placeholder-gray-300"
                 type="text"
                 placeholder="Phone Number"
                 {...register('phone_number')}
@@ -116,7 +110,7 @@ export default function Daftar() {
             </div>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
                 type="email"
                 placeholder="Email"
                 {...register('email')}
@@ -128,7 +122,7 @@ export default function Daftar() {
             </div>
             <div className="mb-4">
               <select
-                className="w-full p-3 border rounded-lg text-slate-500 bg-transparent"
+                className="w-full p-3 border rounded-lg text-black bg-transparent"
                 required
                 defaultValue=""
                 {...register('role')}
@@ -151,7 +145,7 @@ export default function Daftar() {
             </div>
 
             <button
-              className="w-full py-3 bg-white text-black rounded-full flex items-center justify-center mb-4"
+              className="w-full py-3 bg-[#e6f2fe] text-black rounded-full flex items-center justify-center mb-4"
               type="submit"
               disabled={form.formState.isSubmitting}
             >
@@ -159,9 +153,9 @@ export default function Daftar() {
             </button>
           </form>
 
-          <p className="text-gray-300">
+          <p className="text-black">
             Sudah memiliki akun?{' '}
-            <Link href="/masuk" className="text-white font-semibold">
+            <Link href="/masuk" className="text-black font-semibold">
               Masuk
             </Link>
           </p>

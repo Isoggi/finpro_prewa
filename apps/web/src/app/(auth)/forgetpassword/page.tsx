@@ -56,31 +56,23 @@ export default function ForgetPassword() {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{
-        backgroundImage:
-          'url("https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      <div className="breadcrumbs text-sm py-4 px-6 text-white">
+    <div className="min-h-screen flex bg-[#e6f2fe]  flex-col">
+      <div className="breadcrumbs text-sm py-4 px-6 text-black">
         <ul>
           <li>
-            <Link href="/">Home</Link>
+            <Link href="/masuk">Masuk</Link>
           </li>
           <li>Lupa Password</li>
         </ul>
       </div>
 
       <div className="flex-grow flex items-center justify-center px-4">
-        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border border-white sm:mx-4">
-          <h1 className="text-white text-2xl font-bold mb-6">Lupa Password</h1>
+        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border bg-white border-white sm:mx-4">
+          <h1 className="text-black text-2xl font-bold mb-6">Lupa Password</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-black rounded-lg text-white bg-transparent placeholder-gray-300"
                 type="email"
                 placeholder="Email"
                 {...register('email')}
@@ -91,7 +83,7 @@ export default function ForgetPassword() {
               </div>
             </div>
             <button
-              className="w-full py-3 bg-white text-black rounded-full flex items-center justify-center mb-4"
+              className="w-full py-3 bg-[#e6f2fe]  text-black rounded-full flex items-center justify-center mb-4"
               type="submit"
               disabled={form.formState.isSubmitting}
             >
