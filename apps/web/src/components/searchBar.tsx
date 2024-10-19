@@ -15,13 +15,16 @@ export default function SearchBarComponent({}: Props) {
     <div>
       {user?.user_role === 'user' && (
         <div className="bg-[#e6f2fe] dark:bg-base-100 p-6 shadow-md">
-          <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-full shadow-lg">
+          <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-base-100 p-6 rounded-full shadow-lg">
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <span className="text-sm ">Indonesia</span>
             </div>
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <span className="text-sm ">
-                <input title="tanggal" type="date" />
+                <input title="Tanggal Mulai" type="date" />
+              </span>
+              <span className="text-sm ">
+                <input title="Tanggal Selesai" type="date" />
               </span>
             </div>
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
@@ -32,7 +35,7 @@ export default function SearchBarComponent({}: Props) {
               </select>
             </div>
 
-            <button className="bg-[#128ede] text-white p-2 px-4 rounded-xl">
+            <button className="bg-[#128ede] dark:bg-base-100 p-2 px-4 rounded-xl">
               Cari Hunian
             </button>
           </div>

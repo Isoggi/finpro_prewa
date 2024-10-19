@@ -50,7 +50,7 @@ export default function NavbarProfileComponent() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-700 items-center justify-between">
+    <div className="items-center justify-between">
       <div className="flex items-center space-x-4">
         {user ? (
           <>
@@ -87,7 +87,7 @@ export default function NavbarProfileComponent() {
               )}
             </Link>
 
-            <div className="text-black text-sm">
+            <div className="text-sm">
               <span className="truncate">Hi, {user.name}</span>
             </div>
 

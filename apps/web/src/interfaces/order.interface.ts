@@ -1,4 +1,5 @@
 export interface Order {
+  id: number;
   category: 'apartemen' | 'hotel' | 'kos' | undefined;
   name: string;
   description: string;

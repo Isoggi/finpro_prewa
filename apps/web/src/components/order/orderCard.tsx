@@ -2,12 +2,14 @@ import React from 'react';
 import ModalComponent from '../modal';
 import { Order } from '@/interfaces/order.interface';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Props extends Order {
   user_role: string;
 }
 
 export default function OrderCardComponent({
+  id,
   name,
   category,
   description,
@@ -35,38 +37,16 @@ export default function OrderCardComponent({
             alt="image"
             width={100}
             height={100}
+            className="w-12 h-12 object-cover"
           />
         )}
       </figure>
       <div className="card-body">
-        {user_role === 'tenant' &&
-          status === 'pending' &&
-          payment_method === 'manual' && (
-            <div className="card-actions justify-end">
-              <div className="dropdown">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn btn-square btn-sm m-1"
-                >
-                  ...
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-                >
-                  <li>
-                    <ModalComponent
-                      id="cancel_order_modal"
-                      btnTitle="Ajukan pembatalan?"
-                      modalTitle="Ajukan pembatalan?"
-                      modalDesc="Ingin mengajukan pembatalan?"
-                    />
-                  </li>
-                </ul>
-              </div>
-            </div>
-          )}
+        <div className="card-actions justify-end">
+          <Link href={`/dashboard/pesanan/${id}`}>Detail {'>'}</Link>
+        </div>
+      </div>
+      <div className="card-body">
         <div className="flex flex-col lg:flex-row justify-between items-center">
           <div className="flex flex-col lg:flex-row items-center">
             <div>

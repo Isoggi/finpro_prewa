@@ -170,7 +170,8 @@ export class TransactionService {
         user_id: user?.id,
       },
     });
-    if (!result) throw new ErrorHandler('Unaothorized tenant access', 401);
+    if (!result)
+      throw new ErrorHandler('Unaothorized access by other user', 401);
 
     return result;
   }

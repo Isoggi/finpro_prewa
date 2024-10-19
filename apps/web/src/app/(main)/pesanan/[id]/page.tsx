@@ -5,7 +5,7 @@ import React from 'react';
 type Props = { params: { id: string } };
 
 export default async function page({ params }: Props) {
-  const response = await api.get(`/api/tenant//transaction/${params.id}`);
+  const response = await api.get(`/order/${params.id}`);
   const { data } = response.data.data;
   return (
     <div>

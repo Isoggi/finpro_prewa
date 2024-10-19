@@ -45,7 +45,7 @@ const Template = ({ children }: LayoutProps) => {
             </div>
 
             {/* Page content */}
-            <div className="p-4">{children}</div>
+            <div className="lg:p-4 w-full">{children}</div>
           </div>
           <div className="drawer-side">
             <label
@@ -54,7 +54,7 @@ const Template = ({ children }: LayoutProps) => {
               className="drawer-overlay"
             ></label>
             {/* <ul className="menu p-4 w-64 bg-base-200 text-base-content"> */}
-            <ul className="menu text-base-content min-h-full w-80 p-4">
+            <ul className="menu text-base-content bg-base-100 min-h-full w-80 p-4">
               {/* Sidebar content */}
               {/* <li>
                 <Link href="/">Home</Link>
