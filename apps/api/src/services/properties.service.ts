@@ -94,42 +94,38 @@ export class PropertiesService {
         where: {
           // Filter by property name if provided
           name: {
-            contains: name?.toString(),
+            contains: name as string | undefined,
           },
           // Filter by location (province, district, or address detail)
-          OR: [
-            {
-              address: {
-                provinces: {
-                  name: {
+
+          address: {
+            is: {
+              OR: [
+                {
+                  detail: {
                     contains: location?.toString(),
                   },
                 },
-              },
-            },
-            {
-              address: {
-                district: {
-                  name: {
-                    contains: location?.toString(),
+                {
+                  district: {
+                    name: {
+                      contains: location?.toString(),
+                    },
                   },
                 },
-              },
-            },
-            {
-              address: {
-                detail: {
-                  contains: location?.toString(),
+                {
+                  provinces: {
+                    name: {
+                      contains: location?.toString(),
+                    },
+                  },
                 },
-              },
+              ],
             },
-          ],
+          },
+
           // Filter by property category if provided
-          category: category
-            ? {
-                id: Number(category),
-              }
-            : undefined,
+          category: { name: { contains: category as string | undefined } },
           // Filter rooms by availability either null or stock > 1 between startDate and endDate
           rooms: {
             some: {
@@ -289,11 +285,7 @@ export class PropertiesService {
             },
           ],
           // Filter by property category if provided
-          category: category
-            ? {
-                id: Number(category),
-              }
-            : undefined,
+          category: { name: { contains: category as string | undefined } },
           // Filter rooms by availability either null or stock > 1 between startDate and endDate
           rooms: {
             some: {
@@ -346,4 +338,10 @@ export class PropertiesService {
       totalPages: Math.ceil(totalCount / Number(size)),
     };
   }
+
+  // static async searchProperti(req: Request) {
+  //   const {
+  //    startDate,
+  //   }
+  // }
 }

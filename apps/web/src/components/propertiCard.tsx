@@ -23,9 +23,11 @@ export default function PropertiCard({ data }: Props) {
         className="w-full h-24 md:h-32 lg:h-40 object-cover rounded-md mb-2"
       />
       <p className="text-black text-sm font-medium">{data.name}</p>
-      <p className="text-[#d96d62] text-sm font-semibold">100000000</p>
+      <p className="text-[#d96d62] text-sm font-semibold">
+        {data.rooms[0].price}
+      </p>
       <div className="flex justify-center items-center gap-x-2">
-        <p className="text-[#9a98a3] text-xs">{data.address.detail}</p>
+        <p className="text-[#9a98a3] text-xs">{data.address.provinces.name}</p>
         <p className="text-[#9a98a3] text-xs">- {data.address.district.name}</p>
       </div>
     </div>

@@ -5,7 +5,6 @@ export class PropertiesController {
   async get(req: Request, res: Response, next: NextFunction) {
     try {
       const data = await PropertiesService.get(req);
-
       return res
         .status(200)
         .json({ message: 'Get Property', data, success: true });
@@ -52,4 +51,32 @@ export class PropertiesController {
       next(error);
     }
   }
+
+  // async creatProperti(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const data = await PropertiesService.createProperti(req);
+  //     return res.status(200).json({ data, message: "Create Properti Success" });
+  //   } catch (error) {
+  //     console.log(error);
+  //     next(error);
+  //   }
+  // }
+  // async updateProperti(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const data = await PropertiesService.updateProperti(req);
+  //     return res.status(200).json({ data, message: "Update Properti Success" });
+  //   } catch (error) {
+  //     console.log(error);
+  //     next(error);
+  //   }
+  // }
+  // async deleteProperti(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const data = await PropertiesService.deleteProperti(req);
+  //     return res.status(200).json({ data, message: "Delete Properti Success" });
+  //   } catch (error) {
+  //     console.log(error);
+  //     next(error);
+  //   }
+  // }
 }

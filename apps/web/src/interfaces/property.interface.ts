@@ -9,6 +9,7 @@ export interface IProperties {
   rooms: IRooms[];
   category: ICategory;
   address: IAddress;
+  provinces: IProvinces;
 }
 
 export interface IRooms {
@@ -46,6 +47,7 @@ export interface IAddress {
   lat: number;
   detail: string;
   district: IDistrict;
+  provinces: IProvinces;
 }
 
 export interface IReview {
@@ -61,6 +63,11 @@ export interface ICategory {
 }
 
 export interface IDistrict {
+  id: number;
+  name: string;
+}
+
+export interface IProvinces {
   id: number;
   name: string;
 }

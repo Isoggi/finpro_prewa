@@ -10,7 +10,7 @@ export class PropertiesRouter {
 
   private routes(): void {
     this.router.get('/', this.propertiesController.getBySearch);
-    // this.router.get("/category", this.eventController.getCategories);
+    // this.router.get("/category", this.propertiesController.getCategories);
     // this.router.get("/venue", this.eventController.getVenues);
     // this.router.get("/location", this.eventController.getLocations);
     this.router.get('/:id', this.propertiesController.getById);
