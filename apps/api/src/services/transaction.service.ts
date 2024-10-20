@@ -6,7 +6,8 @@ import {
   transactions_payment_method,
   transactions_status,
 } from '@prisma/client';
-import { Request, Response } from 'express';
+import { Request } from 'express';
+import fs from 'fs';
 
 export class TransactionService {
   static async get(req: Request) {
@@ -130,6 +131,18 @@ export class TransactionService {
           },
         });
       });
+      if (
+        exist.payment_proof &&
+        data.image &&
+        exist.payment_proof !== data.image
+      )
+        fs.unlink(
+          __dirname + '/../public/images/trx/' + exist.payment_proof,
+          (err: unknown) => {
+            if (err) console.log(err);
+          },
+        );
+
       return 'Upload success';
     } else {
       throw new ErrorHandler('Unauthorized', 401);

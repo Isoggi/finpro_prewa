@@ -1,8 +1,11 @@
+import { User } from "./user.interface";
+
 export interface Properties {
   id: number;
   name: string;
   description: string;
   image?: string | undefined;
+  tenant? : User;
 }
 
 export interface Rooms {

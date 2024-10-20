@@ -3,6 +3,8 @@ import ModalComponent from '../modal';
 import { Order } from '@/interfaces/order.interface';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaChevronRight } from 'react-icons/fa';
+import { dateDiff } from '@/lib/utils';
 
 interface Props extends Order {
   user_role: string;
@@ -23,13 +25,13 @@ export default function OrderCardComponent({
   // console.log(payment_method, user_role, status);
 
   return (
-    <div className="card lg:card-side w-full bg-base-100 shadow-md">
+    <div className="card lg:card-side w-full bg-base-300 shadow-md">
       <figure>
         {image ? (
           <img
             src={`${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`}
             alt="image"
-            className="w-12 h-12 object-cover"
+            className="max-w-none h-auto"
           />
         ) : (
           <Image
@@ -37,48 +39,43 @@ export default function OrderCardComponent({
             alt="image"
             width={100}
             height={100}
-            className="w-12 h-12 object-cover"
+            className="max-w-none h-auto"
           />
         )}
       </figure>
+
       <div className="card-body">
         <div className="card-actions justify-end">
-          <Link href={`/dashboard/pesanan/${id}`}>Detail {'>'}</Link>
+          <Link
+            href={`/dashboard/pesanan/${id}`}
+            className="hover:animate-bounce text-primary"
+          >
+            <FaChevronRight />
+          </Link>
         </div>
-      </div>
-      <div className="card-body">
         <div className="flex flex-col lg:flex-row justify-between items-center">
           <div className="flex flex-col lg:flex-row items-center">
             <div>
-              <div className="flex flex-col lg:flex-row">
-                <span className="text-white badge badge-info">{category}</span>
-                <h2 className="card-title">{name}</h2>
-              </div>
+              <span className="text-white badge badge-info">{category}</span>
+              <h2 className="card-title">{name}</h2>
 
               <p className="text-sm">{description}</p>
-              <p className="text-sm text-gray-500">
-                {startDate} - {endDate}
+              <p className="text-sm">
+                {startDate}{' '}
+                <span className="text-info">
+                  {dateDiff(startDate, endDate)}
+                </span>
               </p>
             </div>
           </div>
           <div>
             <span
-              className={`badge ${status === 'confirmed' ? 'badge-success' : 'badge-warning'}`}
+              className={`badge ${status === 'completed' ? 'badge-success' : 'badge-warning'}`}
             >
               {status}
             </span>
           </div>
         </div>
-        {user_role === 'user' &&
-          status === 'pending' &&
-          payment_method === 'manual' && (
-            <ModalComponent
-              id="upload_proof_modal"
-              btnTitle="Bukti Bayar"
-              modalTitle="Bukti Bayar"
-              modalDesc="Silahkan unggah hasil pembayaran anda ke dalam aplikasi"
-            />
-          )}
       </div>
     </div>
   );

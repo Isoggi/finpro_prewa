@@ -24,9 +24,9 @@ export class TenantRouter {
       this.tenantController.getTransactionById,
     );
     this.router.post(
-      '/transaction/cancel',
+      '/transaction/verifyOrder',
       AuthMiddleware,
-      this.tenantController.cancelOrder,
+      this.tenantController.verifyOrder,
     );
   }
   public getRouter(): Router {

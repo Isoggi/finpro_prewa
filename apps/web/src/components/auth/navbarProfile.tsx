@@ -31,6 +31,7 @@ export default function NavbarProfileComponent() {
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
+    if (user) return;
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
   const logout = async () => {

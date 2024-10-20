@@ -122,6 +122,7 @@ export default function OrderContainerComponent({ url }: Props) {
             bookings.map((order, index) => (
               <OrderCardComponent
                 key={index}
+                id={order.id}
                 name={order.name}
                 category={order.category}
                 description={order.description}
@@ -129,6 +130,7 @@ export default function OrderContainerComponent({ url }: Props) {
                 endDate={order.endDate}
                 status={order.status}
                 image={order.image}
+                amount={order.amount}
                 payment_method={order.payment_method}
                 user_role={user?.user_role as string}
               />

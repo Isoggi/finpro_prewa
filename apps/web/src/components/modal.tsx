@@ -5,6 +5,7 @@ type Props = {
   btnTitle: string;
   modalTitle?: string;
   modalDesc?: string;
+  form?: React.FC;
 };
 
 export default function ModalComponent({

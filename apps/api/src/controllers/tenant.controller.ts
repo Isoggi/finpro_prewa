@@ -31,12 +31,12 @@ export class TenantController {
     }
   }
 
-  async cancelOrder(req: Request, res: Response, next: NextFunction) {
+  async verifyOrder(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await TenantService.cancelOrder(req);
+      const data = await TenantService.verifyOrder(req);
 
       return res.status(200).json({
-        message: 'Cancel Tenant Transaction',
+        message: 'Verify Tenant Transaction Manual Status',
         data,
         success: true,
       });

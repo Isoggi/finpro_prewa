@@ -1,3 +1,6 @@
+import { Rooms } from './property.interface';
+import { User } from './user.interface';
+
 export interface Order {
   id: number;
   category: 'apartemen' | 'hotel' | 'kos' | undefined;
@@ -5,8 +8,45 @@ export interface Order {
   description: string;
   startDate: string;
   endDate: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'completed' | 'failed';
   image?: string;
+  amount: number;
   payment_method: 'midtrans' | 'doku' | 'manual' | 'other';
   payment_proof?: string;
+}
+
+export interface OrderDetail extends Order {
+  user: User;
+  transactionItems?: TransactionItems[] | null | undefined;
+}
+
+export interface TransactionItems {
+  id: number;
+  total_price: number;
+  start_date: string;
+  end_date: string;
+  status: 'waitingpayment' | 'confirmed' | 'cancelled';
+  room: OrderRooms;
+}
+
+export interface OrderRooms extends Rooms {
+  property?: {
+    id: number;
+    lat: number;
+    lng: number;
+    name: string;
+    tenant: {
+      name: string;
+    };
+    address: {
+      id: number;
+      lat: number;
+      lng: number;
+      detail: string;
+      provinces: {
+        name: string;
+      };
+      district: { name: string };
+    };
+  };
 }

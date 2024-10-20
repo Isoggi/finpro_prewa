@@ -83,7 +83,6 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
         console.log('Access token expired, refreshing...');
         return refreshAccessToken(token as unknown as User);
       }
-      return token;
     },
   },
 });
