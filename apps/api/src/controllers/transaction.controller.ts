@@ -15,6 +15,19 @@ export class TransactionController {
       next(error);
     }
   }
+  async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await TransactionService.getById(req);
+
+      return res
+        .status(200)
+        .json({ message: 'Get Transaction History Detail', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
 
   async post(req: Request, res: Response, next: NextFunction) {
     try {

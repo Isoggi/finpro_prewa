@@ -51,6 +51,7 @@ export class TenantService {
                     select: {
                       category: true,
                       name: true,
+                      image: true,
                     },
                   },
                 },
@@ -93,6 +94,8 @@ export class TenantService {
         startDate: order.transactionItems[0].start_date.toDateString(),
         endDate: order.transactionItems[0].end_date.toDateString(),
         status: order.status,
+        payment_method: order.payment_method,
+        image: order.transactionItems[0].room.property.image,
       };
       return _res;
     });
@@ -106,32 +109,100 @@ export class TenantService {
     };
   }
 
-  static async cancelOrder(req: Request) {
+  static async verifyOrder(req: Request) {
     const { user } = req;
     if (!user) throw new ErrorHandler('Unauthorized', 401);
-    const { id } = req.body;
+    const { id, status } = req.body;
     if (!id) throw new ErrorHandler('Invalid request', 400);
     await prisma.$transaction(async (trx) => {
       const transaction = await trx.transactions.update({
         where: {
-          id,
-          user_id: user?.id,
-        },
-        data: {
-          status: transactions_status.failed,
+          id: Number(id),
           transactionItems: {
-            updateMany: {
-              where: { transaction_id: id },
-              data: {
-                status: transaction_items_status.cancelled,
-                updated_at: new Date(),
-              },
-            },
+            some: { room: { property: { tenant_id: user?.id } } },
           },
         },
+        data: Number(status)
+          ? {
+              status: transactions_status.completed,
+              transactionItems: {
+                updateMany: {
+                  where: { transaction_id: Number(id) },
+                  data: {
+                    status: transaction_items_status.confirmed,
+                    updated_at: new Date(),
+                  },
+                },
+              },
+            }
+          : {
+              status: transactions_status.failed,
+              transactionItems: {
+                updateMany: {
+                  where: { transaction_id: Number(id) },
+                  data: {
+                    status: transaction_items_status.cancelled,
+                    updated_at: new Date(),
+                  },
+                },
+              },
+            },
       });
       return transaction;
     });
     return true;
+  }
+
+  static async getTransactionById(req: Request) {
+    const user = req.user;
+    const { id } = req.params;
+    const result = await prisma.transactions.findUnique({
+      include: {
+        transactionItems: {
+          select: {
+            id: true,
+            total_price: true,
+            start_date: true,
+            end_date: true,
+            status: true,
+            room: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                property: {
+                  select: {
+                    category: true,
+                    name: true,
+                    image: true,
+                    tenant: { select: { id: true, name: true } },
+                    address: {
+                      select: {
+                        id: true,
+                        detail: true,
+                        provinces: { select: { name: true } },
+                        district: { select: { name: true } },
+                        lat: true,
+                        lng: true,
+                      },
+                    },
+                  },
+                },
+              },
+            }, // You can select specific room fields here
+          },
+        },
+        user: true,
+      },
+      where: {
+        id: Number(id),
+        transactionItems: {
+          some: { room: { property: { tenant_id: user?.id } } },
+        },
+      },
+    });
+    if (!result) throw new ErrorHandler('Unaothorized tenant access', 401);
+
+    return result;
   }
 }

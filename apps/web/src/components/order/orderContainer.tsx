@@ -54,7 +54,7 @@ export default function OrderContainerComponent({ url }: Props) {
         },
       });
       const data = await response.data.data;
-
+      console.log(data.data);
       // Update bookings state
       setBookings(data.data);
       setTotalPages(data.totalPages);
@@ -83,36 +83,41 @@ export default function OrderContainerComponent({ url }: Props) {
   return (
     <>
       {/* Filter and Sort */}
-      <div className="flex flex-col lg:flex-row space-x-4 my-4">
+      <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-base-100 p-3 rounded-xl shadow-lg">
         {/* Order Number Input */}
-        <input
-          type="text"
-          title="Order Number"
-          placeholder="Order No."
-          className="input input-bordered w-full md:max-w-xs"
-          value={orderNumber}
-          onChange={(e) => setOrderNumber(e.target.value)}
-        />
+        <div className="flex items-center border-b md:border-b-0 md:border-none pr-4 pb-2 md:pb-0">
+          <input
+            type="text"
+            title="Order Number"
+            placeholder="Order No."
+            className="input input-bordered w-full md:max-w-xs"
+            value={orderNumber}
+            onChange={(e) => setOrderNumber(e.target.value)}
+          />
+        </div>
 
-        {/* Start Date Picker */}
-        <input
-          type="date"
-          title="Start Date"
-          placeholder="Tanggal Mulai"
-          className="input input-bordered w-full md:max-w-xs"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-
+        <div className="flex items-center border-b md:border-b-0 md:border-none pr-4 pb-2 md:pb-0">
+          {/* Start Date Picker */}
+          <input
+            type="date"
+            title="Start Date"
+            placeholder="Tanggal Mulai"
+            className="input input-bordered w-full md:max-w-xs"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
         {/* End Date Picker */}
-        <input
-          type="date"
-          title="End Date"
-          placeholder="Tanggal Selesai"
-          className="input input-bordered w-full md:max-w-xs"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
+        <div className="flex items-center border-b md:border-b-0 md:border-none pr-4 pb-2 md:pb-0">
+          <input
+            type="date"
+            title="End Date"
+            placeholder="Tanggal Selesai"
+            className="input input-bordered w-full md:max-w-xs"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Booking History Cards */}
@@ -122,6 +127,7 @@ export default function OrderContainerComponent({ url }: Props) {
             bookings.map((order, index) => (
               <OrderCardComponent
                 key={index}
+                id={order.id}
                 name={order.name}
                 category={order.category}
                 description={order.description}
@@ -129,7 +135,8 @@ export default function OrderContainerComponent({ url }: Props) {
                 endDate={order.endDate}
                 status={order.status}
                 image={order.image}
-                payment_type={order.payment_type}
+                amount={order.amount}
+                payment_method={order.payment_method}
                 user_role={user?.user_role as string}
               />
             ))

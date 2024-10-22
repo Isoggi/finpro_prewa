@@ -6,7 +6,8 @@ import {
   transactions_payment_method,
   transactions_status,
 } from '@prisma/client';
-import { Request, Response } from 'express';
+import { Request } from 'express';
+import fs from 'fs';
 
 export class TransactionService {
   static async get(req: Request) {
@@ -16,19 +17,25 @@ export class TransactionService {
     const [data, totalCount] = await Promise.all([
       prisma.transactions.findMany({
         where: {
-          // user_id: user?.id,
-          user_id: 1,
-          invoice_number: {
-            contains: orderNumber ? orderNumber?.toString() : undefined,
-          },
-          transactionItems: {
-            some: {
-              start_date: startDate
-                ? new Date(startDate.toString())
-                : undefined,
-              end_date: endDate ? new Date(endDate.toString()) : undefined,
+          user_id: user?.id,
+          // user_id: 1,
+          OR: [
+            {
+              invoice_number: {
+                contains: orderNumber ? orderNumber?.toString() : undefined,
+              },
             },
-          },
+            {
+              transactionItems: {
+                some: {
+                  start_date: startDate
+                    ? new Date(startDate.toString())
+                    : undefined,
+                  end_date: endDate ? new Date(endDate.toString()) : undefined,
+                },
+              },
+            },
+          ],
         },
         include: {
           transactionItems: {
@@ -47,6 +54,7 @@ export class TransactionService {
                     select: {
                       category: true,
                       name: true,
+                      image: true,
                     },
                   },
                 },
@@ -62,17 +70,23 @@ export class TransactionService {
         where: {
           user_id: user?.id,
           // user_id: 1,
-          invoice_number: {
-            contains: orderNumber ? orderNumber?.toString() : undefined,
-          },
-          transactionItems: {
-            some: {
-              start_date: startDate
-                ? new Date(startDate.toString())
-                : undefined,
-              end_date: endDate ? new Date(endDate.toString()) : undefined,
+          OR: [
+            {
+              invoice_number: {
+                contains: orderNumber ? orderNumber?.toString() : undefined,
+              },
             },
-          },
+            {
+              transactionItems: {
+                some: {
+                  start_date: startDate
+                    ? new Date(startDate.toString())
+                    : undefined,
+                  end_date: endDate ? new Date(endDate.toString()) : undefined,
+                },
+              },
+            },
+          ],
         },
       }),
     ]);
@@ -85,6 +99,8 @@ export class TransactionService {
         startDate: order.transactionItems[0].start_date.toDateString(),
         endDate: order.transactionItems[0].end_date.toDateString(),
         status: order.status,
+        payment_method: order.payment_method,
+        image: order.transactionItems[0].room.property.image,
       };
       return _res;
     });
@@ -106,30 +122,94 @@ export class TransactionService {
       const { id } = req.user;
 
       const exist = await prisma.transactions.findUnique({
-        where: { id: data.id, user_id: id },
+        where: { id: Number(data.id), user_id: id },
       });
       if (!exist) {
-        throw new ErrorHandler('User not found', 404);
+        throw new ErrorHandler('Transaction not found', 404);
       }
       await prisma.$transaction(async (trx) => {
         await trx.transactions.update({
-          where: { id: data.id, user_id: id },
+          where: { id: Number(data.id), user_id: id },
           data: {
             payment_proof: data.image,
             payment_method: transactions_payment_method.manual,
             status: transactions_status.completed,
             transactionItems: {
               updateMany: {
-                where: { transaction_id: data.id },
+                where: { transaction_id: Number(data.id) },
                 data: { status: transaction_items_status.waitingpayment },
               },
             },
           },
         });
       });
+      if (
+        exist.payment_proof &&
+        data.image &&
+        exist.payment_proof !== data.image
+      )
+        fs.unlink(
+          __dirname + '/../public/images/trx/' + exist.payment_proof,
+          (err: unknown) => {
+            if (err) console.log(err);
+          },
+        );
+
       return 'Upload success';
     } else {
       throw new ErrorHandler('Unauthorized', 401);
     }
+  }
+
+  static async getById(req: Request) {
+    const user = req.user;
+    const { id } = req.params;
+    const result = await prisma.transactions.findUnique({
+      include: {
+        transactionItems: {
+          select: {
+            id: true,
+            total_price: true,
+            start_date: true,
+            end_date: true,
+            status: true,
+            room: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                property: {
+                  select: {
+                    category: true,
+                    name: true,
+                    image: true,
+                    tenant: { select: { id: true, name: true } },
+                    address: {
+                      select: {
+                        id: true,
+                        detail: true,
+                        provinces: { select: { name: true } },
+                        district: { select: { name: true } },
+                        lat: true,
+                        lng: true,
+                      },
+                    },
+                  },
+                },
+              },
+            }, // You can select specific room fields here
+          },
+        },
+        user: true,
+      },
+      where: {
+        id: Number(id),
+        user_id: user?.id,
+      },
+    });
+    if (!result)
+      throw new ErrorHandler('Unaothorized access by other user', 401);
+
+    return result;
   }
 }

@@ -31,6 +31,7 @@ export default function NavbarProfileComponent() {
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
+    if (user) return;
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
   const logout = async () => {
@@ -50,7 +51,7 @@ export default function NavbarProfileComponent() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-700 items-center justify-between">
+    <div className="items-center justify-between">
       <div className="flex items-center space-x-4">
         {user ? (
           <>
@@ -87,7 +88,7 @@ export default function NavbarProfileComponent() {
               )}
             </Link>
 
-            <div className="text-black text-sm">
+            <div className="text-sm">
               <span className="truncate">Hi, {user.name}</span>
             </div>
 

@@ -1,3 +1,4 @@
+
 import { User } from '@/interfaces/user.interface';
 
 export interface IProperties {
@@ -5,6 +6,7 @@ export interface IProperties {
   name: string;
   description: string;
   image?: string | undefined;
+  tenant? : User;
   slug_address: string;
   rooms: IRooms[];
   category: ICategory;
