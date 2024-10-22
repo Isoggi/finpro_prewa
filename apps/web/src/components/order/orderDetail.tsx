@@ -6,6 +6,9 @@ import { useSession } from 'next-auth/react';
 import React from 'react';
 import ModalVerifyProofComponent from '../modal/verifyPaymentProof';
 import { formatStyledDate } from '@/lib/utils';
+import { FaChevronLeft } from 'react-icons/fa';
+import Link from 'next/link';
+import UploadPayementProofModal from '../modal/uploadPaymentProof';
 
 interface Props {
   id: number;
@@ -23,21 +26,32 @@ export default function OrderDetailComponent({ id }: Props) {
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
 
-  const fetchOrder = async () => {
-    const response = await api.get(`/tenant/transaction/${id}`, {
-      headers: { Authorization: `Bearer ${user?.access_token}` },
-    });
+  const fetchOrder = async (role?: string) => {
+    const response = await api.get(
+      role === 'user' ? `/order/${id}` : `/tenant/transaction/${id}`,
+      {
+        headers: { Authorization: `Bearer ${user?.access_token}` },
+      },
+    );
     console.log(response.data.data);
     setData(response.data.data as OrderDetail);
   };
 
   React.useEffect(() => {
-    if (user) fetchOrder();
+    if (user) fetchOrder(user.user_role);
   }, [user]);
 
   return (
     data && (
       <div className="p-6 shadow-lg rounded-lg w-full max-w-3xl mx-auto">
+        <Link
+          href={user?.user_role === 'user' ? '/pesanan' : `/dashboard/pesanan`}
+          className="hover:text-secondary text-primary"
+        >
+          <FaChevronLeft />
+        </Link>
+        <div className="divider"></div>
+
         <div className="card bg-base-200 w-full shadow-xl mb-4">
           <div className="card-body flex flex-col lg:flex-row justify-between items-center">
             <span
@@ -67,17 +81,15 @@ export default function OrderDetailComponent({ id }: Props) {
                 <ModalVerifyProofComponent
                   id="modalVerifyOrder"
                   trx_id={id}
-                  image={data.image}
+                  image={data.payment_proof}
                   token={user.access_token}
                 />
               ) : (
-                <button
-                  type="button"
-                  title="Unggah Bukti Bayar"
-                  className="btn btn-primary"
-                >
-                  Unggah Bukti Bayar
-                </button>
+                <UploadPayementProofModal
+                  id={'upload-proof-modal'}
+                  trx_id={id}
+                  token={user?.access_token}
+                />
               ))}
           </div>
         </div>
@@ -125,8 +137,8 @@ export default function OrderDetailComponent({ id }: Props) {
                 <strong>Detail Tamu:</strong> {data.user.name}
               </p>
               {data.transactionItems?.map((item, index) => (
-                <>
-                  <p key={index}>
+                <div key={index}>
+                  <p>
                     <strong>Kamar:</strong> {item?.room?.name}
                   </p>
                   <p>
@@ -137,7 +149,7 @@ export default function OrderDetailComponent({ id }: Props) {
                     <strong>Check-out:</strong>{' '}
                     {formatStyledDate(item?.end_date)}
                   </p>
-                </>
+                </div>
               ))}
             </div>
 

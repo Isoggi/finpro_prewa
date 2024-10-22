@@ -54,7 +54,7 @@ export default function ModalVerifyProofComponent({
       console.log(error);
     }
 
-    dialog?.close();
+    if (dialog) dialog.close();
   }
 
   return (
@@ -63,8 +63,8 @@ export default function ModalVerifyProofComponent({
         type="button"
         title="Konfirmasi bayar"
         className="btn btn-sm btn-primary hover:text-red-500"
-        onClick={() => {
-          // e.stopPropagation();
+        onClick={(e) => {
+          e.stopPropagation();
           if (dialog) dialog.showModal();
         }}
       >
@@ -72,20 +72,15 @@ export default function ModalVerifyProofComponent({
       </button>
       <dialog id={id} className="modal modal-bottom lg:modal-middle">
         <div className="modal-box">
-          <form method="dialog">
+          {/* <form method="dialog">
             <button
               type="button"
-              title="close"
+              title="closeX"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             >
               ✕
             </button>
-          </form>
-          <form method="dialog" className="modal-backdrop">
-            <button type="button" title="close">
-              close
-            </button>
-          </form>
+          </form> */}
           <h3 className="font-bold text-lg">Cek Bukti Bayar</h3>
           {image ? (
             <Image
@@ -97,13 +92,32 @@ export default function ModalVerifyProofComponent({
           ) : (
             <p className="py-4 text-red-500">Belum ada bukti bayar</p>
           )}
+
+          <form onSubmit={handleSubmit}>
+            <div className="flex gap-2 items-end">
+              {image && (
+                <button
+                  type="submit"
+                  value={1}
+                  className="btn btn-sm btn-primary"
+                >
+                  Terima
+                </button>
+              )}
+              <button
+                type="submit"
+                value={0}
+                className="btn btn-sm btn-warning"
+              >
+                Tolak
+              </button>
+            </div>
+          </form>
         </div>
-        <form onSubmit={handleSubmit}>
-          <button type="submit" value={1} className="btn btn-primary">
-            Terima
-          </button>
-          <button type="submit" value={0} className="btn btn-warning">
-            Tolak
+
+        <form method="dialog" className="modal-backdrop">
+          <button type="button" title="close">
+            close
           </button>
         </form>
       </dialog>

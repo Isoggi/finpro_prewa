@@ -4,7 +4,7 @@ import { Order } from '@/interfaces/order.interface';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronRight } from 'react-icons/fa';
-import { dateDiff } from '@/lib/utils';
+import { dateDiff, formatStyledDate } from '@/lib/utils';
 
 interface Props extends Order {
   user_role: string;
@@ -47,33 +47,33 @@ export default function OrderCardComponent({
       <div className="card-body">
         <div className="card-actions justify-end">
           <Link
-            href={`/dashboard/pesanan/${id}`}
-            className="hover:animate-bounce text-primary"
+            href={
+              user_role === 'tenant'
+                ? `/dashboard/pesanan/${id}`
+                : `/pesanan/${id}`
+            }
+            className="hover:text-secondary text-primary"
           >
             <FaChevronRight />
           </Link>
         </div>
         <div className="flex flex-col lg:flex-row justify-between items-center">
-          <div className="flex flex-col lg:flex-row items-center">
+          <div className="flex flex-col items-left">
+            <span className="text-white badge badge-info">{category}</span>
             <div>
-              <span className="text-white badge badge-info">{category}</span>
               <h2 className="card-title">{name}</h2>
-
-              <p className="text-sm">{description}</p>
-              <p className="text-sm">
-                {startDate}{' '}
-                <span className="text-info">
-                  {dateDiff(startDate, endDate)}
-                </span>
-              </p>
+              <span
+                className={`badge ${status === 'completed' ? 'badge-success' : 'badge-warning'}`}
+              >
+                {status}
+              </span>
             </div>
-          </div>
-          <div>
-            <span
-              className={`badge ${status === 'completed' ? 'badge-success' : 'badge-warning'}`}
-            >
-              {status}
-            </span>
+
+            <p className="text-sm">{description}</p>
+            <p className="text-sm">
+              {formatStyledDate(startDate)}{' '}
+              <span className="text-info">{dateDiff(startDate, endDate)}</span>
+            </p>
           </div>
         </div>
       </div>

@@ -91,7 +91,7 @@ async function refreshAccessToken(token: User) {
   try {
     // const url = 'YOUR_REFRESH_TOKEN_ENDPOINT';
     const response = await api.post(
-      '/auth/refreshToken',
+      '/auth/refresh-token',
       { token: token.access_token },
       {
         headers: {

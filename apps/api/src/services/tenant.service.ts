@@ -182,8 +182,8 @@ export class TenantService {
                         detail: true,
                         provinces: { select: { name: true } },
                         district: { select: { name: true } },
-                        lat:true,
-                        lng:true
+                        lat: true,
+                        lng: true,
                       },
                     },
                   },
