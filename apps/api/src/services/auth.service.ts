@@ -96,6 +96,22 @@ export class AuthService {
     return 'Email Send';
   }
 
+  // static async socialAccount (req: Request) {
+  //   const { name, email, phone_number, role } = req.body;
+  //   // const user_role = role.toLowerCase() as unknown as users_role;
+  //   const data: Prisma.UsersCreateInput = {
+  //     name,
+  //     email,
+  //     phone_number,
+  //     role: role.toLowerCase() as unknown as users_role,
+  //   };
+
+  //   const result = await prisma.$transaction(async (trx) => {
+  //     return await trx.users.create({ data });
+  //   });
+
+  // }
+
   static async sendVerifyEmail(req: Request) {
     const { phone_number, email } = req.body;
     const data = await prisma.users.findFirst({

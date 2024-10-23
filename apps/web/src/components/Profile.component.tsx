@@ -6,19 +6,61 @@ import { User } from 'next-auth';
 import { profileSchema } from '@/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
-import React, { useRef, useState } from 'react';
-import { Form, useForm } from 'react-hook-form';
+import React, { useRef, useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { z } from 'zod';
+
 const MySwal = withReactContent(Swal);
 
 export default function ProfileComponent() {
   const { data: session } = useSession();
   const [user, setUser] = useState<User | null>(null);
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (session?.user) setUser(session?.user);
   }, [session]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await api.get('/auth/profile', {
+        headers: {
+          Authorization: `Bearer ${session?.user.access_token}`,
+        },
+      });
+      setUser(response.data.data as User);
+    }
+    fetchData();
+  }, [session]);
+
+  const form = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: user?.name || '',
+      image: user?.image || '',
+      password: undefined,
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name || '',
+        image: user.image || '',
+      });
+    }
+  }, [user, form]);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = form;
+
+  const ref = useRef<HTMLInputElement>(null);
+
   const Toast = MySwal.mixin({
     toast: true,
     position: 'top-end',
@@ -31,53 +73,30 @@ export default function ProfileComponent() {
     },
   });
 
-  React.useEffect(() => {
-    async function fetchData() {
-      const response = await api.get('/auth/profile', {
-        headers: {
-          Authorization: `Bearer ${session?.user.access_token}`,
-        },
-      });
-      setUser(response.data.data as User);
-    }
-    fetchData();
-  }, []);
-
-  const form = useForm<z.infer<typeof profileSchema>>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: user?.name!,
-      image: user?.image!,
-      password: undefined,
-    },
-  });
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = form;
-  const ref = useRef<HTMLInputElement>(null);
-
   const onSubmit = async (values: z.infer<typeof profileSchema>) => {
-    const form = new FormData();
-    form.append('name', values.name);
-    form.append('image', values.image);
-    form.append('password', values.password?.length ? values.password : '');
-    console.log(Form);
-    await actionUpdateProfile(form)
-      .then((res) => {
-        Toast.fire({
-          icon: 'success',
-          title: 'Profil diperbarui',
-        });
-      })
-      .catch((err) => {
-        Toast.fire({
-          icon: 'error',
-          title: err.message,
-        });
+    const formData = new FormData();
+    formData.append('name', values.name);
+
+    if (values.image instanceof File) {
+      formData.append('image', values.image);
+    }
+
+    if (values.password?.length) {
+      formData.append('password', values.password);
+    }
+
+    try {
+      await actionUpdateProfile(formData);
+      Toast.fire({
+        icon: 'success',
+        title: 'Profil diperbarui',
       });
+    } catch (err: any) {
+      Toast.fire({
+        icon: 'error',
+        title: err.message,
+      });
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,21 +107,21 @@ export default function ProfileComponent() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-screen-xl">
-      <h1 className="text-2xl font-bold mb-4">Update Profile</h1>
+    <div className="container mx-auto p-4 max-w-md">
+      <h1 className="text-xl font-bold mb-4">Update Profile</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col space-y-4">
-          <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
             <img
               src={
                 watch('image') instanceof File
                   ? URL.createObjectURL(watch('image'))
-                  : watch('image')
+                  : user?.image
                     ? avatar_src + user?.image
                     : ''
               }
               alt="Profile Picture"
-              className="w-24 h-24 rounded-full"
+              className="w-20 h-20 rounded-full mb-2"
               onClick={() => ref.current?.click()}
             />
             <input
@@ -114,30 +133,29 @@ export default function ProfileComponent() {
               ref={ref}
             />
             <label
-              htmlFor="profilePicture"
               className="cursor-pointer text-blue-500"
-              onClick={(e) => ref.current?.click()}
+              onClick={() => ref.current?.click()}
             >
               Upload
             </label>
           </div>
           <div className="flex flex-col">
-            <label htmlFor="name" className="text-gray-700">
+            <label htmlFor="name" className="text-gray-700 text-sm">
               Name:
             </label>
             <input
               type="text"
               id="name"
               {...register('name', { required: 'Name is required' })}
-              className="border p-2"
+              className="border p-2 text-sm"
             />
             {errors.name && (
-              <p className="text-red-500">{errors.name.message}</p>
+              <p className="text-red-500 text-xs">{errors.name.message}</p>
             )}
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-700 disabled:cursor-not-allowed"
+            className="bg-blue-500 text-white px-3 py-1 w-24 text-sm rounded disabled:bg-gray-700 disabled:cursor-not-allowed"
             disabled={isSubmitting}
           >
             Simpan
