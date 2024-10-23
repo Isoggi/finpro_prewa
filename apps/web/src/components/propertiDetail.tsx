@@ -3,18 +3,13 @@ import Link from 'next/link';
 import React from 'react';
 import { IProperties } from '@/interfaces/property.interface';
 import { api } from '@/config/axios.config';
-import {
-  FaCalendar,
-  FaChevronRight,
-  FaClock,
-  FaMapMarker,
-  FaUser,
-} from 'react-icons/fa';
+import { FaMapMarker } from 'react-icons/fa';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { User } from 'next-auth';
+import Map from '@/components/map';
+import Footer from '@/components/footer';
 
 const MySwal = withReactContent(Swal);
 
@@ -24,201 +19,148 @@ type Props = {
 
 const ProppertiDetail = ({ slug }: Props) => {
   const { data: session } = useSession();
-  const [user, setUser] = React.useState<User | null>(null);
-  React.useEffect(() => {
-    if (session?.user) setUser(session?.user);
-  }, [session]);
-  const Toast = MySwal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
   const [properties, setProperti] = React.useState<IProperties | null>(null);
-
-  console.log(`/properti/${slug}`);
+  const [sortOption, setSortOption] = React.useState({
+    field: 'name',
+    order: 'asc',
+  });
 
   React.useEffect(() => {
     const fetchEvents = async () => {
-      console.log(`/properti/${slug}`);
       const response = await api.get(`/properti/${slug}`);
-      const data = (await response.data.data) as IProperties;
-      console.log(response.data.data);
+      const data = response.data.data as IProperties;
       setProperti(data);
     };
     fetchEvents();
-  }, []);
+  }, [slug]);
 
-  //   const onAddCart = async (id: number) => {
-  //     await api
-  //       .post(
-  //         `/purchase`,
-  //         { id, quantity: 1 },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${session?.user.access_token}`,
-  //           },
-  //         },
-  //       )
-  //       .then((res) => {
-  //         Toast.fire({
-  //           icon: 'success',
-  //           title: 'Add to cart success',
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         Toast.fire({
-  //           icon: 'error',
-  //           title: error.message,
-  //         });
-  //       });
-  //   };
+  // Sorting logic for rooms based on selected options
+  const sortedRooms = React.useMemo(() => {
+    if (!properties) return [];
+    const roomsCopy = [...properties.rooms];
+    roomsCopy.sort((a, b) => {
+      if (sortOption.field === 'name') {
+        return sortOption.order === 'asc'
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      } else if (sortOption.field === 'price') {
+        return sortOption.order === 'asc'
+          ? a.price - b.price
+          : b.price - a.price;
+      }
+      return 0;
+    });
+    return roomsCopy;
+  }, [properties, sortOption]);
+
+  const handleSortChange = (field: string, order: string) => {
+    setSortOption({ field, order });
+  };
 
   return (
     <div className="container mx-auto max-w-screen-xl">
       <div className="top">
+        {/* Breadcrumbs */}
         <div className="breadcrumbs">
           <ul className="flex items-center space-x-2">
             <li className="flex items-center">
               <Link href="/" className="text-blue-500">
                 Home
               </Link>
-            </li>
-            <li className="flex items-center">
-              <Link href="/properties" className="text-blue-500">
+              <span className="mx-1">{'>'}</span>
+              <Link href="/" className="text-black">
                 Properti
               </Link>
-
-              <Link
-                href={`/properti?rooms=${properties?.name}`}
-                className="text-blue-500"
-              >
-                {properties?.name}
-              </Link>
-            </li>
-            <li className="flex items-center">
-              <label className="text-gray-600">
-                {properties?.category.name}
-              </label>
+              <span className="mx-1">{'>'}</span>
+              <label className="text-black">{properties?.name}</label>
             </li>
           </ul>
         </div>
-
-        <div className="event-detail-banner my-4 flex justify-center items-center">
-          <img
-            src={properties ? properties.image || '' : ''}
-            alt=""
-            onError={(e) =>
-              (e.currentTarget.src =
-                'https://assets.loket.com/images/banner-event?.jpg')
-            }
-            className="w-64 h-64"
-          />
-        </div>
-
-        <div className="event-detail-info">
-          <div className="event-detail-breadcrumbs mb-2">
-            <ul className="flex items-center space-x-2">
-              <li className="flex items-center">
-                <Link href="/properti" className="text-blue-500">
-                  Properti
-                </Link>
-                <span className="mx-1">•</span>
-                <Link
-                  href={`/properti?category=${properties?.category.name}`}
-                  className="text-blue-500"
-                >
-                  {properties?.category.name}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="info-title mb-4">
-            <h1 id="gt-event-name" className="text-2xl font-bold">
-              {properties?.name}
-            </h1>
-            <p className="">{properties?.description}</p>
-          </div>
-
-          <div className="info-additional space-y-4">
-            <div className="event-venue flex items-center space-x-2">
-              <FaMapMarker />
+        <div className="flex flex-col md:flex-row md:space-x-4 py-4">
+          {/* Property Details Section */}
+          <div className="bg-white p-4 rounded-lg shadow-sm md:w-2/3">
+            <h3 className="text-xl font-semibold mb-2">{properties?.name}</h3>
+            <p className="text-gray-700">{properties?.description}</p>
+            <div className="mt-2">
+              <FaMapMarker className="inline-block mr-2" />
               <Link
-                rel="noopener"
-                href="https://www.google.com/maps/search/?api=1&amp;query=0,0"
-                target="_blank"
+                href={`https://www.google.com/maps/search/?api=1&query=${properties?.address.lat},${properties?.address.lng}`}
                 className="text-blue-500"
+                target="_blank"
               >
-                {properties?.address.detail},{properties?.address.district.name}
+                {properties?.address.detail},{' '}
+                {properties?.address.district.name}
               </Link>
             </div>
+          </div>
 
-            <div className="event-organizer-mobile flex items-center space-x-2">
-              <div className="properties-avatar">
-                {properties?.image ? (
-                  <Image
-                    className="rounded-full h-8 w-8"
-                    src={properties.image}
-                    alt="tenant"
-                    onError={(e) =>
-                      (e.currentTarget.src =
-                        'https://assets.loket.com/images/default-logo-organization.png')
-                    }
-                    width={64}
-                    height={64}
-                  />
-                ) : (
-                  <div className="bg-gray-200 p-3 rounded-full">
-                    <FaUser />
-                  </div>
-                )}
-              </div>
-              <div className="tenant-name">
-                <span className="text-gray-600">Diselenggarakan oleh: </span>
-                <span className="text-blue-500">{properties?.name}</span>
-              </div>
+          {/* Map Section */}
+          <div className="md:w-2/3">
+            {properties?.address && (
+              <Map lat={properties.address.lat} lng={properties.address.lng} />
+            )}
+          </div>
+        </div>
+
+        <div className="flex mt-6">
+          {/* Property List and Sorting (Left Column) */}
+          <div className="w-full md:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Sort by</h2>
+            <div className="mb-4">
+              <label className="block mb-2 font-semibold">property list</label>
+              <select
+                className="p-2 border rounded-lg w-full"
+                value={`${sortOption.field}-${sortOption.order}`}
+                onChange={(e) => {
+                  const [field, order] = e.target.value.split('-');
+                  handleSortChange(field, order);
+                }}
+              >
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-des">Name (Z-A)</option>
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="price-des">Price (High to Low)</option>
+              </select>
             </div>
           </div>
 
-          <div>
-            <h2>Tiket</h2>
-          </div>
-          <div className="flex flex-col md:flex-row justify-center md:justify-start">
-            {properties?.rooms.map((rooms) => {
-              return (
-                <div key={rooms.id} className="card bg-base-100 w-96 shadow-xl">
-                  <div className="card-body">
-                    <h2 className="card-title">{rooms.name}</h2>
-                    <p>{rooms.description}</p>
-                    <p>{`Harga: ${rooms.price ? rooms.price : 'Gratis'}`}</p>
-                    {/* <p>
-                      {`Sisa: ${
-                        ticket.rest ? ticket.rest : ticket.maxNumber
-                      } / ${ticket.maxNumber}`}
-                    </p> */}
-                    {/* <div className="card-actions justify-end">
-                      <button
-                        title="Add to cart"
-                        type="button"
-                        onClick={(e) => onAddCart(Number(ticket.id))}
-                        className="btn btn-primary"
-                      >
-                        Tambah ke keranjang
-                      </button>
-                    </div> */}
+          {/* Rooms Section (Right Column) */}
+          <div className="w-full md:w-2/3 p-4">
+            <h2 className="text-2xl font-bold mb-4">Rooms</h2>
+            <div className="space-y-6">
+              {sortedRooms.map((room) => (
+                <div
+                  key={room.id}
+                  className="flex items-start border rounded-lg p-4 shadow-lg"
+                >
+                  <Image
+                    src={room.image || '/default-room.jpg'}
+                    alt={room.name}
+                    width={200}
+                    height={150}
+                    className="rounded-lg object-cover"
+                  />
+                  <div className="ml-6 flex-col justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold">{room.name}</h3>
+                      <p className="text-gray-700">{room.description}</p>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-xl font-bold text-black">
+                        Rp {room.price.toLocaleString()}
+                      </p>
+                    </div>
+                    <button className="mt-4 bg-[#7AB2D3] text-white py-2 px-4 rounded-lg">
+                      Select Room
+                    </button>
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

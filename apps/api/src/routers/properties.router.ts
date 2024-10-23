@@ -14,6 +14,9 @@ export class PropertiesRouter {
     // this.router.get("/venue", this.eventController.getVenues);
     // this.router.get("/location", this.eventController.getLocations);
     this.router.get('/:id', this.propertiesController.getById);
+    this.router.post('/', this.propertiesController.createProperti); // Create
+    this.router.put('/:id', this.propertiesController.updateProperti); // Update
+    this.router.delete('/:id', this.propertiesController.deleteProperti); // Delete
   }
 
   public getRouter(): Router {

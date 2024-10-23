@@ -13,6 +13,8 @@ import withReactContent from 'sweetalert2-react-content';
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
+import { users_role } from '@/interfaces/user.interface';
+import { avatar_src } from '@/config/images.config';
 
 const MySwal = withReactContent(Swal);
 export default function NavbarProfileComponent() {
@@ -78,7 +80,11 @@ export default function NavbarProfileComponent() {
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
                   <img
                     title="avatar"
-                    src={user.image}
+                    src={
+                      user?.image
+                        ? avatar_src + user.image
+                        : '/path/to/default-avatar.png'
+                    }
                     alt="User Avatar"
                     className="w-full h-full object-cover"
                   />

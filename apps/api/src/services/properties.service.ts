@@ -339,9 +339,63 @@ export class PropertiesService {
     };
   }
 
-  // static async searchProperti(req: Request) {
-  //   const {
-  //    startDate,
-  //   }
-  // }
+  static async createProperti(req: Request) {
+    const { tenant_id, name, description, category_id, address_id, image } =
+      req.body;
+
+    try {
+      const newProperty = await prisma.properties.create({
+        data: {
+          tenant_id,
+          name,
+          description,
+          category_id,
+          address_id,
+          image,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+      return newProperty;
+    } catch (error) {
+      throw new ErrorHandler(500);
+    }
+  }
+
+  static async updateProperti(req: Request) {
+    const { id } = req.params;
+    const { tenant_id, name, description, category_id, address_id, image } =
+      req.body;
+
+    try {
+      const updatedProperty = await prisma.properties.update({
+        where: { id: Number(id) },
+        data: {
+          tenant_id,
+          name,
+          description,
+          category_id,
+          address_id,
+          image,
+          updated_at: new Date(),
+        },
+      });
+      return updatedProperty;
+    } catch (error) {
+      throw new ErrorHandler(500);
+    }
+  }
+
+  static async deleteProperti(req: Request) {
+    const { id } = req.params;
+
+    try {
+      const deletedProperty = await prisma.properties.delete({
+        where: { id: Number(id) },
+      });
+      return deletedProperty;
+    } catch (error) {
+      throw new ErrorHandler(500);
+    }
+  }
 }

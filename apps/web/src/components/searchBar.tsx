@@ -44,26 +44,25 @@ export default function SearchBarComponent({}: Props) {
                 <option value="Kab. Tangerang">Kab. Tangerang</option>
               </select>
             </div>
-            <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
-              <span className="text-sm ">
-                <input
-                  type="date"
-                  id="Start Date"
-                  placeholder="Tanggal Mulai"
-                  className="input input-bordered w-full md:max-w-xs"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-
-                {/* End Date Picker */}
-                <input
-                  type="date"
-                  id="End Date"
-                  className="input input-bordered w-full md:max-w-xs"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
+            <div className="flex items-center bg-white border rounded-full px-4 py-2 w-full max-w-sm">
+              <span className="text-blue-500 pr-2">
+                <i className="fas fa-calendar-alt"></i>
               </span>
+              <input
+                type="date"
+                id="Start Date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full bg-transparent focus:outline-none"
+              />
+              <span className="px-2">-</span>
+              <input
+                type="date"
+                id="End Date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full bg-transparent focus:outline-none"
+              />
             </div>
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <select
