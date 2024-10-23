@@ -236,6 +236,9 @@ enum transactions_status {
   pending
   completed
   failed
+  waitingpayment
+  waitingapproval
+  cancelled
 }
 
 enum properties_rooms_peakseasonrate_rateCategory {

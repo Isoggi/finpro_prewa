@@ -132,14 +132,7 @@ export class TransactionService {
           where: { id: Number(data.id), user_id: id },
           data: {
             payment_proof: data.image,
-            payment_method: transactions_payment_method.manual,
-            status: transactions_status.completed,
-            transactionItems: {
-              updateMany: {
-                where: { transaction_id: Number(data.id) },
-                data: { status: transaction_items_status.waitingpayment },
-              },
-            },
+            status: transactions_status.waitingapproval,
           },
         });
       });
