@@ -340,8 +340,9 @@ export class PropertiesService {
   }
 
   static async createProperti(req: Request) {
-    const { tenant_id, name, description, category_id, address_id, image } = req.body;
-  
+    const { tenant_id, name, description, category_id, address_id, image } =
+      req.body;
+
     try {
       const newProperty = await prisma.properties.create({
         data: {
@@ -360,12 +361,12 @@ export class PropertiesService {
       throw new ErrorHandler(500);
     }
   }
-  
 
   static async updateProperti(req: Request) {
     const { id } = req.params;
-    const { tenant_id, name, description, category_id, address_id, image } = req.body;
-  
+    const { tenant_id, name, description, category_id, address_id, image } =
+      req.body;
+
     try {
       const updatedProperty = await prisma.properties.update({
         where: { id: Number(id) },
@@ -384,11 +385,10 @@ export class PropertiesService {
       throw new ErrorHandler(500);
     }
   }
-  
 
   static async deleteProperti(req: Request) {
     const { id } = req.params;
-  
+
     try {
       const deletedProperty = await prisma.properties.delete({
         where: { id: Number(id) },
