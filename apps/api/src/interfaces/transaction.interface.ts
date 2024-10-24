@@ -30,7 +30,7 @@ export interface TransactionItems {
   updated_at?: Date;
 }
 export interface Order {
-  id: number;
+  invoice_number: string;
   category: string;
   name: string;
   description: string;

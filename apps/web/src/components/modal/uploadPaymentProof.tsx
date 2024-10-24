@@ -76,7 +76,7 @@ export default function UploadPayementProofModal({ id, trx_id, token }: Props) {
           if (dialog) dialog.showModal();
         }}
       >
-        Konfirmasi
+        Unggah bukti bayar
       </button>
       <dialog id={id} className="modal modal-bottom lg:modal-middle">
         <div className="modal-box">

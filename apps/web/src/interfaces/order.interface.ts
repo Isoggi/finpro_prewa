@@ -1,4 +1,4 @@
-import { Rooms } from './property.interface';
+import { IRooms } from './property.interface';
 import { User } from './user.interface';
 
 export interface Order {
@@ -8,11 +8,18 @@ export interface Order {
   description: string;
   startDate: string;
   endDate: string;
-  status: 'pending' | 'completed' | 'failed';
+  status:
+    | 'pending'
+    | 'completed'
+    | 'failed'
+    | 'cancelled'
+    | 'waitingpayment'
+    | 'waitingapproval';
   image?: string;
   amount: number;
   payment_method: 'midtrans' | 'doku' | 'manual' | 'other';
   payment_proof?: string;
+  invoice_number?: string;
 }
 
 export interface OrderDetail extends Order {
@@ -25,11 +32,10 @@ export interface TransactionItems {
   total_price: number;
   start_date: string;
   end_date: string;
-  status: 'waitingpayment' | 'confirmed' | 'cancelled';
   room: OrderRooms;
 }
 
-export interface OrderRooms extends Rooms {
+export interface OrderRooms extends IRooms {
   property?: {
     id: number;
     lat: number;

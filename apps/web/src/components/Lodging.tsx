@@ -10,9 +10,13 @@ function PropertiesSection() {
 
   React.useEffect(() => {
     const fetchEvents = async () => {
-      const response = await api.get('/properti');
-      console.log(response.data.data);
-      setProperti(response.data.data.data as IProperties[]);
+      try {
+        const response = await api.get('/properti');
+        console.log(response.data.data);
+        setProperti(response.data.data.data as IProperties[]);
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchEvents();
   }, []);

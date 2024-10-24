@@ -8,27 +8,14 @@ import {
   FaUser,
   FaChartArea,
 } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
 import { users_role } from '@/interfaces/user.interface';
 import { avatar_src } from '@/config/images.config';
+import { showAlert } from '@/lib/utils';
 
-const MySwal = withReactContent(Swal);
 export default function NavbarProfileComponent() {
-  const Toast = MySwal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
   const session = useSession();
 
   const [user, setUser] = useState<User | null>(null);
@@ -40,12 +27,13 @@ export default function NavbarProfileComponent() {
     try {
       const res = await actionLogout();
       if (res) setUser(null);
-      Toast.fire({
+      showAlert({
         icon: 'success',
         title: 'Logout Berhasil',
       });
+      window.location.reload();
     } catch (error) {
-      Toast.fire({
+      showAlert({
         icon: 'error',
         title: 'Error, Logout Gagal',
       });

@@ -1,0 +1,98 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Pembatalan Pesanan - Order ID {{invoice}}</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #ffffff; color:
+      #303135; margin: 0; padding: 0; } .container { max-width: 600px; margin: 0
+      auto; padding: 20px; background-color: #ffffff; } .header img { width:
+      160px; display: block; margin: 0 auto; } .order-info, .order-details {
+      border: 1px solid #D8DCE8; border-radius: 4px; padding: 20px; margin: 20px
+      0; } h1 { font-size: 18px; font-weight: bold; color: #303135; } p {
+      font-size: 14px; margin: 0; } .bold-red { color: #F15C59; font-weight:
+      bold; } .order-details img { border-radius: 8px; } .order-summary {
+      display: flex; justify-content: space-between; margin-top: 20px; }
+      .order-summary div { text-align: center; } .guest-info { margin-top: 20px;
+      } .guest-info span { font-size: 12px; } .divider { border-top: 1px dashed
+      #D8DCE8; margin: 20px 0; } .footer { text-align: center; font-size: 12px;
+      color: #71747D; } a { color: #007BFF; text-decoration: none; font-weight:
+      bold; }
+    </style>
+  </head>
+  <body>
+
+    <div class='container'>
+      <!-- Header Section -->
+      <div class='header'>
+        <img
+          src='http://s-light.tiket.photos/t/01E25EBZS3W0FY9GTG6C42E1SE/original/test-discovery/2024/03/01/ac13e03e-896c-4bbb-ba7c-cdf9b04a68b7-1709290197088-cb26aa8c25b24b1aa5df8bb2edce7ea7.png'
+          alt='tiket.com'
+        />
+      </div>
+
+      <!-- Greeting Section -->
+      <h1>Hai Kristanto Saptadi Nugraha,</h1>
+      <p>Sayang sekali, kamu
+        <span class='bold-red'>membatalkan</span>
+        pesananmu dengan detail berikut:</p>
+
+      <!-- Payment Info -->
+      <div class='order-info'>
+        <h2>Informasi Pembayaran</h2>
+        <p><strong>Order ID:</strong> {{invoice}}</p>
+        <p><strong>Metode Pembayaran:</strong> -</p>
+      </div>
+
+      <!-- Order Details -->
+      <div class='order-details'>
+        <h2>Detail Pesanan</h2>
+        <img src={{propertiImage}} width='50' alt='Hotel Image' />
+        <p><strong>{{propertiName}}</strong></p>
+        <p><strong>Alamat:</strong> {{address}}</p>
+        <p><a
+            href='https://www.google.com/maps/search/?api=1&query=-6.303123,106.652237'
+          >Lihat peta</a></p>
+
+        <div class='order-summary'>
+          <div>
+            <h4>Check-in</h4>
+            <p>{{startDate}}</p>
+          </div>
+          <div>
+            <h4>Durasi</h4>
+            <p>{{dateDiff}}</p>
+          </div>
+          <div>
+            <h4>Check-out</h4>
+            <p>{{endDate}}</p>
+          </div>
+        </div>
+
+        <div class='guest-info'>
+          <h4>Kamar & Tamu</h4>
+          <p>1 Kamar • 1 Tamu</p>
+          <h4>Detail Tamu</h4>
+          <p><span>{{userName}}</span>
+            <span
+              style='background-color:#F4F7FE; padding:2px 8px; border-radius:2px;'
+            >Dewasa</span></p>
+        </div>
+      </div>
+
+      <div class='divider'></div>
+
+      <!-- Footer Section -->
+      <div class='footer'>
+        <p>Kalau kamu mau pesan perjalanan lain, kami selalu siap menemani
+          perjalananmu.</p>
+        <p>Cheers, <br /><a href='http://localhost:3000'>Prewa</a></p>
+      </div>
+
+      <div class='divider'></div>
+
+      <p class='footer'>© 2011-2024 PT. Prewa. All Rights Reserved</p>
+    </div>
+
+  </body>
+</html>
