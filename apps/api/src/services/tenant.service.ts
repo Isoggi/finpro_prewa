@@ -7,9 +7,15 @@ import { transaction_items_status, transactions_status } from '@prisma/client';
 export class TenantService {
   static async getTransactions(req: Request) {
     const { user } = req;
-
     console.log('access tenant transaction:', user?.name);
-    const { page = 1, size = 8, orderNumber, startDate, endDate } = req.query;
+    const {
+      page = 1,
+      size = 8,
+      orderNumber,
+      startDate,
+      endDate,
+      status = transactions_status.waitingpayment,
+    } = req.query;
     if (!user) throw new ErrorHandler('Unauthorized', 401);
     const [result, totalCount] = await Promise.all([
       prisma.transactions.findMany({
@@ -33,6 +39,11 @@ export class TenantService {
           invoice_number: {
             contains: orderNumber ? orderNumber?.toString() : undefined,
           },
+          status: status
+            ? {
+                equals: status as transactions_status,
+              }
+            : undefined,
         },
         include: {
           transactionItems: {
@@ -87,7 +98,7 @@ export class TenantService {
     // const result = await
     const data = result.map((order) => {
       let _res: Order = {
-        id: order.id,
+        invoice_number: order.invoice_number ?? '',
         category: order.transactionItems[0].room.property.category.name,
         name: order.transactionItems[0].room.property.name,
         description: order.transactionItems[0].room.name,
@@ -114,10 +125,15 @@ export class TenantService {
     if (!user) throw new ErrorHandler('Unauthorized', 401);
     const { id, status } = req.body;
     if (!id) throw new ErrorHandler('Invalid request', 400);
+    const trxData = await prisma.transactions.findFirst({
+      where: { invoice_number: id },
+      select: { id: true },
+    });
+    if (!trxData) throw new ErrorHandler('Transaction not found', 404);
     await prisma.$transaction(async (trx) => {
       const transaction = await trx.transactions.update({
         where: {
-          id: Number(id),
+          id: trxData?.id,
           transactionItems: {
             some: { room: { property: { tenant_id: user?.id } } },
           },
@@ -125,27 +141,9 @@ export class TenantService {
         data: Number(status)
           ? {
               status: transactions_status.completed,
-              transactionItems: {
-                updateMany: {
-                  where: { transaction_id: Number(id) },
-                  data: {
-                    status: transaction_items_status.confirmed,
-                    updated_at: new Date(),
-                  },
-                },
-              },
             }
           : {
-              status: transactions_status.failed,
-              transactionItems: {
-                updateMany: {
-                  where: { transaction_id: Number(id) },
-                  data: {
-                    status: transaction_items_status.cancelled,
-                    updated_at: new Date(),
-                  },
-                },
-              },
+              status: transactions_status.waitingpayment,
             },
       });
       return transaction;
@@ -155,8 +153,9 @@ export class TenantService {
 
   static async getTransactionById(req: Request) {
     const user = req.user;
-    const { id } = req.params;
-    const result = await prisma.transactions.findUnique({
+    const { invoice_number } = req.params;
+
+    const result = await prisma.transactions.findFirst({
       include: {
         transactionItems: {
           select: {
@@ -195,13 +194,13 @@ export class TenantService {
         user: true,
       },
       where: {
-        id: Number(id),
+        invoice_number: invoice_number,
         transactionItems: {
           some: { room: { property: { tenant_id: user?.id } } },
         },
       },
     });
-    if (!result) throw new ErrorHandler('Unaothorized tenant access', 401);
+    if (!result) throw new ErrorHandler('Unauthorized tenant access', 401);
 
     return result;
   }

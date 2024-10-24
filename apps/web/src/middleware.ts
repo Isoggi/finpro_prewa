@@ -24,18 +24,16 @@ export async function middleware(request: NextRequest) {
     if (user?.user_role !== 'tenant') {
       return redirect(new URL('/', request.url));
     }
-    // const requestHeaders = new Headers(request.headers);
-    // requestHeaders.set('x-pathname', pathname);
-
-    // return next({
-    //   request: {
-    //     headers: requestHeaders,
-    //   },
-    // });
   }
   if (
     !user &&
     (pathname.includes('/pesanan/') || pathname.endsWith('/pesanan'))
+  ) {
+    return redirect(new URL('/masuk', request.url));
+  }
+  if (
+    !user &&
+    (pathname.includes('/periksa/') || pathname.endsWith('/periksa'))
   ) {
     return redirect(new URL('/masuk', request.url));
   }
@@ -44,5 +42,11 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/masuk', '/daftar', '/dashboard/:path*', '/pesanan/:path*'],
+  matcher: [
+    '/masuk',
+    '/daftar',
+    '/dashboard/:path*',
+    '/pesanan/:path*',
+    '/periksa/:path*',
+  ],
 };

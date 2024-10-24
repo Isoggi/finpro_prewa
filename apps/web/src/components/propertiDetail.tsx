@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { User } from 'next-auth';
+import { property_src } from '@/config/images.config';
 
 const MySwal = withReactContent(Swal);
 
@@ -111,7 +112,7 @@ const ProppertiDetail = ({ slug }: Props) => {
 
         <div className="event-detail-banner my-4 flex justify-center items-center">
           <img
-            src={properties ? properties.image || '' : ''}
+            src={properties ? `${property_src}${properties.image}` || '' : ''}
             alt=""
             onError={(e) =>
               (e.currentTarget.src =
@@ -161,10 +162,10 @@ const ProppertiDetail = ({ slug }: Props) => {
 
             <div className="event-organizer-mobile flex items-center space-x-2">
               <div className="properties-avatar">
-                {properties?.image ? (
+                {properties?.tenant?.image ? (
                   <Image
                     className="rounded-full h-8 w-8"
-                    src={properties.image}
+                    src={properties?.tenant?.image}
                     alt="tenant"
                     onError={(e) =>
                       (e.currentTarget.src =

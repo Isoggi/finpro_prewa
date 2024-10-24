@@ -58,6 +58,7 @@ export class AuthService {
         image: data.image,
       } as IUser;
       delete user.password;
+      console.log('Masuk', user.name);
       return generateToken(user, '3h');
     }
   }
@@ -311,8 +312,11 @@ export class AuthService {
     const { user, body } = req;
     const { token } = body;
     delete user?.password;
-    if (user) return generateToken(user, '3h');
-    else {
+    if (user) {
+      console.log('refresh-token: user');
+      return generateToken(user, '3h');
+    } else {
+      console.log('refresh-token: token');
       return generateToken(decodeToken(token), '3h');
     }
   }

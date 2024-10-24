@@ -4,6 +4,7 @@ import { Request } from 'express';
 export class PropertiesService {
   static async get(req: Request) {
     const { slug } = req.params;
+    console.log('access search by id:');
     const data = await prisma.properties.findMany({
       where: {
         slug_address: slug,
@@ -89,6 +90,7 @@ export class PropertiesService {
       sortBy = 'desc',
     } = req.query;
     type sortByList = 'name' | 'price';
+    console.log('access search properties');
     const [data, totalCount] = await Promise.all([
       prisma.properties.findMany({
         where: {

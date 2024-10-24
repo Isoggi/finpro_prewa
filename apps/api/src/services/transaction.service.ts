@@ -13,6 +13,7 @@ export class TransactionService {
   static async get(req: Request) {
     const { user } = req;
     const { page = 1, size = 8, orderNumber, startDate, endDate } = req.query;
+
     if (!user) throw new ErrorHandler('Unauthorized', 401);
     const [data, totalCount] = await Promise.all([
       prisma.transactions.findMany({
@@ -92,7 +93,7 @@ export class TransactionService {
     ]);
     const result = data.map((order) => {
       let _res: Order = {
-        id: order.id,
+        invoice_number: order.invoice_number ?? '',
         category: order.transactionItems[0].room.property.category.name,
         name: order.transactionItems[0].room.property.name,
         description: order.transactionItems[0].room.name,
@@ -157,7 +158,7 @@ export class TransactionService {
   static async getById(req: Request) {
     const user = req.user;
     const { id } = req.params;
-    const result = await prisma.transactions.findUnique({
+    const result = await prisma.transactions.findFirst({
       include: {
         transactionItems: {
           select: {
@@ -196,7 +197,7 @@ export class TransactionService {
         user: true,
       },
       where: {
-        id: Number(id),
+        invoice_number: id,
         user_id: user?.id,
       },
     });
