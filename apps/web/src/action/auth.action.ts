@@ -139,15 +139,14 @@ export const actionLogOut = async () => {
   }
 };
 
-export const actionRefreshToken= async() =>{
+export const actionRefreshToken = async () => {
   try {
-    
   } catch (error) {
     return {
       message: 'Logout Gagal',
     };
   }
-}
+};
 
 export async function googleAuthenticate(
   prevState: string | undefined,

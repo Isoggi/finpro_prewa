@@ -113,4 +113,16 @@ export class AuthController {
       next(error);
     }
   }
+
+  // async socialAccount(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const data = await AuthService.socialAccount(req);
+  //     return res
+  //       .status(200)
+  //       .json({ message: 'Update Profile Success', data, success: true });
+  //   } catch (error) {
+  //     console.log(error);
+  //     next(error);
+  //   }
+  // }
 }
