@@ -46,37 +46,6 @@ export class PropertiesService {
     return data;
   }
 
-  static async getByIdService(req: Request) {
-    const { id } = req.params;
-    if (id) {
-      const data = await prisma.properties.findUnique({
-        include: {
-          rooms: {
-            include: {
-              available: true,
-              peakSeasonRate: {
-                select: {
-                  id: true,
-                  room_id: true,
-                  rates: true,
-                  start_date: true,
-                  end_date: true,
-                },
-              },
-            },
-          },
-          address: { include: { provinces: true, district: true } },
-          reviews: true,
-          category: true,
-        },
-        where: { slug_address: id },
-      });
-      console.log(data);
-      return data;
-    }
-    return null;
-  }
-
   static async search(req: Request) {
     const {
       startDate,
@@ -338,10 +307,47 @@ export class PropertiesService {
       totalPages: Math.ceil(totalCount / Number(size)),
     };
   }
+  static async getByIdService(req: Request) {
+    const { id } = req.params;
+    if (id) {
+      const data = await prisma.properties.findUnique({
+        include: {
+          rooms: {
+            include: {
+              available: true,
+              peakSeasonRate: {
+                select: {
+                  id: true,
+                  room_id: true,
+                  rates: true,
+                  start_date: true,
+                  end_date: true,
+                },
+              },
+            },
+          },
+          address: { include: { provinces: true, district: true } },
+          reviews: true,
+          category: true,
+        },
+        where: { slug_address: id },
+      });
+      console.log(data);
+      return data;
+    }
+    return null;
+  }
 
   static async createProperti(req: Request) {
-    const { tenant_id, name, description, category_id, address_id, image } =
-      req.body;
+    const {
+      tenant_id,
+      name,
+      description,
+      category_id,
+      address_id,
+      slug_address,
+      image,
+    } = req.body;
 
     try {
       const newProperty = await prisma.properties.create({
@@ -351,6 +357,7 @@ export class PropertiesService {
           description,
           category_id,
           address_id,
+          slug_address,
           image,
           created_at: new Date(),
           updated_at: new Date(),

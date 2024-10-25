@@ -1,13 +1,15 @@
 'use client';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 type Props = {};
 
 export default function SearchBarComponent({}: Props) {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const today = new Date().toISOString().split('T')[0];
+
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(today);
   const [categories, SetCategories] = useState('');
   const [location, setLocation] = useState('');
 
@@ -22,10 +24,31 @@ export default function SearchBarComponent({}: Props) {
 
   const [user, setUser] = React.useState<User | null>(null);
   const session = useSession();
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (user) return;
     if (session.data?.user) setUser(session.data?.user);
-  }, []);
+  }, [session, user]);
+
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
+
+    if (newStartDate > endDate) {
+      setEndDate(newStartDate);
+    }
+  };
+
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEndDate = e.target.value;
+
+    if (newEndDate >= startDate) {
+      setEndDate(newEndDate);
+    } else {
+      alert('End date cannot be earlier than start date');
+    }
+  };
+
   return (
     <div>
       {(user?.user_role === 'user' || user === null) && (
@@ -51,7 +74,7 @@ export default function SearchBarComponent({}: Props) {
                 type="date"
                 id="Start Date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={handleStartDateChange}
                 className="w-full bg-transparent focus:outline-none"
               />
               <span className="px-2">-</span>
@@ -59,7 +82,7 @@ export default function SearchBarComponent({}: Props) {
                 type="date"
                 id="End Date"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={handleEndDateChange}
                 className="w-full bg-transparent focus:outline-none"
               />
             </div>

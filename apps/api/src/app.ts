@@ -15,6 +15,7 @@ import { join } from 'path';
 import { TransactionRouter } from './routers/transaction.router';
 import { TenantRouter } from './routers/tenant.router';
 import { PropertiesRouter } from './routers/properties.router';
+import { RoomRouter } from './routers/room.router';
 
 export default class App {
   private app: Express;
@@ -69,6 +70,7 @@ export default class App {
     this.app.use('/api/order', new TransactionRouter().getRouter());
     this.app.use('/api/properti', new PropertiesRouter().getRouter());
     this.app.use('/api/tenant', new TenantRouter().getRouter());
+    this.app.use('/api/room', new RoomRouter().getRouter());
   }
 
   public start(): void {

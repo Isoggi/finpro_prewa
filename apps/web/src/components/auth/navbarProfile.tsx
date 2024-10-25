@@ -1,7 +1,5 @@
-'use client';
 import React, { useEffect, useState } from 'react';
 import { SessionContextValue, useSession } from 'next-auth/react';
-
 import {
   FaShoppingCart,
   FaSignOutAlt,
@@ -17,6 +15,7 @@ import { users_role } from '@/interfaces/user.interface';
 import { avatar_src } from '@/config/images.config';
 
 const MySwal = withReactContent(Swal);
+
 export default function NavbarProfileComponent() {
   const Toast = MySwal.mixin({
     toast: true,
@@ -29,12 +28,14 @@ export default function NavbarProfileComponent() {
       toast.addEventListener('mouseleave', Swal.resumeTimer);
     },
   });
-  const session = useSession();
 
+  const session = useSession();
   const [user, setUser] = useState<User | null>(null);
+
   useEffect(() => {
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
+
   const logout = async () => {
     try {
       const res = await actionLogout();
@@ -59,7 +60,7 @@ export default function NavbarProfileComponent() {
             {user.user_role === 'tenant' ? (
               <Link
                 href="/dashboard"
-                className="text-2xl text-zinc-400  transition-colors flex items-center justify-center hover:text-gray-700"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
                 title="Dashboard"
               >
                 <FaChartArea />
@@ -81,7 +82,7 @@ export default function NavbarProfileComponent() {
                     title="avatar"
                     src={
                       user?.image
-                        ? avatar_src + user.image
+                        ? avatar_src + user?.image
                         : '/path/to/default-avatar.png'
                     }
                     alt="User Avatar"
