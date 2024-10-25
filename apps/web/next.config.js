@@ -11,6 +11,7 @@ const nextConfig = {
         hostname: 'images.rukita.co',
       },
     ],
+    domains: ['localhost'],
   },
 };
 

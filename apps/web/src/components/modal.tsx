@@ -5,6 +5,7 @@ type Props = {
   btnTitle: string;
   modalTitle?: string;
   modalDesc?: string;
+  form?: React.FC;
 };
 
 export default function ModalComponent({
@@ -15,7 +16,7 @@ export default function ModalComponent({
 }: Props) {
   const dialog = document.getElementById(id) as HTMLDialogElement | null;
   return (
-    <div>
+    <>
       <div
         className="hover:cursor-pointer hover:text-red-500"
         onClick={(e) => {
@@ -34,6 +35,6 @@ export default function ModalComponent({
           <button type="button">close</button>
         </form>
       </dialog>
-    </div>
+    </>
   );
 }

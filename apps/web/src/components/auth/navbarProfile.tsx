@@ -6,33 +6,19 @@ import {
   FaUser,
   FaChartArea,
 } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
 import { users_role } from '@/interfaces/user.interface';
 import { avatar_src } from '@/config/images.config';
-
-const MySwal = withReactContent(Swal);
+import { showAlert } from '@/lib/utils';
 
 export default function NavbarProfileComponent() {
-  const Toast = MySwal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
-
   const session = useSession();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    if (user) return;
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
 
@@ -40,12 +26,13 @@ export default function NavbarProfileComponent() {
     try {
       const res = await actionLogout();
       if (res) setUser(null);
-      Toast.fire({
+      showAlert({
         icon: 'success',
         title: 'Logout Berhasil',
       });
+      window.location.reload();
     } catch (error) {
-      Toast.fire({
+      showAlert({
         icon: 'error',
         title: 'Error, Logout Gagal',
       });
@@ -53,7 +40,7 @@ export default function NavbarProfileComponent() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-700 items-center justify-between">
+    <div className="items-center justify-between">
       <div className="flex items-center space-x-4">
         {user ? (
           <>
@@ -94,7 +81,7 @@ export default function NavbarProfileComponent() {
               )}
             </Link>
 
-            <div className="text-black text-sm">
+            <div className="text-sm">
               <span className="truncate">Hi, {user.name}</span>
             </div>
 

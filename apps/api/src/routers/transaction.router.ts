@@ -3,6 +3,7 @@ import { TransactionController } from '../controllers/transaction.controller';
 // import { validateAuth } from "../middlewares/authValidator.middleware";
 // import { loginSchema, registerSchema } from "../schemas/auth.schema";
 import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { uploader } from '@/libs/uploader.lib';
 // import { uploader } from "../libs/uploader.lib";
 
 export class TransactionRouter {
@@ -14,10 +15,12 @@ export class TransactionRouter {
 
   private routes(): void {
     this.router.get('', AuthMiddleware, this.transactionController.get);
+    this.router.get('/:id', AuthMiddleware, this.transactionController.getById);
 
     this.router.post(
       '/upload-payment-proof',
       AuthMiddleware,
+      uploader('PAYMENT', 'trx').single('image'),
       this.transactionController.uploadProof,
     );
   }

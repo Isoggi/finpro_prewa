@@ -8,8 +8,13 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+
 import Map from '@/components/map';
 import Footer from '@/components/footer';
+
+import { User } from 'next-auth';
+import { property_src } from '@/config/images.config';
+
 
 const MySwal = withReactContent(Swal);
 
@@ -124,6 +129,7 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
 
+
           {/* Rooms Section (Right Column) */}
           <div className="w-full md:w-2/3 p-4">
             <h2 className="text-2xl font-bold mb-4">Rooms</h2>
@@ -139,6 +145,7 @@ const ProppertiDetail = ({ slug }: Props) => {
                     width={200}
                     height={150}
                     className="rounded-lg object-cover"
+
                   />
                   <div className="ml-6 flex-col justify-between">
                     <div>

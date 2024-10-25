@@ -30,11 +30,14 @@ export interface TransactionItems {
   updated_at?: Date;
 }
 export interface Order {
-  id: number;
+  invoice_number: string;
   category: string;
   name: string;
   description: string;
   startDate: string;
   endDate: string;
   status: transactions_status;
+  payment_method?: transactions_payment_method;
+  image?: string | null | undefined;
+  items?: TransactionItems[] | null | undefined;
 }

@@ -83,7 +83,6 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
         console.log('Access token expired, refreshing...');
         return refreshAccessToken(token as unknown as User);
       }
-      return token;
     },
   },
 });
@@ -92,7 +91,7 @@ async function refreshAccessToken(token: User) {
   try {
     // const url = 'YOUR_REFRESH_TOKEN_ENDPOINT';
     const response = await api.post(
-      '/auth/refreshToken',
+      '/auth/refresh-token',
       { token: token.access_token },
       {
         headers: {
