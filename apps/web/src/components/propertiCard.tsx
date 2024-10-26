@@ -17,7 +17,7 @@ export default function PropertiCard({ data }: Props) {
       className="bg-[#ffffff] rounded-lg p-3 text-center transform hover:scale-105 transition duration-200 shadow-lg min-w-[200px] flex-shrink-0 cursor-pointer"
       onClick={() => handleCardClick(data.slug_address)}
     >
-      <div className="gap">
+      <div className="gap ">
         <img
           src={data.image}
           alt={data.name}
