@@ -6,6 +6,7 @@ import { api } from '@/config/axios.config';
 import { OrderDetail } from '@/interfaces/order.interface';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
+import CheckoutDetail from './checkoutDetail';
 
 type Props = {};
 
@@ -31,5 +32,10 @@ export default function CheckoutContainer({}: Props) {
     };
     fetchOrder();
   }, []);
-  return <div>{order && <CheckoutMethod data={order} />}</div>;
+  return (
+    <div>
+      {order && <CheckoutDetail order={order} />}
+      {order && <CheckoutMethod data={order} />}
+    </div>
+  );
 }

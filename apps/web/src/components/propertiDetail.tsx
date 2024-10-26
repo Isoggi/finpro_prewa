@@ -55,31 +55,6 @@ const ProppertiDetail = ({ slug }: Props) => {
     fetchEvents();
   }, []);
 
-  //   const onAddCart = async (id: number) => {
-  //     await api
-  //       .post(
-  //         `/purchase`,
-  //         { id, quantity: 1 },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${session?.user.access_token}`,
-  //           },
-  //         },
-  //       )
-  //       .then((res) => {
-  //         Toast.fire({
-  //           icon: 'success',
-  //           title: 'Add to cart success',
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         Toast.fire({
-  //           icon: 'error',
-  //           title: error.message,
-  //         });
-  //       });
-  //   };
-
   return (
     <div className="container mx-auto max-w-screen-xl">
       <div className="top">

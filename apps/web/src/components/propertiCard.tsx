@@ -1,3 +1,4 @@
+import { property_src } from '@/config/images.config';
 import { IProperties } from '@/interfaces/property.interface';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -18,7 +19,7 @@ export default function PropertiCard({ data }: Props) {
       onClick={() => handleCardClick(data.slug_address)}
     >
       <img
-        src={data.image}
+        src={`${property_src}${data.image}`}
         alt={data.name}
         className="w-full h-24 md:h-32 lg:h-40 object-cover rounded-md mb-2"
       />
