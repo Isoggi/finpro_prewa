@@ -14,7 +14,7 @@ export class AuthRouter {
   private routes(): void {
     this.router.post('/login', this.authController.login);
     this.router.post('/register', this.authController.register);
-
+    // this.router.post('/google', this.authController.socialAccount)
     this.router.patch('/verify-password', this.authController.verifyPassword);
     this.router.patch(
       '/confirm-verify-password',

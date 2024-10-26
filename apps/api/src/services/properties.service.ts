@@ -47,37 +47,6 @@ export class PropertiesService {
     return data;
   }
 
-  static async getByIdService(req: Request) {
-    const { id } = req.params;
-    if (id) {
-      const data = await prisma.properties.findUnique({
-        include: {
-          rooms: {
-            include: {
-              available: true,
-              peakSeasonRate: {
-                select: {
-                  id: true,
-                  room_id: true,
-                  rates: true,
-                  start_date: true,
-                  end_date: true,
-                },
-              },
-            },
-          },
-          address: { include: { provinces: true, district: true } },
-          reviews: true,
-          category: true,
-        },
-        where: { slug_address: id },
-      });
-      console.log(data);
-      return data;
-    }
-    return null;
-  }
-
   static async search(req: Request) {
     const {
       startDate,
@@ -340,10 +309,102 @@ export class PropertiesService {
       totalPages: Math.ceil(totalCount / Number(size)),
     };
   }
+  static async getByIdService(req: Request) {
+    const { id } = req.params;
+    if (id) {
+      const data = await prisma.properties.findUnique({
+        include: {
+          rooms: {
+            include: {
+              available: true,
+              peakSeasonRate: {
+                select: {
+                  id: true,
+                  room_id: true,
+                  rates: true,
+                  start_date: true,
+                  end_date: true,
+                },
+              },
+            },
+          },
+          address: { include: { provinces: true, district: true } },
+          reviews: true,
+          category: true,
+        },
+        where: { slug_address: id },
+      });
+      console.log(data);
+      return data;
+    }
+    return null;
+  }
 
-  // static async searchProperti(req: Request) {
-  //   const {
-  //    startDate,
-  //   }
-  // }
+  static async createProperti(req: Request) {
+    const {
+      tenant_id,
+      name,
+      description,
+      category_id,
+      address_id,
+      slug_address,
+      image,
+    } = req.body;
+
+    try {
+      const newProperty = await prisma.properties.create({
+        data: {
+          tenant_id,
+          name,
+          description,
+          category_id,
+          address_id,
+          slug_address,
+          image,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+      return newProperty;
+    } catch (error) {
+      throw new ErrorHandler(500);
+    }
+  }
+
+  static async updateProperti(req: Request) {
+    const { id } = req.params;
+    const { tenant_id, name, description, category_id, address_id, image } =
+      req.body;
+
+    try {
+      const updatedProperty = await prisma.properties.update({
+        where: { id: Number(id) },
+        data: {
+          tenant_id,
+          name,
+          description,
+          category_id,
+          address_id,
+          image,
+          updated_at: new Date(),
+        },
+      });
+      return updatedProperty;
+    } catch (error) {
+      throw new ErrorHandler(500);
+    }
+  }
+
+  static async deleteProperti(req: Request) {
+    const { id } = req.params;
+
+    try {
+      const deletedProperty = await prisma.properties.delete({
+        where: { id: Number(id) },
+      });
+      return deletedProperty;
+    } catch (error) {
+      throw new ErrorHandler(500);
+    }
+  }
 }
