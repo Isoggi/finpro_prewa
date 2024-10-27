@@ -20,7 +20,7 @@ export class RoomService {
   }
 
   static async createRoom(req: Request) {
-    const { property_id, name, description, price, capacity } = req.body;
+    const { property_id, name, description, price, capacity, image } = req.body;
 
     try {
       const newRoom = await prisma.rooms.create({
@@ -30,6 +30,7 @@ export class RoomService {
           description,
           price,
           capacity,
+          image,
           created_at: new Date(),
           updated_at: new Date(),
         },

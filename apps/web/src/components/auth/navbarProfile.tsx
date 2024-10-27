@@ -6,6 +6,7 @@ import {
   FaUser,
   FaChartArea,
 } from 'react-icons/fa';
+import { LuTableProperties } from 'react-icons/lu'; // Import the new icon
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
@@ -44,6 +45,7 @@ export default function NavbarProfileComponent() {
       <div className="flex items-center space-x-4">
         {user ? (
           <>
+            {/* Dashboard or Cart button based on user role */}
             {user.user_role === 'tenant' ? (
               <Link
                 href="/dashboard"
@@ -62,24 +64,36 @@ export default function NavbarProfileComponent() {
               </Link>
             )}
 
-            <Link href="/profile" title="Profile">
-              {user.image ? (
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
-                  <img
-                    title="avatar"
-                    src={
-                      user?.image
-                        ? avatar_src + user?.image
-                        : '/path/to/default-avatar.png'
-                    }
-                    alt="User Avatar"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <FaUser className="text-zinc-400 text-2xl hover:text-gray-700 transition-colors" />
-              )}
-            </Link>
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/createProperti"
+                title="Create"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <LuTableProperties />
+              </Link>
+            )}
+
+            {user.user_role !== 'tenant' && (
+              <Link href="/profile" title="Profile">
+                {user.image ? (
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
+                    <img
+                      title="avatar"
+                      src={
+                        user?.image
+                          ? avatar_src + user?.image
+                          : '/path/to/default-avatar.png'
+                      }
+                      alt="User Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <FaUser className="text-zinc-400 text-2xl hover:text-gray-700 transition-colors" />
+                )}
+              </Link>
+            )}
 
             <div className="text-sm">
               <span className="truncate">Hi, {user.name}</span>

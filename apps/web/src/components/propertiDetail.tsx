@@ -11,10 +11,9 @@ import withReactContent from 'sweetalert2-react-content';
 
 import Map from '@/components/map';
 import Footer from '@/components/footer';
+import RoomDetail from './roomDetail';
 
-import { User } from 'next-auth';
 import { property_src } from '@/config/images.config';
-
 
 const MySwal = withReactContent(Swal);
 
@@ -29,14 +28,17 @@ const ProppertiDetail = ({ slug }: Props) => {
     field: 'name',
     order: 'asc',
   });
+  const [selectedRoomId, setSelectedRoomId] = React.useState<string | null>(
+    null,
+  ); // State for selected room ID
 
   React.useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchProperties = async () => {
       const response = await api.get(`/properti/${slug}`);
       const data = response.data.data as IProperties;
       setProperti(data);
     };
-    fetchEvents();
+    fetchProperties();
   }, [slug]);
 
   // Sorting logic for rooms based on selected options
@@ -62,6 +64,10 @@ const ProppertiDetail = ({ slug }: Props) => {
     setSortOption({ field, order });
   };
 
+  const handleSelectRoom = (roomId: string) => {
+    setSelectedRoomId(roomId); // Set the selected room ID
+  };
+
   return (
     <div className="container mx-auto max-w-screen-xl">
       <div className="top">
@@ -82,7 +88,6 @@ const ProppertiDetail = ({ slug }: Props) => {
           </ul>
         </div>
         <div className="flex flex-col md:flex-row md:space-x-4 py-4">
-          {/* Property Details Section */}
           <div className="bg-white p-4 rounded-lg shadow-sm md:w-2/3">
             <h3 className="text-xl font-semibold mb-2">{properties?.name}</h3>
             <p className="text-gray-700">{properties?.description}</p>
@@ -108,7 +113,6 @@ const ProppertiDetail = ({ slug }: Props) => {
         </div>
 
         <div className="flex mt-6">
-          {/* Property List and Sorting (Left Column) */}
           <div className="w-full md:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Sort by</h2>
             <div className="mb-4">
@@ -129,8 +133,6 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
 
-
-          {/* Rooms Section (Right Column) */}
           <div className="w-full md:w-2/3 p-4">
             <h2 className="text-2xl font-bold mb-4">Rooms</h2>
             <div className="space-y-6">
@@ -145,7 +147,6 @@ const ProppertiDetail = ({ slug }: Props) => {
                     width={200}
                     height={150}
                     className="rounded-lg object-cover"
-
                   />
                   <div className="ml-6 flex-col justify-between">
                     <div>
@@ -157,9 +158,12 @@ const ProppertiDetail = ({ slug }: Props) => {
                         Rp {room.price.toLocaleString()}
                       </p>
                     </div>
-                    <button className="mt-4 bg-[#7AB2D3] text-white py-2 px-4 rounded-lg">
+                    <Link
+                      href={`/room/${room.id}`}
+                      className="mt-4 bg-[#7AB2D3] text-white py-2 px-4 rounded-lg"
+                    >
                       Select Room
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -167,6 +171,7 @@ const ProppertiDetail = ({ slug }: Props) => {
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );
