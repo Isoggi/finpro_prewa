@@ -1,3 +1,4 @@
+import { property_src } from '@/config/images.config';
 import { IProperties } from '@/interfaces/property.interface';
 import { useRouter } from 'next/navigation';
 import React from 'react';

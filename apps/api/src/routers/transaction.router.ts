@@ -23,6 +23,12 @@ export class TransactionRouter {
       uploader('PAYMENT', 'trx').single('image'),
       this.transactionController.uploadProof,
     );
+
+    this.router.post(
+      '/create',
+      AuthMiddleware,
+      this.transactionController.createTransaction,
+    );
   }
   public getRouter(): Router {
     return this.router;

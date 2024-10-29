@@ -2,14 +2,25 @@
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 type Props = {};
 
 export default function SearchBarComponent({}: Props) {
-  const today = new Date().toISOString().split('T')[0];
-
+  const params = useSearchParams();
+  const today = params.get('start_date')
+    ? new Date(Date.parse(params.get('start_date') ?? ''))
+        .toISOString()
+        .split('T')[0]
+    : new Date().toISOString().split('T')[0];
+  const tomorrow = params.get('end_date')
+    ? new Date(Date.parse(params.get('end_date') ?? ''))
+        .toISOString()
+        .split('T')[0]
+    : new Date(new Date().setDate(new Date().getDate() + 1))
+        .toISOString()
+        .split('T')[0];
   const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState(today);
+  const [endDate, setEndDate] = useState(tomorrow);
   const [categories, SetCategories] = useState('');
   const [location, setLocation] = useState('');
 
@@ -51,8 +62,7 @@ export default function SearchBarComponent({}: Props) {
 
   return (
     <div>
-
-      {user?.user_role === 'user' && (
+      {user?.user_role !== 'tenant' && (
         <div className="bg-[#e6f2fe] dark:bg-base-100 p-6 shadow-md">
           <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-base-100 p-6 rounded-full shadow-lg">
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
@@ -74,6 +84,7 @@ export default function SearchBarComponent({}: Props) {
               <input
                 type="date"
                 id="Start Date"
+                title="tanggal mulai"
                 value={startDate}
                 onChange={handleStartDateChange}
                 className="w-full bg-transparent focus:outline-none"
@@ -82,6 +93,7 @@ export default function SearchBarComponent({}: Props) {
               <input
                 type="date"
                 id="End Date"
+                title="tangal selesai"
                 value={endDate}
                 onChange={handleEndDateChange}
                 className="w-full bg-transparent focus:outline-none"

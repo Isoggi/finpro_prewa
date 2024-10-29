@@ -206,4 +206,52 @@ export class TransactionService {
 
     return result;
   }
+
+  static async createTransaction(req: Request) {
+    const user = req.user;
+    const { room_id, start_date, end_date } = req.body;
+
+    const room = await prisma.rooms.findUnique({
+      where: { id: Number(room_id) },
+      include: { available: true, peakSeasonRate: true },
+    });
+    if (!room) {
+      throw new ErrorHandler('Room not found', 404);
+    }
+
+    await prisma.$transaction(async (trx) => {
+      const newTrx = await trx.transactions.create({
+        data: {
+          invoice_number: `ORDER-${new Date().getTime()}`,
+          amount: 0,
+          payment_method: 'manual',
+          status: transactions_status.waitingpayment,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          user_id: Number(user?.id),
+        },
+      });
+      const items = await trx.transactionItems.create({
+        data: {
+          transaction_id: newTrx.id,
+          room_id: Number(room_id),
+          start_date: new Date(start_date),
+          end_date: new Date(end_date),
+          status: transaction_items_status.waitingpayment,
+          total_price: room.peakSeasonRate.length
+            ? room.peakSeasonRate[0].rates + room.price.toNumber()
+            : room.price.toNumber(),
+        },
+      });
+
+      await trx.transactions.update({
+        where: { id: newTrx.id },
+        data: {
+          amount: items.total_price,
+        },
+      });
+
+      return newTrx.invoice_number;
+    });
+  }
 }
