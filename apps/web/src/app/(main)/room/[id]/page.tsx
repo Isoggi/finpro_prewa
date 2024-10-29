@@ -23,7 +23,6 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="container mx-auto max-w-screen-xl">
-   
       <h1 className="text-3xl font-bold">{room.name}</h1>
       <Image
         src={room.image || '/default-room.jpg'}
@@ -38,13 +37,11 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
       <div className="mt-6">
         <h2 className="text-2xl font-semibold">Additional Details</h2>
 
-       
         <div className="mt-4">
           <h3 className="font-semibold">Category:</h3>
           <p>{room.category?.name}</p>
         </div>
 
-   
         <div className="mt-4">
           <h3 className="font-semibold">Address:</h3>
           <p>{room.address?.detail}</p>
@@ -53,29 +50,35 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
           </p>
         </div>
 
-       
         <div className="mt-4">
           <h3 className="font-semibold">Availability:</h3>
-          {room.availability.map((avail) => (
-            <div key={avail.id} className="border-b border-gray-200 py-2">
-              <p>
-                {avail.name} - Rp {avail.price.toLocaleString()}
-              </p>
-              <p>Capacity: {avail.capacity}</p>
-            </div>
-          ))}
+          {room.availability?.length ? (
+            room.availability.map((avail) => (
+              <div key={avail.id} className="border-b border-gray-200 py-2">
+                <p>
+                  {avail.name} - Rp {avail.price.toLocaleString()}
+                </p>
+                <p>Capacity: {avail.capacity}</p>
+              </div>
+            ))
+          ) : (
+            <p>No availability information available.</p>
+          )}
         </div>
 
-       
         <div className="mt-4">
           <h3 className="font-semibold">Peak Season Rate:</h3>
-          <p>{room.peakSeasonRate?.name}</p>
-          <p>Price: Rp {room.peakSeasonRate?.price.toLocaleString()}</p>
-          <p>Capacity: {room.peakSeasonRate?.capacity}</p>
+          <p>{room.peakSeasonRate?.name || 'Not available'}</p>
+          <p>
+            Price: Rp{' '}
+            {room.peakSeasonRate?.price
+              ? room.peakSeasonRate.price.toLocaleString()
+              : 'Not available'}
+          </p>
+          <p>Capacity: {room.peakSeasonRate?.capacity || 'Not available'}</p>
         </div>
       </div>
 
- 
       <Footer />
     </div>
   );

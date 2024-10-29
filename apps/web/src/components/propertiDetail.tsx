@@ -7,9 +7,10 @@ import { FaMapMarker } from 'react-icons/fa';
 import Image from 'next/image';
 // import Map from '@/components/map';
 import Footer from '@/components/footer';
+import RoomDetail from './roomDetail';
 
+import { property_src } from '@/config/images.config';
 import { User } from 'next-auth';
-// import { property_src } from '@/config/images.config';
 import { useRouter, useSearchParams } from 'next/navigation';
 import MapLocation from './maplocation';
 import { IRooms } from '@/interfaces/property.interface';
@@ -39,12 +40,12 @@ const ProppertiDetail = ({ slug }: Props) => {
     if (session.data?.user) setUser(session.data?.user);
   }, [session]);
   React.useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchProperties = async () => {
       const response = await api.get(`/properti/${slug}`);
       const data = response.data.data as IProperties;
       setProperti(data);
     };
-    fetchEvents();
+    fetchProperties();
   }, [slug]);
 
   // Sorting logic for rooms based on selected options
@@ -122,7 +123,6 @@ const ProppertiDetail = ({ slug }: Props) => {
           </ul>
         </div>
         <div className="flex flex-col md:flex-row md:space-x-4 py-4">
-          {/* Property Details Section */}
           <div className="bg-white p-4 rounded-lg shadow-sm md:w-2/3">
             <h3 className="text-xl font-semibold mb-2">{properties?.name}</h3>
             <p className="text-gray-700">{properties?.description}</p>
@@ -200,15 +200,13 @@ const ProppertiDetail = ({ slug }: Props) => {
                         Rp {room.price.toLocaleString()}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      disabled={loading}
-                      onClick={() => handleOrderRoom(room)}
-                      title={`select ${room.name}`}
-                      className="mt-4 bg-[#7AB2D3] text-white py-2 px-4 rounded-lg disabled:btn-disabled disabled:cursor-not-allowed"
+                    <Link
+                      href={`/room/${room.id}`}
+                      className="mt-4 bg-[#7AB2D3] text-white py-2 px-4 rounded-lg"
                     >
-                      Pilih Kamar
-                    </button>
+                      Select Room
+                    </Link>
+
                   </div>
                 </div>
               ))}
@@ -216,6 +214,7 @@ const ProppertiDetail = ({ slug }: Props) => {
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );

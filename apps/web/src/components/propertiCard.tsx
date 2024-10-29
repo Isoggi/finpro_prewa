@@ -2,7 +2,7 @@ import { property_src } from '@/config/images.config';
 import { IProperties } from '@/interfaces/property.interface';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-
+import { properties_src } from '@/config/images.config';
 type Props = {
   data: IProperties;
 };
@@ -20,7 +20,7 @@ export default function PropertiCard({ data }: Props) {
     >
       <div className="gap ">
         <img
-          src={data.image}
+          src={properties_src + data.image}
           alt={data.name}
           className="w-full h-24 md:h-32 lg:h-40 object-cover rounded-md mb-2"
         />
