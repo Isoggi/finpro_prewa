@@ -1,14 +1,15 @@
 import { ErrorHandler } from '@/helpers/response.helper';
 import prisma from '@/prisma';
 import { Request } from 'express';
+import fs from 'fs';
+import path from 'path';
+
 export class PropertiesService {
+  // Fungsi untuk mendapatkan properti berdasarkan slug
   static async get(req: Request) {
     const { slug } = req.params;
-    console.log('access search by id:');
     const data = await prisma.properties.findMany({
-      where: {
-        slug_address: slug,
-      },
+      where: { slug_address: slug },
       select: {
         id: true,
         name: true,
@@ -27,26 +28,18 @@ export class PropertiesService {
             id: true,
             lng: true,
             lat: true,
-            provinces: {
-              select: {
-                name: true,
-              },
-            },
-            district: {
-              select: {
-                name: true,
-              },
-            },
+            provinces: { select: { name: true } },
+            district: { select: { name: true } },
             detail: true,
           },
         },
         tenant: { select: { id: true, name: true } },
       },
     });
-
     return data;
   }
 
+  // Fungsi untuk mencari properti berdasarkan beberapa kriteria
   static async search(req: Request) {
     const {
       startDate,
@@ -58,78 +51,45 @@ export class PropertiesService {
       size = 8,
       sortBy = 'desc',
     } = req.query;
-    type sortByList = 'name' | 'price';
-    console.log('access search properties');
+
     const [data, totalCount] = await Promise.all([
       prisma.properties.findMany({
         where: {
-          // Filter by property name if provided
-          name: {
-            contains: name as string | undefined,
-          },
-          // Filter by location (province, district, or address detail)
-
+          name: { contains: name as string | undefined },
           address: {
             is: {
               OR: [
-                {
-                  detail: {
-                    contains: location?.toString(),
-                  },
-                },
-                {
-                  district: {
-                    name: {
-                      contains: location?.toString(),
-                    },
-                  },
-                },
-                {
-                  provinces: {
-                    name: {
-                      contains: location?.toString(),
-                    },
-                  },
-                },
+                { detail: { contains: location?.toString() } },
+                { district: { name: { contains: location?.toString() } } },
+                { provinces: { name: { contains: location?.toString() } } },
               ],
             },
           },
-
-          // Filter by property category if provided
           category: { name: { contains: category as string | undefined } },
-          // Filter rooms by availability either null or stock > 1 between startDate and endDate
           rooms: {
             some: {
               OR: [
                 {
-                  // Case 1: Room has no availability records for the given date range (null availability)
                   available: {
                     none: {
                       date: {
                         gte: startDate
-                          ? new Date(startDate.toString()).toDateString()
+                          ? new Date(startDate.toString())
                           : undefined,
-                        lte: endDate
-                          ? new Date(endDate.toString()).toDateString()
-                          : undefined,
+                        lte: endDate ? new Date(endDate.toString()) : undefined,
                       },
                     },
                   },
                 },
                 {
-                  // Case 2: Room has availability with stock > 1
                   available: {
                     some: {
-                      stock: {
-                        gte: 1,
-                      },
+                      stock: { gte: 1 },
                       date: {
                         gte: startDate
-                          ? new Date(startDate.toString()).toDateString()
+                          ? new Date(startDate.toString())
                           : undefined,
-                        lte: endDate
-                          ? new Date(endDate.toString()).toDateString()
-                          : undefined,
+                        lte: endDate ? new Date(endDate.toString()) : undefined,
                       },
                     },
                   },
@@ -139,7 +99,6 @@ export class PropertiesService {
           },
         },
         orderBy: { created_at: sortBy as 'desc' | 'asc' },
-        // Skip and take for pagination
         skip: (Number(page) - 1) * Number(size),
         take: Number(size),
         select: {
@@ -152,62 +111,46 @@ export class PropertiesService {
             where: {
               OR: [
                 {
-                  // Include rooms with no availability (null availability)
                   available: {
                     none: {
                       date: {
                         gte: startDate
-                          ? new Date(startDate.toString()).toDateString()
+                          ? new Date(startDate.toString())
                           : undefined,
-                        lte: endDate
-                          ? new Date(endDate.toString()).toDateString()
-                          : undefined,
+                        lte: endDate ? new Date(endDate.toString()) : undefined,
                       },
                     },
                   },
                 },
                 {
-                  // Include rooms with availability where stock > 1
                   available: {
                     some: {
-                      stock: {
-                        gte: 1,
-                      },
+                      stock: { gte: 1 },
                       date: {
                         gte: startDate
-                          ? new Date(startDate.toString()).toDateString()
+                          ? new Date(startDate.toString())
                           : undefined,
-                        lte: endDate
-                          ? new Date(endDate.toString()).toDateString()
-                          : undefined,
+                        lte: endDate ? new Date(endDate.toString()) : undefined,
                       },
                     },
                   },
                 },
               ],
             },
-            orderBy: {
-              price: sortBy as unknown as 'asc' | 'desc',
-            },
+            orderBy: { price: sortBy as unknown as 'asc' | 'desc' },
             select: {
               name: true,
               price: true,
               peakSeasonRate: {
                 where: {
                   start_date: {
-                    lte: endDate
-                      ? new Date(endDate.toString()).toDateString()
-                      : undefined,
+                    lte: endDate ? new Date(endDate.toString()) : undefined,
                   },
                   end_date: {
-                    gte: startDate
-                      ? new Date(startDate.toString()).toDateString()
-                      : undefined,
+                    gte: startDate ? new Date(startDate.toString()) : undefined,
                   },
                 },
-                select: {
-                  rates: true,
-                },
+                select: { rates: true },
               },
             },
           },
@@ -223,73 +166,45 @@ export class PropertiesService {
       }),
       prisma.properties.count({
         where: {
-          // Filter by property name if provided
-          name: {
-            contains: name?.toString(),
-          },
-          // Filter by location (province, district, or address detail)
+          name: { contains: name?.toString() },
           OR: [
             {
               address: {
-                provinces: {
-                  name: {
-                    contains: location?.toString(),
-                  },
-                },
+                provinces: { name: { contains: location?.toString() } },
               },
             },
             {
               address: {
-                district: {
-                  name: {
-                    contains: location?.toString(),
-                  },
-                },
+                district: { name: { contains: location?.toString() } },
               },
             },
-            {
-              address: {
-                detail: {
-                  contains: location?.toString(),
-                },
-              },
-            },
+            { address: { detail: { contains: location?.toString() } } },
           ],
-          // Filter by property category if provided
           category: { name: { contains: category as string | undefined } },
-          // Filter rooms by availability either null or stock > 1 between startDate and endDate
           rooms: {
             some: {
               OR: [
                 {
-                  // Case 1: Room has no availability records for the given date range (null availability)
                   available: {
                     none: {
                       date: {
                         gte: startDate
-                          ? new Date(startDate.toString()).toDateString()
+                          ? new Date(startDate.toString())
                           : undefined,
-                        lte: endDate
-                          ? new Date(endDate.toString()).toDateString()
-                          : undefined,
+                        lte: endDate ? new Date(endDate.toString()) : undefined,
                       },
                     },
                   },
                 },
                 {
-                  // Case 2: Room has availability with stock > 1
                   available: {
                     some: {
-                      stock: {
-                        gte: 1,
-                      },
+                      stock: { gte: 1 },
                       date: {
                         gte: startDate
-                          ? new Date(startDate.toString()).toDateString()
+                          ? new Date(startDate.toString())
                           : undefined,
-                        lte: endDate
-                          ? new Date(endDate.toString()).toDateString()
-                          : undefined,
+                        lte: endDate ? new Date(endDate.toString()) : undefined,
                       },
                     },
                   },
@@ -309,10 +224,12 @@ export class PropertiesService {
       totalPages: Math.ceil(totalCount / Number(size)),
     };
   }
+
   static async getByIdService(req: Request) {
     const { id } = req.params;
     if (id) {
       const data = await prisma.properties.findUnique({
+        where: { slug_address: id },
         include: {
           rooms: {
             include: {
@@ -332,9 +249,7 @@ export class PropertiesService {
           reviews: true,
           category: true,
         },
-        where: { slug_address: id },
       });
-      console.log(data);
       return data;
     }
     return null;
@@ -348,62 +263,185 @@ export class PropertiesService {
       category_id,
       address_id,
       slug_address,
-      image,
     } = req.body;
 
     try {
+      if (!tenant_id || !name || !category_id || !address_id) {
+        throw new Error('Missing required fields');
+      }
+
+      const parsedTenantId = parseInt(tenant_id);
+      const parsedCategoryId = parseInt(category_id);
+      const parsedAddressId = parseInt(address_id);
+
+      if (
+        isNaN(parsedTenantId) ||
+        isNaN(parsedCategoryId) ||
+        isNaN(parsedAddressId)
+      ) {
+        throw new Error('Invalid ID format');
+      }
+
+      const [tenant, category, address] = await Promise.all([
+        prisma.tenants.findUnique({ where: { id: parsedTenantId } }),
+        prisma.categories.findUnique({ where: { id: parsedCategoryId } }),
+        prisma.address.findUnique({ where: { id: parsedAddressId } }),
+      ]);
+
+      if (!tenant || !category || !address) {
+        throw new Error('Related record not found');
+      }
+
+      let image = null;
+      if (req.file) {
+        image = `images/properties/${req.file.filename}`;
+      }
+
+      const finalSlugAddress =
+        slug_address || name.toLowerCase().replace(/\s+/g, '-');
+
       const newProperty = await prisma.properties.create({
         data: {
-          tenant_id,
           name,
           description,
-          category_id,
-          address_id,
-          slug_address,
+          slug_address: finalSlugAddress,
           image,
+          tenant: { connect: { id: parsedTenantId } },
+          category: { connect: { id: parsedCategoryId } },
+          address: { connect: { id: parsedAddressId } },
           created_at: new Date(),
           updated_at: new Date(),
         },
+        include: {
+          tenant: true,
+          category: true,
+          address: true,
+        },
       });
+
       return newProperty;
     } catch (error) {
+      if (req.file) {
+        const filePath = path.join(
+          __dirname,
+          '/../public/images/properties',
+          req.file.filename,
+        );
+        fs.unlink(filePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+        });
+      }
+
+      console.error('Property creation error:', error);
+
+      if (error instanceof Error) {
+        switch (error.message) {
+          case 'Missing required fields':
+            throw new ErrorHandler(400);
+          case 'Invalid ID format':
+            throw new ErrorHandler(400);
+          case 'Related record not found':
+            throw new ErrorHandler(404);
+          default:
+            throw new ErrorHandler(500);
+        }
+      }
+
       throw new ErrorHandler(500);
     }
   }
 
   static async updateProperti(req: Request) {
     const { id } = req.params;
-    const { tenant_id, name, description, category_id, address_id, image } =
-      req.body;
+    const { tenant_id, name, description, category_id, address_id } = req.body;
 
     try {
+      const existingProperty = await prisma.properties.findUnique({
+        where: { id: Number(id) },
+        select: { image: true },
+      });
+
+      let image = existingProperty?.image;
+      if (req.file) {
+        if (existingProperty?.image) {
+          const oldFilePath = path.join(
+            __dirname,
+            '../public',
+            existingProperty.image,
+          );
+          fs.unlink(oldFilePath, (err) => {
+            if (err && err.code !== 'ENOENT')
+              console.error('Error deleting old file:', err);
+          });
+        }
+        image = `images/properties/${req.file.filename}`;
+      }
+
       const updatedProperty = await prisma.properties.update({
         where: { id: Number(id) },
         data: {
-          tenant_id,
+          tenant_id: parseInt(tenant_id),
           name,
           description,
-          category_id,
-          address_id,
+          category_id: parseInt(category_id),
+          address_id: parseInt(address_id),
           image,
           updated_at: new Date(),
         },
       });
+
       return updatedProperty;
     } catch (error) {
+      // If there was an error and we uploaded a new file, delete it
+      if (req.file) {
+        const filePath = path.join(
+          __dirname,
+          '../public',
+          'images/properties',
+          req.file.filename,
+        );
+        fs.unlink(filePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+        });
+      }
       throw new ErrorHandler(500);
     }
   }
-
   static async deleteProperti(req: Request) {
     const { id } = req.params;
 
     try {
+      // Get the property details first to get the image path
+      const property = await prisma.properties.findUnique({
+        where: { id: Number(id) },
+        select: { image: true },
+      });
+
+      if (!property) {
+        throw new ErrorHandler(404);
+      }
+
+      // Delete the property from database
       const deletedProperty = await prisma.properties.delete({
         where: { id: Number(id) },
       });
+
+      // If property has an image, delete the image file
+      if (property.image) {
+        const imagePath = path.join(__dirname, '../public', property.image);
+        fs.unlink(imagePath, (err) => {
+          if (err && err.code !== 'ENOENT') {
+            console.error('Error deleting image file:', err);
+            // We don't throw here because the property is already deleted
+          }
+        });
+      }
+
       return deletedProperty;
     } catch (error) {
+      if (error instanceof ErrorHandler) {
+        throw error;
+      }
       throw new ErrorHandler(500);
     }
   }
