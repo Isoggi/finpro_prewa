@@ -27,18 +27,12 @@ const ProppertiDetail = ({ slug }: Props) => {
     field: 'name',
     order: 'asc',
   });
-  const [loading, setLoading] = React.useState<boolean>(false);
 
-  const router = useRouter();
+  // const router = useRouter();
   const params = useSearchParams();
-  const start_date = params.get('start_date');
-  const end_date = params.get('end_date');
-  const session = useSession();
-  const [user, setUser] = React.useState<User | null>(null);
-  React.useEffect(() => {
-    if (user) return;
-    if (session.data?.user) setUser(session.data?.user);
-  }, [session]);
+  // const start_date = params.get('start_date');
+  // const end_date = params.get('end_date');
+  
   React.useEffect(() => {
     const fetchProperties = async () => {
       const response = await api.get(`/properti/${slug}`);
@@ -70,39 +64,6 @@ const ProppertiDetail = ({ slug }: Props) => {
   const handleSortChange = (field: string, order: string) => {
     setSortOption({ field, order });
   };
-
-  const handleOrderRoom = async (room: IRooms) => {
-    try {
-      setLoading(true);
-      const response = await api.post(
-        '/order/create',
-        {
-          room_id: room.id,
-          start_date: start_date,
-          end_date: end_date,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.access_token}`,
-          },
-        },
-      );
-      const invoice = response.data.data;
-      if (invoice) {
-        setLoading(false);
-
-        router.push(`/periksa?inv=${invoice}`);
-      }
-    } catch (error) {
-      showAlert({
-        title: 'Gagal bikin transaksi',
-        text: 'Silahkan coba lagi',
-        icon: 'error',
-      });
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="container mx-auto max-w-screen-xl">
       <div className="top">

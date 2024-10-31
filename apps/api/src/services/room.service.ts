@@ -11,10 +11,19 @@ export class RoomService {
         include: {
           available: true,
           peakSeasonRate: true,
+          property: {
+            include: {
+              address: { include: { district: true, provinces: true } },
+            },
+          },
         },
       });
       console.log(data);
-      return data;
+      return {
+        ...data,
+        properties: data?.property,
+        address: data?.property.address,
+      };
     }
     return null;
   }

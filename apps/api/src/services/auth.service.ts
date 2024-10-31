@@ -63,7 +63,26 @@ export class AuthService {
     }
   }
   static async register(req: Request) {
-    const { name, email, phone_number, role } = req.body;
+    const { name, email, phone_number, role, oauth_id, oauth_provider } =
+      req.body;
+
+    if (oauth_id && oauth_provider) {
+      const result = await prisma.$transaction(async (trx) => {
+        return await trx.users.create({
+          data: {
+            name,
+            email,
+            phone_number,
+            role: users_role.user,
+            isVerified: true,
+            verified_at: new Date(),
+            // oauth_id,
+            // oauth_provider
+          },
+        });
+      });
+      return result;
+    }
     // const user_role = role.toLowerCase() as unknown as users_role;
     const data: Prisma.UsersCreateInput = {
       name,
@@ -328,6 +347,7 @@ export class AuthService {
     const { user, body } = req;
     const { token } = body;
     delete user?.password;
+    console.log('user refresh token:', user);
     if (user) {
       console.log('refresh-token: user');
       return generateToken(user, '3h');
@@ -335,5 +355,9 @@ export class AuthService {
       console.log('refresh-token: token');
       return generateToken(decodeToken(token), '3h');
     }
+  }
+
+  static async oAuthHandler(req: Request) {
+    const { oauth_id, oauth_provider } = req.body;
   }
 }
