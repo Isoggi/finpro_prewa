@@ -23,6 +23,12 @@ export default function OrderContainerComponent({ url }: Props) {
   const searchParams = useSearchParams();
   const session = useSession();
 
+  setEndDate(searchParams.get('endDate') ?? '');
+  setStartDate(searchParams.get('startDate') ?? '');
+  setOrderNumber(searchParams.get('orderNumber') ?? '');
+  // const page = searchParams.get('page') ? searchParams.get('page') : 1;
+  // const size = searchParams.get('size') ? searchParams.get('size') : 8;
+
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     if (user) return;

@@ -5,33 +5,40 @@ import { IProperties } from '@/interfaces/property.interface';
 import { api } from '@/config/axios.config';
 import { FaMapMarker } from 'react-icons/fa';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-
-import Map from '@/components/map';
+// import Map from '@/components/map';
 import Footer from '@/components/footer';
 import RoomDetail from './roomDetail';
 
 import { property_src } from '@/config/images.config';
-
-const MySwal = withReactContent(Swal);
+import { User } from 'next-auth';
+import { useRouter, useSearchParams } from 'next/navigation';
+import MapLocation from './maplocation';
+import { IRooms } from '@/interfaces/property.interface';
+import { useSession } from 'next-auth/react';
+import { showAlert } from '@/lib/utils';
 
 type Props = {
   slug: string;
 };
 
 const ProppertiDetail = ({ slug }: Props) => {
-  const { data: session } = useSession();
   const [properties, setProperti] = React.useState<IProperties | null>(null);
   const [sortOption, setSortOption] = React.useState({
     field: 'name',
     order: 'asc',
   });
-  const [selectedRoomId, setSelectedRoomId] = React.useState<string | null>(
-    null,
-  ); // State for selected room ID
+  const [loading, setLoading] = React.useState<boolean>(false);
 
+  const router = useRouter();
+  const params = useSearchParams();
+  const start_date = params.get('start_date');
+  const end_date = params.get('end_date');
+  const session = useSession();
+  const [user, setUser] = React.useState<User | null>(null);
+  React.useEffect(() => {
+    if (user) return;
+    if (session.data?.user) setUser(session.data?.user);
+  }, [session]);
   React.useEffect(() => {
     const fetchProperties = async () => {
       const response = await api.get(`/properti/${slug}`);
@@ -64,8 +71,36 @@ const ProppertiDetail = ({ slug }: Props) => {
     setSortOption({ field, order });
   };
 
-  const handleSelectRoom = (roomId: string) => {
-    setSelectedRoomId(roomId); // Set the selected room ID
+  const handleOrderRoom = async (room: IRooms) => {
+    try {
+      setLoading(true);
+      const response = await api.post(
+        '/order/create',
+        {
+          room_id: room.id,
+          start_date: start_date,
+          end_date: end_date,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.access_token}`,
+          },
+        },
+      );
+      const invoice = response.data.data;
+      if (invoice) {
+        setLoading(false);
+
+        router.push(`/periksa?inv=${invoice}`);
+      }
+    } catch (error) {
+      showAlert({
+        title: 'Gagal bikin transaksi',
+        text: 'Silahkan coba lagi',
+        icon: 'error',
+      });
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,17 +142,23 @@ const ProppertiDetail = ({ slug }: Props) => {
           {/* Map Section */}
           <div className="md:w-2/3">
             {properties?.address && (
-              <Map lat={properties.address.lat} lng={properties.address.lng} />
+              // <Map lat={properties.address.lat} lng={properties.address.lng} />
+              <MapLocation
+                lat={properties.address.lat}
+                lng={properties.address.lng}
+              />
             )}
           </div>
         </div>
 
         <div className="flex mt-6">
-          <div className="w-full md:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
+          {/* Property List and Sorting (Left Column) */}
+          <div className="w-full lg:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Sort by</h2>
             <div className="mb-4">
               <label className="block mb-2 font-semibold">property list</label>
               <select
+                title="select properti list"
                 className="p-2 border rounded-lg w-full"
                 value={`${sortOption.field}-${sortOption.order}`}
                 onChange={(e) => {
@@ -133,7 +174,8 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
 
-          <div className="w-full md:w-2/3 p-4">
+          {/* Rooms Section (Right Column) */}
+          <div className="w-full lg:w-2/3 p-4">
             <h2 className="text-2xl font-bold mb-4">Rooms</h2>
             <div className="space-y-6">
               {sortedRooms.map((room) => (
@@ -164,6 +206,7 @@ const ProppertiDetail = ({ slug }: Props) => {
                     >
                       Select Room
                     </Link>
+
                   </div>
                 </div>
               ))}

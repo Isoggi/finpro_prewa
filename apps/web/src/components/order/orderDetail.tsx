@@ -66,10 +66,7 @@ export default function OrderDetailComponent({ id }: Props) {
               </p>
             </span>
 
-            {data.status === 'pending' &&
-              (data.transactionItems
-                ? data.transactionItems[0].status === 'waitingpayment'
-                : false) &&
+            {data.status === 'waitingapproval' &&
               (user?.user_role === 'tenant' ? (
                 // <button
                 //   type="button"
