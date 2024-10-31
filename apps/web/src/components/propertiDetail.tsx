@@ -30,7 +30,7 @@ const ProppertiDetail = ({ slug }: Props) => {
   });
   const [selectedRoomId, setSelectedRoomId] = React.useState<string | null>(
     null,
-  ); // State for selected room ID
+  );
 
   React.useEffect(() => {
     const fetchProperties = async () => {
@@ -41,7 +41,6 @@ const ProppertiDetail = ({ slug }: Props) => {
     fetchProperties();
   }, [slug]);
 
-  // Sorting logic for rooms based on selected options
   const sortedRooms = React.useMemo(() => {
     if (!properties) return [];
     const roomsCopy = [...properties.rooms];
@@ -65,13 +64,12 @@ const ProppertiDetail = ({ slug }: Props) => {
   };
 
   const handleSelectRoom = (roomId: string) => {
-    setSelectedRoomId(roomId); // Set the selected room ID
+    setSelectedRoomId(roomId);
   };
 
   return (
     <div className="container mx-auto max-w-screen-xl">
       <div className="top">
-        {/* Breadcrumbs */}
         <div className="breadcrumbs">
           <ul className="flex items-center space-x-2">
             <li className="flex items-center">
@@ -104,7 +102,6 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
 
-          {/* Map Section */}
           <div className="md:w-2/3">
             {properties?.address && (
               <Map lat={properties.address.lat} lng={properties.address.lng} />
@@ -139,28 +136,29 @@ const ProppertiDetail = ({ slug }: Props) => {
               {sortedRooms.map((room) => (
                 <div
                   key={room.id}
-                  className="flex items-start border rounded-lg p-4 shadow-lg"
+                  className="flex items-start border rounded-lg shadow-lg "
                 >
                   <Image
-                    src={room.image || '/default-room.jpg'}
+                    src={
+                      room.image?.includes('http')
+                        ? room.image
+                        : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+                    }
                     alt={room.name}
                     width={200}
                     height={150}
                     className="rounded-lg object-cover"
                   />
-                  <div className="ml-6 flex-col justify-between">
-                    <div>
-                      <h3 className="text-lg font-bold">{room.name}</h3>
-                      <p className="text-gray-700">{room.description}</p>
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-xl font-bold text-black">
+                  <div className=" flex-grow flex px-2 py-2 flex-col justify-between">
+                    <div className="flex justify-between xitems-start">
+                      <h3 className="text-lg mx-auto font-bold">{room.name}</h3>
+                      <p className="text-xl px-2 font-bold text-black">
                         Rp {room.price.toLocaleString()}
                       </p>
                     </div>
                     <Link
                       href={`/room/${room.id}`}
-                      className="mt-4 bg-[#7AB2D3] text-white py-2 px-4 rounded-lg"
+                      className="bg-[#7AB2D3] text-white py-1 px-3 rounded-lg mt-2 self-end text-sm"
                     >
                       Select Room
                     </Link>
@@ -171,7 +169,6 @@ const ProppertiDetail = ({ slug }: Props) => {
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );

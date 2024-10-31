@@ -6,7 +6,8 @@ import {
   FaUser,
   FaChartArea,
 } from 'react-icons/fa';
-import { LuTableProperties } from 'react-icons/lu'; // Import the new icon
+import { LuTableProperties } from 'react-icons/lu';
+import { MdBedroomChild } from 'react-icons/md';
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
@@ -45,7 +46,6 @@ export default function NavbarProfileComponent() {
       <div className="flex items-center space-x-4">
         {user ? (
           <>
-            {/* Dashboard or Cart button based on user role */}
             {user.user_role === 'tenant' ? (
               <Link
                 href="/dashboard"
@@ -67,10 +67,20 @@ export default function NavbarProfileComponent() {
             {user.user_role === 'tenant' && (
               <Link
                 href="/dashboard/createProperti"
-                title="Create"
+                title="Create Properti"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <LuTableProperties />
+              </Link>
+            )}
+
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/createRoom"
+                title="Create Room"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <MdBedroomChild />
               </Link>
             )}
 
@@ -81,9 +91,9 @@ export default function NavbarProfileComponent() {
                     <img
                       title="avatar"
                       src={
-                        user?.image
-                          ? avatar_src + user?.image
-                          : '/path/to/default-avatar.png'
+                        user.image?.includes('http')
+                          ? user.image
+                          : `${process.env.NEXT_PUBLIC_AVATAR_IMAGE}${user.image}`
                       }
                       alt="User Avatar"
                       className="w-full h-full object-cover"
