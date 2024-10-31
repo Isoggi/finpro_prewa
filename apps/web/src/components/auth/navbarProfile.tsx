@@ -14,7 +14,7 @@ import { User } from 'next-auth';
 import { users_role } from '@/interfaces/user.interface';
 import { avatar_src } from '@/config/images.config';
 import { showAlert } from '@/lib/utils';
-
+import Image from 'next/image';
 export default function NavbarProfileComponent() {
   const session = useSession();
   const [user, setUser] = useState<User | null>(null);

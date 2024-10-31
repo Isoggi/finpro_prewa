@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import AddProperti from './addProperti';
 import UpdateProperti from '@/components/properti/updateProperti';
 import DeleteProperti from '@/components/properti/deleteProperti';
-import { DecimalLocale } from 'validator';
 const prisma = new PrismaClient();
 
 const getProperti = async () => {
@@ -40,6 +39,7 @@ const getProperti = async () => {
     })),
   }));
 };
+
 const getCategory = async () => {
   const res = await prisma.categories.findMany();
   return res;
@@ -47,11 +47,6 @@ const getCategory = async () => {
 
 const getAddress = async () => {
   const res = await prisma.address.findMany();
-  return res;
-};
-
-const getRooms = async () => {
-  const res = await prisma.rooms.findMany();
   return res;
 };
 
@@ -75,6 +70,7 @@ const formProperti = async () => {
             <th>Description</th>
             <th>Category</th>
             <th>Address</th>
+            <th>Image</th>
             <th className="text-center">Actions</th>
           </tr>
         </thead>
@@ -86,13 +82,24 @@ const formProperti = async () => {
               <td>{properties.description}</td>
               <td>{properties.category.name}</td>
               <td>{properties.address.detail}</td>
+              <td>
+                <img
+                  src={
+                    properties.image?.includes('http')
+                      ? properties.image
+                      : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties.image}`
+                  }
+                  alt={properties.name}
+                  className="w-full h-20 md:h-32 lg:h-40 object-cover rounded-md mb-2"
+                />
+              </td>
               <td className="flex justify-center space-x-1">
-                <DeleteProperti properties={properties} />
                 <UpdateProperti
                   categories={category}
                   addresses={addresses}
                   properties={properties}
                 />
+                <DeleteProperti properties={properties} />
               </td>
             </tr>
           ))}

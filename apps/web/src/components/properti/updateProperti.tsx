@@ -10,19 +10,16 @@ type Category = {
 
 interface Address {
   id: number;
-  lng: number;
-  lat: number;
-  province_id: number;
-  district_id: number;
   detail: string | null;
 }
+
 type Properties = {
   id: number;
   name: string;
-  image: string;
   description: string;
-  addressId: number;
-  categoryId: number;
+  category_id: number;
+  address_id: number;
+  image: string | null;
   category: {
     name: string;
   };
@@ -42,8 +39,9 @@ const UpdateProperti = ({
 }) => {
   const [name, setName] = useState(properties.name);
   const [description, setDescription] = useState(properties.description);
-  const [category, setCategory] = useState(categories?.[0]?.id);
-  const [selectedAddress, setSelectedAddress] = useState(addresses[0].id);
+  const [category, setCategory] = useState(properties.category_id);
+  const [address, setAddress] = useState(properties.address_id);
+  const [image, setImage] = useState<File | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,17 +51,23 @@ const UpdateProperti = ({
     e.preventDefault();
     setIsLoading(true);
     try {
-      await api.put(`/properti/${properties.id}`, {
-        name: name,
-        description: description,
-        categoryId: Number(category),
-        addressesId: Number(selectedAddress),
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('category_id', category.toString());
+      formData.append('address_id', address.toString());
+      if (image) formData.append('image', image);
+
+      await api.put(`/properti/${properties.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
+
       router.refresh();
       setIsOpen(false);
     } catch (error) {
       console.error('Error updating property:', error);
-
       setIsLoading(false);
     }
   };
@@ -81,13 +85,12 @@ const UpdateProperti = ({
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
         <div className="modal-box">
           <h3 className="font-bold text-lg">Update {properties.name}</h3>
-          <form onSubmit={handleUpdate}>
+          <form onSubmit={handleUpdate} encType="multipart/form-data">
             <div className="form-control w-full">
-              <label className="label font-bold">Properti Name</label>
+              <label className="label font-bold">Property Name</label>
               <input
                 type="text"
-                name="name"
-                value={properties.name}
+                value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="input input-bordered"
                 placeholder="Property Name"
@@ -97,8 +100,7 @@ const UpdateProperti = ({
               <label className="label font-bold">Description</label>
               <input
                 type="text"
-                name="description"
-                value={properties.description}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="input input-bordered"
                 placeholder="Description"
@@ -107,13 +109,12 @@ const UpdateProperti = ({
             <div className="form-control w-full">
               <label className="label font-bold">Category</label>
               <select
-                name="categoryId"
-                value={properties.categoryId}
+                value={category}
                 onChange={(e) => setCategory(Number(e.target.value))}
                 className="select select-bordered"
               >
                 {categories.map((category) => (
-                  <option value={category.id} key={category.id}>
+                  <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
@@ -122,17 +123,24 @@ const UpdateProperti = ({
             <div className="form-control w-full">
               <label className="label font-bold">Address</label>
               <select
-                name="addressId"
-                value={properties.addressId}
-                onChange={(e) => setSelectedAddress(Number(e.target.value))}
+                value={address}
+                onChange={(e) => setAddress(Number(e.target.value))}
                 className="select select-bordered"
               >
                 {addresses.map((address) => (
-                  <option value={address.id} key={address.id}>
+                  <option key={address.id} value={address.id}>
                     {address.detail}
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="form-control w-full">
+              <label className="label font-bold">Image</label>
+              <input
+                type="file"
+                onChange={(e) => setImage(e.target.files?.[0] || null)}
+                className="file-input file-input-bordered w-full"
+              />
             </div>
             <div className="modal-action">
               <button type="button" className="btn" onClick={handleModal}>
