@@ -5,24 +5,23 @@ import { IProperties } from '@/interfaces/property.interface';
 import { api } from '@/config/axios.config';
 import { FaMapMarker } from 'react-icons/fa';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-
-import Map from '@/components/map';
+// import Map from '@/components/map';
 import Footer from '@/components/footer';
 import RoomDetail from './roomDetail';
 
 import { property_src } from '@/config/images.config';
-
-const MySwal = withReactContent(Swal);
+import { User } from 'next-auth';
+import { useRouter, useSearchParams } from 'next/navigation';
+import MapLocation from './maplocation';
+import { IRooms } from '@/interfaces/property.interface';
+import { useSession } from 'next-auth/react';
+import { showAlert } from '@/lib/utils';
 
 type Props = {
   slug: string;
 };
 
 const ProppertiDetail = ({ slug }: Props) => {
-  const { data: session } = useSession();
   const [properties, setProperti] = React.useState<IProperties | null>(null);
   const [sortOption, setSortOption] = React.useState({
     field: 'name',
@@ -30,7 +29,7 @@ const ProppertiDetail = ({ slug }: Props) => {
   });
   const [selectedRoomId, setSelectedRoomId] = React.useState<string | null>(
     null,
-  );
+  ); // State for selected room ID
 
   React.useEffect(() => {
     const fetchProperties = async () => {
@@ -64,7 +63,7 @@ const ProppertiDetail = ({ slug }: Props) => {
   };
 
   const handleSelectRoom = (roomId: string) => {
-    setSelectedRoomId(roomId);
+    setSelectedRoomId(roomId); // Set the selected room ID
   };
 
   return (
@@ -104,17 +103,23 @@ const ProppertiDetail = ({ slug }: Props) => {
 
           <div className="md:w-2/3">
             {properties?.address && (
-              <Map lat={properties.address.lat} lng={properties.address.lng} />
+              // <Map lat={properties.address.lat} lng={properties.address.lng} />
+              <MapLocation
+                lat={properties.address.lat}
+                lng={properties.address.lng}
+              />
             )}
           </div>
         </div>
 
         <div className="flex mt-6">
-          <div className="w-full md:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
+          {/* Property List and Sorting (Left Column) */}
+          <div className="w-full lg:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Sort by</h2>
             <div className="mb-4">
               <label className="block mb-2 font-semibold">property list</label>
               <select
+                title="select properti list"
                 className="p-2 border rounded-lg w-full"
                 value={`${sortOption.field}-${sortOption.order}`}
                 onChange={(e) => {
@@ -130,7 +135,8 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
 
-          <div className="w-full md:w-2/3 p-4">
+          {/* Rooms Section (Right Column) */}
+          <div className="w-full lg:w-2/3 p-4">
             <h2 className="text-2xl font-bold mb-4">Rooms</h2>
             <div className="space-y-6">
               {sortedRooms.map((room) => (

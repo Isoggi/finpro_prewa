@@ -21,13 +21,11 @@ export class TransactionController {
     try {
       const data = await TransactionService.getById(req);
 
-      return res
-        .status(200)
-        .json({
-          message: 'Get Transaction History Detail',
-          data,
-          success: true,
-        });
+      return res.status(200).json({
+        message: 'Get Transaction History Detail',
+        data,
+        success: true,
+      });
     } catch (error) {
       console.log(error);
       next(error);
@@ -54,6 +52,18 @@ export class TransactionController {
       return res
         .status(200)
         .json({ message: 'Upload Proof', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  async createTransaction(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await TransactionService.createTransaction(req);
+      return res
+        .status(200)
+        .json({ message: 'Success Create Transaction', data, success: true });
     } catch (error) {
       console.log(error);
       next(error);
