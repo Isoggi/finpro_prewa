@@ -27,9 +27,18 @@ const ProppertiDetail = ({ slug }: Props) => {
     field: 'name',
     order: 'asc',
   });
+
   const [selectedRoomId, setSelectedRoomId] = React.useState<string | null>(
     null,
   ); // State for selected room ID
+
+
+
+  // const router = useRouter();
+  const params = useSearchParams();
+  // const start_date = params.get('start_date');
+  // const end_date = params.get('end_date');
+  
 
   React.useEffect(() => {
     const fetchProperties = async () => {

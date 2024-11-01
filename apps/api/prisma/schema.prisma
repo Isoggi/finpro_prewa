@@ -203,6 +203,9 @@ model Users {
   forget_password_token String?    @db.Text
   image                 String?    @db.VarChar(255)
 
+  oauth_id       String? @db.VarChar(255)
+  oauth_provider String? @db.VarChar(255)
+
   tenant       Tenants[]
   transactions Transactions[]
   properties   Properties[]
