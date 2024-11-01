@@ -211,6 +211,8 @@ export class TransactionService {
     const user = req.user;
     const { room_id, start_date, end_date } = req.body;
 
+    const availability = await prisma.availability.findMany({ where: room_id });
+
     const room = await prisma.rooms.findUnique({
       where: { id: Number(room_id) },
       include: { available: true, peakSeasonRate: true },
@@ -250,8 +252,8 @@ export class TransactionService {
           amount: items.total_price,
         },
       });
-
-      return newTrx.invoice_number;
+      console.log(newTrx.invoice_number);
+      return { data: newTrx.invoice_number };
     });
   }
 }

@@ -92,39 +92,7 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
         <div className="w-full lg:w-1/3">
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div>
-              <RoomBookForm room_id={room.id} />
-            </div>
-            <div className="divider"></div>
-            <div className="mb-6">
-              <Image
-                src={
-                  room.image
-                    ? room.image?.startsWith('http')
-                      ? room.image
-                      : `${properties_src}}${room.image}`
-                    : '/default-hotel.jpg'
-                }
-                alt="Tempat"
-                className="rounded-lg"
-                height={100}
-                width={100}
-              />
-              <p className="text-gray-600 mt-4">
-                {room.name}: {room.properties.name}
-              </p>
-            </div>
-            <div className="text-gray-600 mb-4">
-              <p>Rp700,000.00 x 2 nights</p>
-              <p>Rp1,400,000.00</p>
-            </div>
-            <div className="text-gray-600 mb-4">
-              <p>Early bird discount</p>
-              <p>-Rp280,000.00</p>
-            </div>
-            <hr />
-            <div className="text-lg font-semibold flex justify-between mt-4">
-              <p>Total (IDR)</p>
-              <p>{room.price + room.peakSeasonRate.price}</p>
+              <RoomBookForm room={room} />
             </div>
           </div>
         </div>

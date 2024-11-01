@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 
 import { addDays, format } from 'date-fns';
 import Calendar from './calendar/calendarDay';
+import { date } from 'zod';
 
 type Props = {
   name: string;
-  handleDate: () => void;
+  onDateChange: (formStartDate: Date | null, formEndDate: Date | null) => void;
 };
 
-const DateRangePicker: React.FC<Props> = ({ name, handleDate }) => {
+const DateRangePicker: React.FC<Props> = ({ name, onDateChange }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -18,8 +19,10 @@ const DateRangePicker: React.FC<Props> = ({ name, handleDate }) => {
 
   // Callback to update selected dates
   const handleDateSelect = (start: Date, end: Date) => {
+    console.log('datepicker: ', start, end);
     setStartDate(start);
     setEndDate(end);
+    onDateChange(start, end);
     setIsCalendarOpen(false); // Close calendar after selection
   };
 
@@ -33,6 +36,7 @@ const DateRangePicker: React.FC<Props> = ({ name, handleDate }) => {
       <input
         title="Rentang tanggal"
         type="text"
+        name={name}
         readOnly
         value={
           startDate && endDate
