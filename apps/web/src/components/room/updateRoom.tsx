@@ -2,98 +2,79 @@
 import { useState, SyntheticEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/config/axios.config';
-import type { IRooms } from '@/interfaces/property.interface';
-import type { IProperties } from '@/interfaces/property.interface';
+import { FaEdit } from 'react-icons/fa';
 
-interface UpdateRoomProps {
-  room: IRooms;
-  properties: IProperties[];
-}
+type Room = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  capacity: number;
+  property_id: number;
+  image: string | null;
+};
 
-const UpdateRoom = ({ room, properties }: UpdateRoomProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+type Property = {
+  id: number;
+  name: string;
+};
 
+const UpdateRoom = ({
+  room,
+  properties,
+}: {
+  room: Room;
+  properties: Property[];
+}) => {
   const [name, setName] = useState(room.name);
   const [description, setDescription] = useState(room.description);
-  const [price, setPrice] = useState(room.price.toString());
-  const [capacity, setCapacity] = useState(room.capacity.toString());
-  const [selectedProperty, setSelectedProperty] = useState(
-    room.properties?.id.toString(),
-  );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [price, setPrice] = useState(room.price);
+  const [capacity, setCapacity] = useState(room.capacity);
+  const [propertyId, setPropertyId] = useState(room.property_id);
+  const [image, setImage] = useState<File | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  const validateForm = () => {
-    if (!name.trim()) return 'Room name is required';
-    if (!description.trim()) return 'Description is required';
-    if (!price || isNaN(Number(price))) return 'Valid price is required';
-    if (!capacity || isNaN(Number(capacity)))
-      return 'Valid capacity is required';
-    if (!selectedProperty) return 'Property is required';
-    return null;
-  };
-
-  const handleSubmit = async (e: SyntheticEvent) => {
+  const handleUpdate = async (e: SyntheticEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      setIsLoading(false);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('description', description);
-    formData.append('price', price);
-    formData.append('capacity', capacity);
-    formData.append('property_id', selectedProperty);
-
-    if (selectedFile) {
-      formData.append('image', selectedFile);
-    }
-
     try {
-      const response = await api.put(`/room/${room.id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('price', price.toString());
+      formData.append('capacity', capacity.toString());
+      formData.append('property_id', propertyId.toString());
+      if (image) formData.append('image', image);
+
+      await api.put(`/room/${room.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      if (response.status === 200) {
-        setSuccess('Room updated successfully!');
-        router.refresh();
-        setTimeout(() => {
-          setIsOpen(false);
-          setSuccess(null);
-        }, 1500);
-      }
-    } catch (error: any) {
-      setError(error.response?.data?.message || 'Failed to update room');
+      router.refresh();
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error updating room:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleModal = () => setIsOpen(!isOpen);
+
   return (
     <div>
-      <button
-        className="btn btn-warning btn-sm"
-        onClick={() => setIsOpen(true)}
-      >
-        Edit
+      <button className="btn btn-info btn-sm" onClick={handleModal}>
+        <FaEdit size={20} />
       </button>
-
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Update Room</h3>
-          <form onSubmit={handleSubmit}>
+          <h3 className="font-bold text-lg">Update {room.name}</h3>
+          <form onSubmit={handleUpdate} encType="multipart/form-data">
             <div className="form-control w-full">
               <label className="label font-bold">Room Name</label>
               <input
@@ -104,91 +85,64 @@ const UpdateRoom = ({ room, properties }: UpdateRoomProps) => {
                 placeholder="Room Name"
               />
             </div>
-
             <div className="form-control w-full">
               <label className="label font-bold">Description</label>
-              <textarea
+              <input
+                type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="textarea textarea-bordered"
-                placeholder="Room Description"
+                className="input input-bordered"
+                placeholder="Description"
               />
             </div>
-
             <div className="form-control w-full">
               <label className="label font-bold">Price</label>
               <input
                 type="number"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(Number(e.target.value))}
                 className="input input-bordered"
-                placeholder="Room Price"
+                placeholder="Price"
               />
             </div>
-
             <div className="form-control w-full">
               <label className="label font-bold">Capacity</label>
               <input
                 type="number"
                 value={capacity}
-                onChange={(e) => setCapacity(e.target.value)}
+                onChange={(e) => setCapacity(Number(e.target.value))}
                 className="input input-bordered"
-                placeholder="Room Capacity"
+                placeholder="Capacity"
               />
             </div>
-
             <div className="form-control w-full">
               <label className="label font-bold">Property</label>
               <select
-                value={selectedProperty}
-                onChange={(e) => setSelectedProperty(e.target.value)}
+                value={propertyId}
+                onChange={(e) => setPropertyId(Number(e.target.value))}
                 className="select select-bordered"
               >
                 {properties.map((property) => (
-                  <option value={property.id} key={property.id}>
+                  <option key={property.id} value={property.id}>
                     {property.name}
                   </option>
                 ))}
               </select>
             </div>
-
             <div className="form-control w-full">
-              <label className="label font-bold">New Image (Optional)</label>
+              <label className="label font-bold">Image</label>
               <input
                 type="file"
-                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                onChange={(e) => setImage(e.target.files?.[0] || null)}
                 className="file-input file-input-bordered w-full"
-                accept="image/*"
               />
             </div>
-
-            {error && (
-              <div className="alert alert-error mt-4">
-                <span>{error}</span>
-              </div>
-            )}
-
-            {success && (
-              <div className="alert alert-success mt-4">
-                <span>{success}</span>
-              </div>
-            )}
-
             <div className="modal-action">
-              <button
-                type="button"
-                className="btn"
-                onClick={() => setIsOpen(false)}
-                disabled={isLoading}
-              >
-                Cancel
+              <button type="button" className="btn" onClick={handleModal}>
+                Close
               </button>
-              <button
-                type="submit"
-                className={`btn btn-primary ${isLoading ? 'loading' : ''}`}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Saving...' : 'Save Changes'}
+              <button type="submit" className="btn btn-primary">
+                {isLoading ? 'Updating...' : 'Update'}
               </button>
             </div>
           </form>

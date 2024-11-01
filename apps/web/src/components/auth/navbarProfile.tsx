@@ -6,6 +6,7 @@ import {
   FaUser,
   FaChartArea,
 } from 'react-icons/fa';
+import { BiSolidCategory } from 'react-icons/bi';
 import { LuTableProperties } from 'react-icons/lu';
 import { MdBedroomChild } from 'react-icons/md';
 import Link from 'next/link';
@@ -81,6 +82,15 @@ export default function NavbarProfileComponent() {
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <MdBedroomChild />
+              </Link>
+            )}
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/createCategory"
+                title="Create Category"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <BiSolidCategory />
               </Link>
             )}
 

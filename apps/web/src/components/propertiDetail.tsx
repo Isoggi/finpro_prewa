@@ -29,7 +29,7 @@ const ProppertiDetail = ({ slug }: Props) => {
   });
   const [selectedRoomId, setSelectedRoomId] = React.useState<string | null>(
     null,
-  ); // State for selected room ID
+  );
 
   React.useEffect(() => {
     const fetchProperties = async () => {
@@ -63,7 +63,7 @@ const ProppertiDetail = ({ slug }: Props) => {
   };
 
   const handleSelectRoom = (roomId: string) => {
-    setSelectedRoomId(roomId); // Set the selected room ID
+    setSelectedRoomId(roomId);
   };
 
   return (
@@ -91,19 +91,18 @@ const ProppertiDetail = ({ slug }: Props) => {
             <div className="mt-2">
               <FaMapMarker className="inline-block mr-2" />
               <Link
-                href={`https://www.google.com/maps/search/?api=1&query=${properties?.address.lat},${properties?.address.lng}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${properties?.address?.lat},${properties?.address?.lng}`}
                 className="text-blue-500"
                 target="_blank"
               >
-                {properties?.address.detail},{' '}
-                {properties?.address.district.name}
+                {properties?.address?.detail},{' '}
+                {properties?.address?.district.name}
               </Link>
             </div>
           </div>
 
           <div className="md:w-2/3">
             {properties?.address && (
-              // <Map lat={properties.address.lat} lng={properties.address.lng} />
               <MapLocation
                 lat={properties.address.lat}
                 lng={properties.address.lng}
@@ -113,7 +112,6 @@ const ProppertiDetail = ({ slug }: Props) => {
         </div>
 
         <div className="flex mt-6">
-          {/* Property List and Sorting (Left Column) */}
           <div className="w-full lg:w-1/3 p-4 bg-gray-50 shadow-md rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Sort by</h2>
             <div className="mb-4">
@@ -135,7 +133,6 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
 
-          {/* Rooms Section (Right Column) */}
           <div className="w-full lg:w-2/3 p-4">
             <h2 className="text-2xl font-bold mb-4">Rooms</h2>
             <div className="space-y-6">

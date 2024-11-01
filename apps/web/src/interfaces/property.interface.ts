@@ -3,14 +3,14 @@ import { User } from '@/interfaces/user.interface';
 export interface IProperties {
   id: number;
   name: string;
-  description: string;
-  image?: string | undefined;
+  description: string | null | undefined;
+  image?: string | undefined | null;
   tenant?: User;
   slug_address: string;
   rooms: IRooms[];
   category: ICategory;
-  address: IAddress;
-  provinces: IProvinces;
+  address?: IAddress;
+  provinces?: IProvinces;
 }
 
 export interface IRooms {

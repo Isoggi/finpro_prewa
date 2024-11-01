@@ -31,10 +31,10 @@ export default function PropertiCard({ data }: Props) {
         <p className="text-black text-sm font-medium">{data.name}</p>
         <div className="flex justify-center items-center gap-x-2">
           <p className="text-[#9a98a3] text-xs">
-            {data.address.provinces.name}
+            {data.address?.provinces.name}
           </p>
           <p className="text-[#9a98a3] text-xs">
-            - {data.address.district.name}
+            - {data.address?.district.name}
           </p>
         </div>
       </div>

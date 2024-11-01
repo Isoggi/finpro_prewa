@@ -99,7 +99,7 @@ const formProperti = async () => {
                   addresses={addresses}
                   properties={properties}
                 />
-                <DeleteProperti properties={properties} />
+                <DeleteProperti id={properties.id} name={properties.name} />
               </td>
             </tr>
           ))}

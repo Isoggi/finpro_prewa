@@ -10,21 +10,21 @@ type Category = {
 
 interface Address {
   id: number;
-  detail: string | null;
+  detail: string | null | undefined;
 }
 
 type Properties = {
   id: number;
   name: string;
-  description: string;
+  description: string | null | undefined;
   category_id: number;
   address_id: number;
   image: string | null;
-  category: {
+  category?: {
     name: string;
   };
-  address: {
-    detail: string;
+  address?: {
+    detail: string | null | undefined;
   };
 };
 
@@ -53,7 +53,7 @@ const UpdateProperti = ({
     try {
       const formData = new FormData();
       formData.append('name', name);
-      formData.append('description', description);
+      formData.append('description', (description ?? '').toString());
       formData.append('category_id', category.toString());
       formData.append('address_id', address.toString());
       if (image) formData.append('image', image);
@@ -100,7 +100,7 @@ const UpdateProperti = ({
               <label className="label font-bold">Description</label>
               <input
                 type="text"
-                value={description}
+                value={description ?? ''}
                 onChange={(e) => setDescription(e.target.value)}
                 className="input input-bordered"
                 placeholder="Description"

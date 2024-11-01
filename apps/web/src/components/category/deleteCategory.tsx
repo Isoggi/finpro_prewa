@@ -3,9 +3,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/config/axios.config';
 import { MdDelete } from 'react-icons/md';
-import type { IRooms } from '@/interfaces/room.interface';
 
-const DeleteRoom = ({ id, name }: { id: number; name: string }) => {
+const DeleteCategory = ({ id, name }: { id: number; name: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,11 +16,11 @@ const DeleteRoom = ({ id, name }: { id: number; name: string }) => {
     setError(null);
 
     try {
-      await api.delete(`/room/${id}`);
+      await api.delete(`/category/${id}`);
       router.refresh();
       setIsOpen(false);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete room');
+      setError(err.response?.data?.message || 'Failed to delete category');
     } finally {
       setIsLoading(false);
     }
@@ -69,4 +68,4 @@ const DeleteRoom = ({ id, name }: { id: number; name: string }) => {
   );
 };
 
-export default DeleteRoom;
+export default DeleteCategory;
