@@ -15,14 +15,12 @@ export class PropertiesRouter {
     this.router.get('/', this.propertiesController.getBySearch);
     this.router.get('/:id', this.propertiesController.getById);
 
-    // Create with image upload
     this.router.post(
       '/',
       this.uploadMiddleware.single('image'),
       this.propertiesController.createProperti,
     );
 
-    // Update with image upload
     this.router.put(
       '/:id',
       this.uploadMiddleware.single('image'),

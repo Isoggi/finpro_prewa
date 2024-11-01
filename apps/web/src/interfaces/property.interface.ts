@@ -1,4 +1,3 @@
-
 import { User } from '@/interfaces/user.interface';
 
 export interface IProperties {
@@ -6,7 +5,7 @@ export interface IProperties {
   name: string;
   description: string;
   image?: string | undefined;
-  tenant? : User;
+  tenant?: User;
   slug_address: string;
   rooms: IRooms[];
   category: ICategory;
@@ -21,8 +20,12 @@ export interface IRooms {
   price: number;
   capacity: number;
   image?: string | undefined;
-  available: IAvailability[];
-  peak_season_rate: IPeakSeasonRate[];
+  properties: IProperties;
+  availability: IAvailability[];
+  peakSeasonRate: IPeakSeasonRate;
+  address: IAddress;
+  review: IReview;
+  category: ICategory;
 }
 
 export interface IAvailability {
