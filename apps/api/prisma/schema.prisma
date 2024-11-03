@@ -173,16 +173,18 @@ model TransactionItems {
 }
 
 model Transactions {
-  id               Int                         @id @default(autoincrement())
-  invoice_number   String?                     @db.VarChar(255)
-  user_id          Int
-  amount           Decimal                     @db.Decimal(10, 0)
-  payment_method   transactions_payment_method
-  payment_proof    String?                     @db.VarChar(255)
-  status           transactions_status
-  created_at       DateTime                    @default(now())
-  updated_at       DateTime                    @updatedAt
-  user             Users                       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
+  id             Int                         @id @default(autoincrement())
+  invoice_number String?                     @db.VarChar(255)
+  user_id        Int
+  amount         Decimal                     @db.Decimal(10, 0)
+  payment_method transactions_payment_method
+  payment_proof  String?                     @db.VarChar(255)
+  status         transactions_status
+  created_at     DateTime                    @default(now())
+  updated_at     DateTime                    @updatedAt
+  payment_expire DateTime?
+
+  user             Users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
   transactionItems TransactionItems[]
 
   @@index([user_id], map: "user_id")

@@ -11,7 +11,8 @@ export const intervalBetweenDay = (start: Date, end: Date) => {
   const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
   const arrayDay: Date[] = [];
   for (let i = 0; i <= diffInDays; i++) {
-    arrayDay.push();
+    const checkDay = new Date(start);
+    arrayDay.push(new Date(checkDay.setDate(start.getDate() + 1)));
   }
   return arrayDay;
 };
