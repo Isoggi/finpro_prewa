@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { IProperties } from '@/interfaces/property.interface';
 import { api } from '@/config/axios.config';
-const DeleteProperti = ({ properties }: { properties: IProperties }) => {
+const DeleteProperti = ({ id, name }: { id: number; name: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,9 +35,7 @@ const DeleteProperti = ({ properties }: { properties: IProperties }) => {
 
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">
-            Are you sure to delete {properties.name}?
-          </h3>
+          <h3 className="font-bold text-lg">Are you sure to delete {name}?</h3>
 
           <div className="modal-action">
             <button type="button" className="btn" onClick={handleModal}>
@@ -46,7 +44,7 @@ const DeleteProperti = ({ properties }: { properties: IProperties }) => {
             {!isLoading ? (
               <button
                 type="button"
-                onClick={() => handleDelete(properties.id)}
+                onClick={() => handleDelete(id)}
                 className="btn btn-primary"
               >
                 Yes
