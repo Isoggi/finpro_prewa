@@ -5,7 +5,6 @@ import fs from 'fs';
 import path from 'path';
 
 export class PropertiesService {
-  // Fungsi untuk mendapatkan properti berdasarkan slug
   static async get(req: Request) {
     const { slug } = req.params;
     const data = await prisma.properties.findMany({
@@ -39,7 +38,6 @@ export class PropertiesService {
     return data;
   }
 
-  // Fungsi untuk mencari properti berdasarkan beberapa kriteria
   static async search(req: Request) {
     const {
       startDate,
@@ -294,7 +292,7 @@ export class PropertiesService {
 
       let image = null;
       if (req.file) {
-        image = `images/properties/${req.file.filename}`;
+        image = `${req.file.filename}`;
       }
 
       const finalSlugAddress =
@@ -324,7 +322,7 @@ export class PropertiesService {
       if (req.file) {
         const filePath = path.join(
           __dirname,
-          '/../public/images/properties',
+          '/../public/images/',
           req.file.filename,
         );
         fs.unlink(filePath, (err) => {
@@ -353,7 +351,7 @@ export class PropertiesService {
 
   static async updateProperti(req: Request) {
     const { id } = req.params;
-    const { tenant_id, name, description, category_id, address_id } = req.body;
+    const { name, description, category_id, address_id } = req.body;
 
     try {
       const existingProperty = await prisma.properties.findUnique({
@@ -370,34 +368,37 @@ export class PropertiesService {
             existingProperty.image,
           );
           fs.unlink(oldFilePath, (err) => {
-            if (err && err.code !== 'ENOENT')
+            if (err && err.code !== 'ENOENT') {
               console.error('Error deleting old file:', err);
+            }
           });
         }
-        image = `images/properties/${req.file.filename}`;
+        image = `${req.file.filename}`;
       }
 
       const updatedProperty = await prisma.properties.update({
         where: { id: Number(id) },
         data: {
-          tenant_id: parseInt(tenant_id),
           name,
           description,
-          category_id: parseInt(category_id),
-          address_id: parseInt(address_id),
           image,
           updated_at: new Date(),
+          ...(category_id
+            ? { category: { connect: { id: parseInt(category_id) } } }
+            : {}),
+          ...(address_id
+            ? { address: { connect: { id: parseInt(address_id) } } }
+            : {}),
         },
       });
 
       return updatedProperty;
     } catch (error) {
-      // If there was an error and we uploaded a new file, delete it
       if (req.file) {
         const filePath = path.join(
           __dirname,
           '../public',
-          'images/properties',
+          'images/',
           req.file.filename,
         );
         fs.unlink(filePath, (err) => {
@@ -407,11 +408,11 @@ export class PropertiesService {
       throw new ErrorHandler(500);
     }
   }
+
   static async deleteProperti(req: Request) {
     const { id } = req.params;
 
     try {
-      // Get the property details first to get the image path
       const property = await prisma.properties.findUnique({
         where: { id: Number(id) },
         select: { image: true },
@@ -421,18 +422,14 @@ export class PropertiesService {
         throw new ErrorHandler(404);
       }
 
-      // Delete the property from database
       const deletedProperty = await prisma.properties.delete({
         where: { id: Number(id) },
       });
-
-      // If property has an image, delete the image file
       if (property.image) {
         const imagePath = path.join(__dirname, '../public', property.image);
         fs.unlink(imagePath, (err) => {
           if (err && err.code !== 'ENOENT') {
             console.error('Error deleting image file:', err);
-            // We don't throw here because the property is already deleted
           }
         });
       }

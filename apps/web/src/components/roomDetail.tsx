@@ -23,10 +23,13 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="container mx-auto max-w-screen-xl">
-   
       <h1 className="text-3xl font-bold">{room.name}</h1>
       <Image
-        src={room.image || '/default-room.jpg'}
+        src={
+          room.image?.includes('http')
+            ? room.image
+            : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+        }
         alt={room.name}
         width={600}
         height={400}
@@ -38,13 +41,11 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
       <div className="mt-6">
         <h2 className="text-2xl font-semibold">Additional Details</h2>
 
-       
         <div className="mt-4">
           <h3 className="font-semibold">Category:</h3>
           <p>{room.category?.name}</p>
         </div>
 
-   
         <div className="mt-4">
           <h3 className="font-semibold">Address:</h3>
           <p>{room.address?.detail}</p>
@@ -53,7 +54,6 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
           </p>
         </div>
 
-       
         <div className="mt-4">
           <h3 className="font-semibold">Availability:</h3>
           {room.availability.map((avail) => (
@@ -66,7 +66,6 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
           ))}
         </div>
 
-       
         <div className="mt-4">
           <h3 className="font-semibold">Peak Season Rate:</h3>
           <p>{room.peakSeasonRate?.name}</p>
@@ -75,7 +74,6 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
- 
       <Footer />
     </div>
   );
