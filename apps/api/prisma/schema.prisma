@@ -47,6 +47,7 @@ model Properties {
   image        String?  @db.VarChar(255)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+  isActive Boolean @default(true)
 
   category Categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_1")
   tenant   Users      @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_2")
@@ -80,6 +81,7 @@ model Rooms {
   image       String?  @db.VarChar(255)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  isActive Boolean @default(true)
 
   property       Properties         @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_ibfk_1")
   transaction    TransactionItems[]

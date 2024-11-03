@@ -3,8 +3,9 @@ import { useState, SyntheticEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/config/axios.config';
 import type { Properties } from '@prisma/client';
+import { MdCreate } from 'react-icons/md';
 
-const AddRoom = ({ property }: { property: Properties[] }) => {
+const AddRoom = ({ properties }: { properties: Properties[] }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -74,7 +75,10 @@ const AddRoom = ({ property }: { property: Properties[] }) => {
 
   return (
     <div>
-      <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
+      <button
+        className="btn btn-primary flex items-center gap-2"
+        onClick={() => setIsOpen(true)}
+      >
         Add Room
       </button>
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
@@ -91,10 +95,9 @@ const AddRoom = ({ property }: { property: Properties[] }) => {
                 className="select select-bordered"
                 required
               >
-                <option value="">Select a Property</option>
-                {property.map((prop) => (
-                  <option value={prop.id} key={prop.id}>
-                    {prop.name}
+                {properties.map((property: Properties) => (
+                  <option value={property.id} key={property.id}>
+                    {property.name}
                   </option>
                 ))}
               </select>

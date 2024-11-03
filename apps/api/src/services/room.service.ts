@@ -31,7 +31,15 @@ export class RoomService {
   }
 
   static async createRoom(req: Request) {
-    const { property_id, name, description, price, capacity } = req.body;
+    const {
+      property_id,
+      name,
+      description,
+      price,
+      capacity,
+      availability,
+      peakSeasonRate,
+    } = req.body;
     let image = null;
 
     try {
@@ -78,6 +86,28 @@ export class RoomService {
           updated_at: new Date(),
         },
       });
+      if (availability) {
+        const availabilityRoom = JSON.parse(availability);
+        await prisma.availability.createMany({
+          data: availabilityRoom.map((availability: any) => ({
+            room_id: newRoom.id,
+            date: new Date(availability.date),
+            stock: availability.stock,
+          })),
+        });
+      }
+      if (peakSeasonRate) {
+        const peakSeasonRateRoom = JSON.parse(peakSeasonRate);
+        await prisma.peakSeasonRate.createMany({
+          data: peakSeasonRateRoom.map((peakSeasonRate: any) => ({
+            room_id: newRoom.id,
+            start_date: new Date(peakSeasonRate.startDate),
+            end_date: new Date(peakSeasonRate.endDate),
+            rates: peakSeasonRate.rate,
+            peakSeasonRateCategory: peakSeasonRate.rateCategory,
+          })),
+        });
+      }
 
       return newRoom;
     } catch (error) {
@@ -109,10 +139,12 @@ export class RoomService {
 
   static async updateRoom(req: Request) {
     const { id } = req.params;
-    const { name, description, price, capacity } = req.body;
+    const { name, description, price, capacity, property_id } = req.body;
+
     try {
       const existingRoom = await prisma.rooms.findUnique({
         where: { id: Number(id) },
+        select: { image: true },
       });
 
       if (!existingRoom) throw new ErrorHandler(404);
@@ -122,14 +154,14 @@ export class RoomService {
         if (existingRoom.image) {
           const oldFilePath = path.join(
             __dirname,
-            '../public',
+            '../public/images',
             existingRoom.image,
           );
           if (fs.existsSync(oldFilePath)) {
             fs.unlinkSync(oldFilePath);
           }
         }
-        image = `${req.file.filename}`;
+        image = req.file.filename;
       }
 
       const updateData: any = {
@@ -139,11 +171,13 @@ export class RoomService {
         updated_at: new Date(),
       };
 
-      if (price !== undefined) {
-        updateData.price = parseFloat(price);
-      }
-      if (capacity !== undefined) {
-        updateData.capacity = parseInt(capacity);
+      if (price !== undefined) updateData.price = parseFloat(price);
+      if (capacity !== undefined) updateData.capacity = parseInt(capacity);
+      if (property_id !== undefined) {
+        const parsedPropertyId = parseInt(property_id);
+        if (isNaN(parsedPropertyId))
+          throw new Error('Invalid property ID format');
+        updateData.property_id = parsedPropertyId;
       }
 
       const updatedRoom = await prisma.rooms.update({
@@ -156,13 +190,14 @@ export class RoomService {
       if (req.file) {
         const filePath = path.join(
           __dirname,
-          '../public/images/',
+          '../public/images',
           req.file.filename,
         );
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
       }
+
       console.error('Error updating room:', error);
       throw error instanceof ErrorHandler ? error : new ErrorHandler(500);
     }
@@ -174,9 +209,24 @@ export class RoomService {
     try {
       const room = await prisma.rooms.findUnique({
         where: { id: Number(id) },
+        select: { image: true, id: true },
       });
 
       if (!room) throw new ErrorHandler(404);
+
+      await prisma.$transaction(async (prisma) => {
+        await prisma.availability.deleteMany({
+          where: { room_id: room.id },
+        });
+
+        await prisma.peakSeasonRate.deleteMany({
+          where: { room_id: room.id },
+        });
+
+        await prisma.rooms.delete({
+          where: { id: room.id },
+        });
+      });
 
       if (room.image) {
         const filePath = path.join(__dirname, '../public', room.image);
@@ -185,11 +235,7 @@ export class RoomService {
         }
       }
 
-      const deletedRoom = await prisma.rooms.delete({
-        where: { id: Number(id) },
-      });
-
-      return deletedRoom;
+      return { message: 'Room and related data deleted successfully' };
     } catch (error) {
       console.error('Error deleting room:', error);
       throw error instanceof ErrorHandler ? error : new ErrorHandler(500);

@@ -16,6 +16,7 @@ import { TransactionRouter } from './routers/transaction.router';
 import { TenantRouter } from './routers/tenant.router';
 import { PropertiesRouter } from './routers/properties.router';
 import { RoomRouter } from './routers/room.router';
+import { CategoryRouter } from './routers/category.router';
 
 export default class App {
   private app: Express;
@@ -71,6 +72,7 @@ export default class App {
     this.app.use('/api/properti', new PropertiesRouter().getRouter());
     this.app.use('/api/tenant', new TenantRouter().getRouter());
     this.app.use('/api/room', new RoomRouter().getRouter());
+    this.app.use('/api/category', new CategoryRouter().getRouter());
   }
 
   public start(): void {
