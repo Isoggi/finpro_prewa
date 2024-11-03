@@ -4,6 +4,7 @@ import { api } from '@/config/axios.config';
 import { IRooms } from '@/interfaces/room.interface';
 import Image from 'next/image';
 import Footer from '@/components/footer';
+
 import {
   FaBed,
   FaMapMarkerAlt,
@@ -27,6 +28,7 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
       const fetchRoomDetail = async () => {
         const response = await api.get(`/room/${params.id}`);
         const data = response.data.data as IRooms;
+
         setRoom(data);
       };
       fetchRoomDetail();
@@ -36,6 +38,7 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
   if (!room) return <div>Loading...</div>;
 
   return (
+
     <div className="container mx-auto max-w-screen-xl py-4">
       <Image
         src={
@@ -143,12 +146,14 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
             </div>
             <div>
               <h4 className="font-semibold">Ketersediaan:</h4>
+
               {room.availability?.length ? (
                 room.availability.map((avail) => (
                   <div key={avail.id} className="border-b border-gray-200 py-2">
                     <p>
                       {avail.name} - Rp {avail.price.toLocaleString()}
                     </p>
+
                     <p>Kapasitas: {avail.capacity}</p>
                   </div>
                 ))
@@ -162,11 +167,19 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
         <div className="mt-6">
           <h2 className="text-xl font-semibold">Deskripsi Kamar</h2>
           <p className="mt-2 text-gray-600">{room.description}</p>
-        </div>
-      </div>
 
-      <Footer />
-    </div>
+        </div
+               <div className="w-full lg:w-1/3">
+          <div className="bg-white p-8 rounded-lg shadow-md">
+            <div>
+              <RoomBookForm room={room} />
+            </div>
+          </div>
+
+        </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 

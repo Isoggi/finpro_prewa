@@ -3,7 +3,7 @@ import ModalComponent from '../modal';
 import { Order } from '@/interfaces/order.interface';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaChevronRight } from 'react-icons/fa';
+import { FaChevronRight, FaEllipsisV } from 'react-icons/fa';
 import { dateDiff, formatStyledDate } from '@/lib/utils';
 
 interface Props extends Order {
@@ -46,16 +46,31 @@ export default function OrderCardComponent({
 
       <div className="card-body">
         <div className="card-actions justify-end">
-          <Link
-            href={
-              user_role === 'tenant'
-                ? `/dashboard/pesanan/${id}`
-                : `/pesanan/${id}`
-            }
-            className="hover:text-secondary text-primary"
-          >
-            <FaChevronRight />
-          </Link>
+          <div className="dropdown dropdown-bottom dropdown-end">
+            <div title="cek detail" tabIndex={0} role="button" className="m-1">
+              <FaEllipsisV />
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+            >
+              <li>
+                <a className="text-red-500">Batalkan pesanan</a>
+              </li>
+              <li>
+                <Link
+                  href={
+                    user_role === 'tenant'
+                      ? `/dashboard/pesanan/${id}`
+                      : `/pesanan/${id}`
+                  }
+                  className="hover:text-secondary text-primary"
+                >
+                  Lihat detail
+                </Link>
+              </li>
+            </ul>
+          </div>{' '}
         </div>
         <div className="flex flex-col lg:flex-row justify-between items-center">
           <div className="flex flex-col items-left">

@@ -1,39 +1,63 @@
 'use client';
 import { api } from '@/config/axios.config';
 import { OrderDetail, TransactionItems } from '@/interfaces/order.interface';
-import { dateDiff, formatStyledDate } from '@/lib/utils';
+import { dateDiff, formatStyledDate, showAlert } from '@/lib/utils';
 import { User } from 'next-auth';
 import React from 'react';
+import CheckoutDetail from './checkoutDetail';
+import { useRouter } from 'next/navigation';
+import CountdownTimer from '../countdownTimer';
 
 type Props = { data?: OrderDetail | null; user?: User | null };
 
 export default function CheckoutMethod({ data }: Props) {
-  const [order, setOrder] = React.useState<OrderDetail | null>(null);
-  React.useEffect(() => {
-    if (data) {
-      setOrder(data);
-    }
-  });
-  // } else {
-  //   const fetchOrder = async () => {
-  //     const response = await api.get(`/order/${order?.invoice_number}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-  //       },
-  //     });
-  //     setOrder(response.data.data);
-  //   };
-  //   fetchOrder();
-  // }
-
+  const router = useRouter();
+  const order = data;
+  const [expired, setExpired] = React.useState<boolean>(false);
   const [paymentMethod, setPaymentMethod] = React.useState<string | null>(null);
-
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      const response = await api.patch(
+        `/order/update`,
+        {
+          invoice_number: order?.invoice_number,
+          payment_method: order?.payment_method,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        },
+      );
+      showAlert({
+        title: 'Berhasil',
+        text: 'Pembayaran Berhasil',
+        icon: 'success',
+      });
+      // (response.data.data);
+      router.push('/pesanan');
+    } catch (error) {
+      showAlert({
+        title: 'Gagal',
+        text: 'Ada masalah padad pembayaran',
+        icon: 'error',
+      });
+    }
+  };
   return (
     <div className="flex gap-6">
+      <div className="w-full lg:w-2/3 bg-white p-6 rounded-lg shadow-md">
+        <CountdownTimer
+          targetDate={order?.payment_expire ?? new Date()}
+          onExpired={() => setExpired(false)}
+        />
+      </div>
+      <div className="w-full lg:w-1/3 hidden lg:block"></div>
       {/* Left Column - Payment Options */}
-      <div className="w-2/3 bg-white p-6 rounded-lg shadow-md">
+      <div className="w-full lg:w-2/3 bg-white p-6 rounded-lg shadow-md">
+        {order && <CheckoutDetail order={order} />}
         <h2 className="font-semibold text-lg mb-4">Metode Pembayaran</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="form-control">
             <label className="cursor-pointer label">
               <input
@@ -74,7 +98,7 @@ export default function CheckoutMethod({ data }: Props) {
           </div>
         </form>
       </div>
-      <div className="w-1/3 bg-white p-6 rounded-lg shadow-md">
+      <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md">
         <h2 className="font-semibold text-lg mb-4">Ringkasan order</h2>
         <div className="text-sm">
           <div>
@@ -103,8 +127,9 @@ export default function CheckoutMethod({ data }: Props) {
         </div>
 
         <button
+          type="submit"
           className="btn btn-primary w-full mt-6"
-          disabled={!paymentMethod}
+          disabled={!paymentMethod || expired}
         >
           Bayar Sekarang
         </button>

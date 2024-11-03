@@ -69,4 +69,30 @@ export class TransactionController {
       next(error);
     }
   }
+
+  async updateTransaction(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await TransactionService.updateTransaction(req);
+      return res
+        .status(200)
+        .json({ message: 'Success Update Transaction', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  async cancelOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await TransactionService.cancelTransaction(req);
+      return res.status(200).json({
+        message: 'Success Cancelling Transaction',
+        data,
+        success: true,
+      });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }

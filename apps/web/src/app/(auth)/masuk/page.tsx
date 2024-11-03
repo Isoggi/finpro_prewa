@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+
 import { loginAction, googleAuthenticate } from '@/action/auth.action';
 import { loginSchema } from '@/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,22 +11,9 @@ import { ErrorMessage } from '@hookform/error-message';
 import { useFormState } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const MySwal = withReactContent(Swal);
+import { showAlert } from '@/lib/utils';
 
 export default function Masuk() {
-  const Toast = MySwal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
-
   const [errorMsgGoogle, dispatchGoogle] = useFormState(
     googleAuthenticate,
     undefined,
@@ -49,13 +35,13 @@ export default function Masuk() {
       const res = await loginAction(values);
       window.location.reload();
 
-      Toast.fire({
+      showAlert({
         icon: 'success',
         title: res.message || 'Login berhasil',
       });
     } catch (err) {
       if (err instanceof Error) {
-        Toast.fire({
+        showAlert({
           icon: 'error',
           title: err.message || 'Error, No atau Password anda salah',
         });
@@ -116,7 +102,7 @@ export default function Masuk() {
             <button
               title="Login with email"
               type="submit"
-              className="w-full py-3 bg-[#e6f2fe] text-black rounded-full flex items-center justify-center mb-4"
+              className="w-full py-3 bg-[#e6f2fe] text-black rounded-full flex items-center justify-center mb-4  disabled:btn-disabled"
               disabled={form.formState.isSubmitting}
             >
               Lanjut
@@ -140,7 +126,7 @@ export default function Masuk() {
               title="Login with Google"
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="w-full rounded-[25px] py-[12px] min-h-14  bg-gray-100  shadow-xl m-auto mb-[10px] flex items-center justify-center"
+              className="w-full rounded-[25px] py-[12px] min-h-14  bg-gray-100  shadow-xl m-auto mb-[10px] flex items-center justify-center disabled:btn-disabled"
             >
               {form.formState.isSubmitting ? (
                 <svg

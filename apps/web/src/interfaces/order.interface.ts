@@ -20,6 +20,7 @@ export interface Order {
   payment_method: 'midtrans' | 'doku' | 'manual' | 'other';
   payment_proof?: string;
   invoice_number?: string;
+  payment_expire?: Date | null | undefined;
 }
 
 export interface OrderDetail extends Order {

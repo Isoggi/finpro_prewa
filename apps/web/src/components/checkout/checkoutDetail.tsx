@@ -5,9 +5,12 @@ import React from 'react';
 type Props = { order: OrderDetail };
 
 export default function checkoutDetail({ order }: Props) {
+  console.log(order);
   const normalPrice = order.amount;
   const ratedPrice = order.transactionItems?.length
-    ? order.transactionItems[0].room.peak_season_rate[0].price + order.amount
+    ? order.transactionItems[0].room.peak_season_rate
+      ? order.transactionItems[0].room.peak_season_rate[0].price + order.amount
+      : order.amount
     : order.amount;
   const isSamePrice = normalPrice === ratedPrice;
   return (
@@ -17,9 +20,21 @@ export default function checkoutDetail({ order }: Props) {
         <div className="flex justify-between text-gray-600">
           <p>Tanggal</p>
           <p className="underline">
-            {formatStyledDate(order.startDate)}
+            {formatStyledDate(
+              order.transactionItems
+                ? order.transactionItems[0].start_date
+                : '',
+            )}
             {' - '}
-            {formatStyledDate(order.endDate)}
+            {formatStyledDate(
+              order.transactionItems ? order.transactionItems[0].end_date : '',
+            )}
+          </p>
+        </div>
+        <div className="flex justify-between text-gray-600">
+          <p>Harga</p>
+          <p className="underline">
+            {isSamePrice ? `${normalPrice}` : `${ratedPrice}`}
           </p>
         </div>
         <div className="flex justify-between text-gray-600">

@@ -211,6 +211,14 @@ export class TransactionService {
     const user = req.user;
     const { room_id, start_date, end_date } = req.body;
 
+    const availability = await prisma.availability.findMany({
+      where: {
+        room_id: room_id,
+        date: { gte: start_date, lte: end_date },
+        stock: { gt: 0 },
+      },
+    });
+
     const room = await prisma.rooms.findUnique({
       where: { id: Number(room_id) },
       include: { available: true, peakSeasonRate: true },
@@ -219,7 +227,7 @@ export class TransactionService {
       throw new ErrorHandler('Room not found', 404);
     }
 
-    await prisma.$transaction(async (trx) => {
+    const data = await prisma.$transaction(async (trx) => {
       const newTrx = await trx.transactions.create({
         data: {
           invoice_number: `ORDER-${new Date().getTime()}`,
@@ -250,8 +258,47 @@ export class TransactionService {
           amount: items.total_price,
         },
       });
+      // const diffInMs = end_date.getTime() - start_date.getTime();
+      // const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+      // const arrayDay: Date[] = [];
+      // for (let i = 0; i <= diffInDays; i++) {
+      //   const checkDay = new Date(start_date);
+      //   arrayDay.push(new Date(checkDay.setDate(start_date.getDate() + 1)));
+      // }
+      // arrayDay;
 
+      availability.map(async (roomAvail) => {
+        await trx.availability.update({
+          where: { id: roomAvail.id },
+          data: {
+            stock: roomAvail.stock - 1,
+            updated_at: new Date(),
+          },
+        });
+      });
       return newTrx.invoice_number;
     });
+    return data;
   }
+
+  static async updateTransaction(req: Request) {
+    const user = req.user;
+    const [invoice_number, payment_method] = req.body;
+    const trx_id = await prisma.transactions.findFirst({
+      where: { invoice_number: invoice_number },
+      select: { id: true },
+    });
+    const result = await prisma.$transaction(async (trx) => {
+      return await trx.transactions.update({
+        where: { id: trx_id?.id },
+        data: {
+          payment_method: payment_method,
+          status: transactions_status.waitingpayment,
+        },
+      });
+    });
+    return result;
+  }
+
+  static async cancelTransaction(req: Request) {}
 }
