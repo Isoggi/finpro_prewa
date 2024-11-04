@@ -9,10 +9,12 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { properties_src } from '@/config/images.config';
 import { useRouter } from 'next/navigation';
+import { differenceInDays } from 'date-fns';
 
 type Props = { room: IRooms };
 
 export default function RoomBookForm({ room }: Props) {
+  console.log(room);
   const session = useSession();
   const user: User | null = React.useMemo(() => {
     if (session.data?.user) {
@@ -20,6 +22,7 @@ export default function RoomBookForm({ room }: Props) {
     }
     return null;
   }, [session]);
+
   const router = useRouter();
 
   const [startDate, setStartDate] = React.useState<Date | null>(null);
@@ -95,12 +98,12 @@ export default function RoomBookForm({ room }: Props) {
             width={100}
           />
           <p className="text-gray-600 mt-4">
-            {room.name}
-            {room.properties?.name && `: ${room.properties.name}`}
+            {room.name}: {room.property?.name}
           </p>
         </div>
         <div className="text-gray-600 mb-4">
           <p>
+
             Rp{basePrice.toLocaleString('id-ID')},00 x {numberOfNights}{' '}
             {numberOfNights > 1 ? 'nights' : 'night'}
           </p>
@@ -109,11 +112,34 @@ export default function RoomBookForm({ room }: Props) {
         <div className="text-gray-600 mb-4">
           <p>Early bird discount</p>
           <p>-Rp{discount.toLocaleString('id-ID')},00</p>
+            Rp{room.price.toLocaleString('id-ID')} x{' '}
+            {differenceInDays(endDate ?? new Date(), startDate ?? new Date())}{' '}
+            hari
+          </p>
+          <p>
+            Rp
+            {(
+              room.price *
+              differenceInDays(endDate ?? new Date(), startDate ?? new Date())
+            ).toLocaleString('id-ID')}
+          </p>
         </div>
+        {room.peakSeasonRate && (
+          <div className="text-gray-600 mb-4">
+            <p>Biaya Musim Puncak</p>
+            <p>Rp {room.peakSeasonRate[0].rates.toLocaleString('id-ID')}</p>
+          </div>
+        )}
         <hr />
         <div className="text-lg font-semibold flex justify-between mt-4">
           <p>Total (IDR)</p>
           <p>Rp{finalPrice.toLocaleString('id-ID')},00</p>
+          <p>
+            Rp{' '}
+            {((room.peakSeasonRate ? room.peakSeasonRate[0].rates : 0) +
+              room.price) *
+              differenceInDays(endDate ?? new Date(), startDate ?? new Date())}
+          </p>
         </div>
         <button
           type="submit"

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import OrderCardComponent from './orderCard';
 import { Order } from '@/interfaces/order.interface';
 import { api } from '@/config/axios.config';
@@ -21,7 +21,6 @@ export default function OrderContainerComponent({ url }: Props) {
     null,
   ); // Timeout ID for debounce
   const searchParams = useSearchParams();
-  const session = useSession();
 
   setEndDate(searchParams.get('endDate') ?? '');
   setStartDate(searchParams.get('startDate') ?? '');
@@ -29,11 +28,8 @@ export default function OrderContainerComponent({ url }: Props) {
   // const page = searchParams.get('page') ? searchParams.get('page') : 1;
   // const size = searchParams.get('size') ? searchParams.get('size') : 8;
 
-  const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    if (user) return;
-    if (session.data?.user) setUser(session.data?.user);
-  }, [session]);
+  const { data: session } = useSession();
+  const user: User | undefined | null = session ? session.user : null;
 
   // Function to fetch bookings from API
   const fetchBookings = async (
@@ -71,11 +67,13 @@ export default function OrderContainerComponent({ url }: Props) {
 
   // Effect to trigger fetch after input changes
   useEffect(() => {
+    console.log('order start');
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
     }
 
     const timeoutId = setTimeout(() => {
+      console.log('order fetch');
       fetchBookings(orderNumber, startDate, endDate);
     }, 500); // Delay of 500ms
 

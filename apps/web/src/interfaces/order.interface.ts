@@ -37,23 +37,23 @@ export interface TransactionItems {
 }
 
 export interface OrderRooms extends IRooms {
-  property?: {
-    id: number;
-    lat: number;
-    lng: number;
-    name: string;
-    tenant: {
-      name: string;
-    };
-    address: {
-      id: number;
-      lat: number;
-      lng: number;
-      detail: string;
-      provinces: {
-        name: string;
-      };
-      district: { name: string };
-    };
-  };
+  // property?: {
+  //   id: number;
+  //   lat: number;
+  //   lng: number;
+  //   name: string;
+  //   tenant: {
+  //     name: string;
+  //   };
+  //   address: {
+  //     id: number;
+  //     lat: number;
+  //     lng: number;
+  //     detail: string;
+  //     provinces: {
+  //       name: string;
+  //     };
+  //     district: { name: string };
+  //   };
+  // };
 }
