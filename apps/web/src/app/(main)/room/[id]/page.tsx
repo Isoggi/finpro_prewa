@@ -19,6 +19,7 @@ import {
 } from 'react-icons/fa';
 import { MdElevator } from 'react-icons/md';
 import Link from 'next/link';
+import RoomBookForm from '@/components/room/roomBookForm';
 
 const RoomDetail = ({ params }: { params: { id: string } }) => {
   const [room, setRoom] = useState<IRooms | null>(null);
@@ -28,6 +29,7 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
       const fetchRoomDetail = async () => {
         const response = await api.get(`/room/${params.id}`);
         const data = response.data.data as IRooms;
+        console.log(data);
 
         setRoom(data);
       };
@@ -38,13 +40,14 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
   if (!room) return <div>Loading...</div>;
 
   return (
-
     <div className="container mx-auto max-w-screen-xl py-4">
       <Image
         src={
-          room.image?.includes('http')
-            ? room.image
-            : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+          room.image
+            ? room.image.includes('http')
+              ? room.image
+              : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+            : '/default-hotel.jpg'
         }
         alt={room.name}
         width={600}
@@ -133,16 +136,18 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
             </h3>
             <div className="mb-2">
               <h4 className="font-semibold">Tarif Musim Puncak:</h4>
-              <p>{room.peakSeasonRate?.name || 'Tidak tersedia'}</p>
+              {/* <p>
+                {room.peakSeasonRate
+                  ? room.peakSeasonRate[0].name
+                  : 'Tidak tersedia'}
+              </p> */}
               <p>
                 Harga: Rp{' '}
-                {room.peakSeasonRate?.price
-                  ? room.peakSeasonRate.price.toLocaleString()
+                {room.peakSeasonRate
+                  ? room.peakSeasonRate[0].rates.toLocaleString()
                   : 'Tidak tersedia'}
               </p>
-              <p>
-                Kapasitas: {room.peakSeasonRate?.capacity || 'Tidak tersedia'}
-              </p>
+              <p>Kapasitas: {room.capacity || 'Tidak tersedia'}</p>
             </div>
             <div>
               <h4 className="font-semibold">Ketersediaan:</h4>
@@ -167,19 +172,17 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
         <div className="mt-6">
           <h2 className="text-xl font-semibold">Deskripsi Kamar</h2>
           <p className="mt-2 text-gray-600">{room.description}</p>
-
-        </div
-               <div className="w-full lg:w-1/3">
+        </div>
+        <div className="w-full lg:w-1/3">
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div>
               <RoomBookForm room={room} />
             </div>
           </div>
-
         </div>
         <Footer />
       </div>
-    </>
+    </div>
   );
 };
 

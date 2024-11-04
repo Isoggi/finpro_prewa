@@ -21,9 +21,11 @@ export default function PropertiCard({ data }: Props) {
       <div className="gap ">
         <img
           src={
-            data.image?.includes('http')
-              ? data.image
-              : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${data.image}`
+            data.image
+              ? data.image?.includes('http')
+                ? data.image
+                : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${data.image}`
+              : '-/default-hotel.jpg'
           }
           alt={data.name}
           className="w-full h-24 md:h-32 lg:h-40 object-cover rounded-md mb-2"
