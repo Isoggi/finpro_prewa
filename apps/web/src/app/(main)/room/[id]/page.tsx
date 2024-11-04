@@ -180,8 +180,8 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };
