@@ -10,15 +10,20 @@ import {
   sendVerificationEmail as sendVerifyMail,
 } from '../libs/nodemailer.lib';
 import {
+  decodeForgetPasswordToken,
   decodeGeneralToken,
+  decodeToken,
   decodeVerifyToken,
   generateForgetPaswordToken,
   generateGeneralToken,
   generateToken,
   generateVerifyToken,
 } from '../libs/token.lib';
-import { FORGETPASSWORD_URL_PATH, WEB_URL } from '@/config';
-import { verify } from 'jsonwebtoken';
+import {
+  FORGETPASSWORD_URL_PATH,
+  VERIFICATION_URL_PATH,
+  WEB_URL,
+} from '@/config';
 
 export class AuthService {
   static async login(req: Request) {
@@ -53,11 +58,31 @@ export class AuthService {
         image: data.image,
       } as IUser;
       delete user.password;
+      console.log('Masuk', user.name);
       return generateToken(user, '3h');
     }
   }
   static async register(req: Request) {
-    const { name, email, phone_number, role } = req.body;
+    const { name, email, phone_number, role, oauth_id, oauth_provider } =
+      req.body;
+
+    if (oauth_id && oauth_provider) {
+      const result = await prisma.$transaction(async (trx) => {
+        return await trx.users.create({
+          data: {
+            name,
+            email,
+            phone_number,
+            role: users_role.user,
+            isVerified: true,
+            verified_at: new Date(),
+            // oauth_id,
+            // oauth_provider
+          },
+        });
+      });
+      return result;
+    }
     // const user_role = role.toLowerCase() as unknown as users_role;
     const data: Prisma.UsersCreateInput = {
       name,
@@ -85,11 +110,27 @@ export class AuthService {
 
     sendVerifyMail(data.email, {
       email: data.email,
-      verification_url: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
+      verification_url: `${WEB_URL}${VERIFICATION_URL_PATH}${token}`,
     });
 
     return 'Email Send';
   }
+
+  // static async socialAccount (req: Request) {
+  //   const { name, email, phone_number, role } = req.body;
+  //   // const user_role = role.toLowerCase() as unknown as users_role;
+  //   const data: Prisma.UsersCreateInput = {
+  //     name,
+  //     email,
+  //     phone_number,
+  //     role: role.toLowerCase() as unknown as users_role,
+  //   };
+
+  //   const result = await prisma.$transaction(async (trx) => {
+  //     return await trx.users.create({ data });
+  //   });
+
+  // }
 
   static async sendVerifyEmail(req: Request) {
     const { phone_number, email } = req.body;
@@ -128,7 +169,7 @@ export class AuthService {
 
     sendVerifyMail(data.email, {
       email: data.email,
-      verification_url: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
+      verification_url: `${WEB_URL}${VERIFICATION_URL_PATH}${token}`,
     });
 
     return 'Email Send';
@@ -164,7 +205,6 @@ export class AuthService {
         });
         return 'Verify success';
       }
-
       throw new ErrorHandler('Invalid Token', 400);
     }
     throw new ErrorHandler('User not found', 404);
@@ -172,26 +212,33 @@ export class AuthService {
 
   static async sendForgetPasswordEmail(req: Request) {
     try {
-      if (req.user) {
-        const { user } = req;
+      const { email } = req.body;
+      console.log('cek email lupa passwor:', email);
+      if (email) {
+        const user = await prisma.users.findUnique({
+          where: { email: email },
+        });
+        if (!user) {
+          throw new ErrorHandler('User not found', 404);
+        }
         const token = generateForgetPaswordToken({
           id: generateGeneralToken(user.id.toString()),
-          email: generateGeneralToken(user.email),
+          email: generateGeneralToken(email),
         });
-
+        console.log('token:', token);
         await prisma.$transaction(async (trx) => {
-          return await trx.users.update({
-            where: { id: user.id },
+          await trx.users.update({
+            where: { email: email },
             data: { forget_password_token: token },
           });
         });
-        sendFPMail(user.name, {
-          email: user.email,
+        sendFPMail(email, {
+          email,
           forgetPasswordUrl: `${WEB_URL}${FORGETPASSWORD_URL_PATH}${token}`,
         });
         return true;
       } else {
-        throw new ErrorHandler('Unauthorized', 401);
+        throw new ErrorHandler('Bad Request: Email is required', 400);
       }
     } catch (error) {
       throw new ErrorHandler(error, 500);
@@ -199,37 +246,37 @@ export class AuthService {
   }
 
   static async forgetPassword(req: Request) {
-    if (!req.user) {
-      throw new ErrorHandler('Unauthorized', 401);
-    }
     const { password, token } = req.body;
-    const userData = decodeVerifyToken(token);
+    const userData = decodeForgetPasswordToken(token);
     if (!userData) {
       throw new ErrorHandler('Invalid token', 400);
     }
-    if (req.user.id != Number(decodeGeneralToken(userData.id))) {
-      throw new ErrorHandler('Unauthorized', 401);
-    }
+    const userId = Number(decodeGeneralToken(userData.id));
     const data = await prisma.users.findUnique({
-      where: { id: decodeGeneralToken(userData.id) },
+      where: { id: userId },
       select: {
         id: true,
         forget_password_token: true,
       },
     });
+
     if (data) {
-      const isMatch = token == data.forget_password_token;
+      const isMatch = token === data.forget_password_token;
       if (isMatch) {
         const hashPassword = await hash(password, 10);
         await prisma.$transaction(async (trx) => {
           return await trx.users.update({
             where: { id: data.id },
-            data: { password: isMatch ? hashPassword : undefined },
+            data: { password: hashPassword },
           });
         });
-      } else throw new ErrorHandler('Invalid token', 400);
+      } else {
+        throw new ErrorHandler('Invalid token', 400);
+      }
+    } else {
+      throw new ErrorHandler('User not found', 404);
     }
-    return 'Success Change Password';
+    return 'Password changed successfully';
   }
 
   static async getProfile(req: Request) {
@@ -294,5 +341,23 @@ export class AuthService {
     } else {
       throw new ErrorHandler('Unauthorized', 401);
     }
+  }
+
+  static async refreshJWT(req: Request) {
+    const { user, body } = req;
+    const { token } = body;
+    delete user?.password;
+    console.log('user refresh token:', user);
+    if (user) {
+      console.log('refresh-token: user');
+      return generateToken(user, '3h');
+    } else {
+      console.log('refresh-token: token');
+      return generateToken(decodeToken(token), '3h');
+    }
+  }
+
+  static async oAuthHandler(req: Request) {
+    const { oauth_id, oauth_provider } = req.body;
   }
 }

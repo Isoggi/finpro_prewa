@@ -9,9 +9,9 @@ export const AuthMiddleware = (
   next: NextFunction,
 ) => {
   try {
-    const { authorization } = req.headers;
+    const { authorization, 'user-agent': userAgent } = req.headers;
+    console.log(userAgent);
     const token = authorization?.replace('Bearer ', '');
-    console.log(token);
 
     if (!token) throw new ErrorHandler('unauthorized', 401);
     req.user = verify(token, JWT_SECRET) as IUser;

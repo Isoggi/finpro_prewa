@@ -47,6 +47,7 @@ model Properties {
   image        String?  @db.VarChar(255)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+  isActive Boolean @default(true)
 
   category Categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_1")
   tenant   Users      @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_2")
@@ -80,6 +81,7 @@ model Rooms {
   image       String?  @db.VarChar(255)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  isActive Boolean @default(true)
 
   property       Properties         @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_ibfk_1")
   transaction    TransactionItems[]
@@ -173,15 +175,18 @@ model TransactionItems {
 }
 
 model Transactions {
-  id               Int                         @id @default(autoincrement())
-  user_id          Int
-  amount           Decimal                     @db.Decimal(10, 0)
-  payment_method   transactions_payment_method
-  payment_proof    String?                     @db.VarChar(255)
-  status           transactions_status
-  created_at       DateTime                    @default(now())
-  updated_at       DateTime                    @updatedAt
-  user             Users                       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
+  id             Int                         @id @default(autoincrement())
+  invoice_number String?                     @db.VarChar(255)
+  user_id        Int
+  amount         Decimal                     @db.Decimal(10, 0)
+  payment_method transactions_payment_method
+  payment_proof  String?                     @db.VarChar(255)
+  status         transactions_status
+  created_at     DateTime                    @default(now())
+  updated_at     DateTime                    @updatedAt
+  payment_expire DateTime?
+
+  user             Users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
   transactionItems TransactionItems[]
 
   @@index([user_id], map: "user_id")
@@ -201,6 +206,9 @@ model Users {
   verified_at           DateTime?  @db.DateTime
   forget_password_token String?    @db.Text
   image                 String?    @db.VarChar(255)
+
+  oauth_id       String? @db.VarChar(255)
+  oauth_provider String? @db.VarChar(255)
 
   tenant       Tenants[]
   transactions Transactions[]
@@ -235,6 +243,9 @@ enum transactions_status {
   pending
   completed
   failed
+  waitingpayment
+  waitingapproval
+  cancelled
 }
 
 enum properties_rooms_peakseasonrate_rateCategory {

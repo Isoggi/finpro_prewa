@@ -33,6 +33,7 @@
     }
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.3",
     "@types/axios": "^0.14.0",
     "axios": "^1.7.2"
   }

@@ -1,7 +1,9 @@
 node_modules
 # Keep environment variables out of version control
 .env
+.env.*
 
 # custom
 package-lock.json
 bun.lockb
+/src/public/images/*
