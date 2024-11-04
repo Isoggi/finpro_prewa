@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/config/axios.config';
-
+import { IoIosSearch } from 'react-icons/io';
 export default function SearchBarComponent() {
   const params = useSearchParams();
   const today = params.get('start_date')
@@ -130,10 +130,10 @@ export default function SearchBarComponent() {
             </div>
 
             <button
-              className="bg-[#128ede] text-white p-2 px-4 rounded-xl"
+              className="bg-[#62CDFF] text-white p-2 px-4 rounded-xl"
               onClick={handleFilterClick}
             >
-              Cari Hunian
+              Ayo Cari
             </button>
           </div>
         </div>

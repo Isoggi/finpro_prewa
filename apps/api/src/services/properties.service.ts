@@ -352,7 +352,6 @@ export class PropertiesService {
   static async updateProperti(req: Request) {
     const { id } = req.params;
     const { name, description, category_id, address_id } = req.body;
-
     try {
       const existingProperty = await prisma.properties.findUnique({
         where: { id: Number(id) },
@@ -411,7 +410,6 @@ export class PropertiesService {
 
   static async deleteProperti(req: Request) {
     const { id } = req.params;
-
     try {
       const property = await prisma.properties.findUnique({
         where: { id: Number(id) },
@@ -421,7 +419,6 @@ export class PropertiesService {
       if (!property) {
         throw new ErrorHandler(404);
       }
-
       const deletedProperty = await prisma.properties.delete({
         where: { id: Number(id) },
       });
@@ -433,7 +430,6 @@ export class PropertiesService {
           }
         });
       }
-
       return deletedProperty;
     } catch (error) {
       if (error instanceof ErrorHandler) {

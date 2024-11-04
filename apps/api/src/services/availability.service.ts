@@ -12,11 +12,9 @@ export class AvailabilityService {
 
   static async createAvailability(req: Request) {
     const { room_id, stock, date } = req.body;
-
     if (!room_id || !stock || !date) {
       throw new ErrorHandler(400);
     }
-
     const newAvailability = await prisma.availability.create({
       data: {
         room_id,
@@ -24,11 +22,9 @@ export class AvailabilityService {
         date: new Date(date),
       },
     });
-
     return newAvailability;
   }
 
-  // Update an existing availability
   static async updateAvailability(req: Request) {
     const { id } = req.params;
     const { room_id, stock, date, isCanceled } = req.body;
@@ -51,7 +47,6 @@ export class AvailabilityService {
     return updatedAvailability;
   }
 
-  // Delete an availability by ID
   static async deleteAvailability(req: Request) {
     const { id } = req.params;
 

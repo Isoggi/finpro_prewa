@@ -1,11 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-// import AddProduct from "./addProduct";
-// import AddAvailability from './addAvailability';
-// // import DeleteProduct from "./deleteProduct";
-// import UpdateAvailability from './updateAvailability';
-// // import UpdateProduct from "./updateProduct";
-// import DeleteAvailability from './deleteAvailability';
-import AddPeakSeason from '../availability/addAvailability';
+import AddPeakSeason from '@/components/peakSeason/addPeakSeason';
+import DeletePeakSeason from './deletePeakSeason';
+import UpdatePeakSeason from './UpdatePeakSeason';
+
 const prisma = new PrismaClient();
 
 const getPeakSeason = async () => {
@@ -17,7 +14,6 @@ const getPeakSeason = async () => {
       rates: true,
       rateCategory: true,
       room_id: true,
-      rooms: true,
     },
   });
   return res;
@@ -43,9 +39,9 @@ const FormPeakSeason = async () => {
             <th>ID</th>
             <th>Room Id</th>
             <th>Start Date</th>
-            <th>End Date </th>
-            <th>Rates </th>
-            <th>Rate Category </th>
+            <th>End Date</th>
+            <th>Rates</th>
+            <th>Rate Category</th>
             <th className="text-center">Actions</th>
           </tr>
         </thead>
@@ -54,22 +50,30 @@ const FormPeakSeason = async () => {
             <tr key={peakseason.id}>
               <td>{index + 1}</td>
               <td>{peakseason.room_id}</td>
-              <td>{peakseason.start_date.toLocaleDateString()}</td>
-              <td>{peakseason.end_date.toLocaleDateString()}</td>
+              <td>{new Date(peakseason.start_date).toLocaleDateString()}</td>
+              <td>{new Date(peakseason.end_date).toLocaleDateString()}</td>
               <td>{peakseason.rates}</td>
               <td>{peakseason.rateCategory}</td>
               <td className="flex justify-center space-x-1">
-                {/* <UpdateAvailability
-                  availability={{
-                    ...availability,
-                    date: availability.date.toLocaleDateString(),
+                <UpdatePeakSeason
+                  peakSeason={{
+                    ...peakseason,
+                    start_date: new Date(
+                      peakseason.start_date,
+                    ).toLocaleDateString(),
+                    end_date: new Date(
+                      peakseason.end_date,
+                    ).toLocaleDateString(),
+                    rateCategory: peakseason.rateCategory || '',
                   }}
                 />
-                <DeleteAvailability
-                  id={availability.id}
-                  stock={availability.stock}
-                  date={availability.date} */}
-                {/* */}
+                <DeletePeakSeason
+                  id={peakseason.id}
+                  start_date={peakseason.start_date}
+                  end_date={peakseason.end_date}
+                  rates={peakseason.rates}
+                  rateCategory={peakseason.rateCategory ?? ''}
+                />
               </td>
             </tr>
           ))}

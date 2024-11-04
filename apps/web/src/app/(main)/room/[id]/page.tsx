@@ -19,7 +19,7 @@ import {
 } from 'react-icons/fa';
 import { MdElevator } from 'react-icons/md';
 import Link from 'next/link';
-
+import RoomBookForm from '@/components/room/roomBookForm';
 const RoomDetail = ({ params }: { params: { id: string } }) => {
   const [room, setRoom] = useState<IRooms | null>(null);
 
@@ -38,7 +38,6 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
   if (!room) return <div>Loading...</div>;
 
   return (
-
     <div className="container mx-auto max-w-screen-xl py-4">
       <Image
         src={
@@ -167,19 +166,17 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
         <div className="mt-6">
           <h2 className="text-xl font-semibold">Deskripsi Kamar</h2>
           <p className="mt-2 text-gray-600">{room.description}</p>
-
-        </div
-               <div className="w-full lg:w-1/3">
+        </div>
+        <div className="w-full lg:w-1/3">
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div>
               <RoomBookForm room={room} />
             </div>
           </div>
-
         </div>
         <Footer />
       </div>
-    </>
+    </div>
   );
 };
 

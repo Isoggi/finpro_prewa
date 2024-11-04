@@ -70,8 +70,8 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createProperti"
-                title="Create Properti"
+                href="/dashboard/properti"
+                title="Properti"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <LuTableProperties />
@@ -80,8 +80,8 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createRoom"
-                title="Create Room"
+                href="/dashboard/room"
+                title="Room"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <MdBedroomChild />
@@ -90,8 +90,8 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createCategory"
-                title="Create Category"
+                href="/dashboard/category"
+                title="Category"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <BiSolidCategory />
@@ -100,8 +100,8 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createAvailability"
-                title="Create Availability"
+                href="/dashboard/availability"
+                title="Availability"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <MdEventAvailable />
@@ -110,8 +110,8 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createPeakSeason"
-                title="Create Availability"
+                href="/dashboard/peakseason"
+                title="Peak Season "
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <LuCalendarClock />
@@ -125,11 +125,13 @@ export default function NavbarProfileComponent() {
                     <img
                       title="avatar"
                       src={
-                        user.image?.includes('http')
-                          ? user.image
-                          : `${process.env.NEXT_PUBLIC_AVATAR_IMAGE}${user.image}`
+                        user.image
+                          ? user?.image?.startsWith('http')
+                            ? user?.image
+                            : `${process.env.NEXT_PUBLIC_AVATAR_IMAGE}${user?.image}`
+                          : ''
                       }
-                      alt="User Avatar"
+                      alt={user.image}
                       className="w-full h-full object-cover"
                     />
                   </div>

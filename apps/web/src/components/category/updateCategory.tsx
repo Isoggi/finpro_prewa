@@ -34,7 +34,7 @@ const UpdateCategory = ({ category }: { category: Category }) => {
 
   return (
     <div>
-      <button className="btn btn-info btn-sm" onClick={handleModal}>
+      <button className="btn bg-[#62CDFF] btn-sm" onClick={handleModal}>
         <FaEdit size={20} />
       </button>
       <div className={isOpen ? 'modal modal-open' : 'modal'}>

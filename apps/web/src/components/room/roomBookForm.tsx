@@ -24,11 +24,13 @@ export default function RoomBookForm({ room }: Props) {
 
   const [startDate, setStartDate] = React.useState<Date | null>(null);
   const [endDate, setEndDate] = React.useState<Date | null>(null);
+
   const handleDate = (formStartDate: Date | null, formEndDate: Date | null) => {
     console.log(formStartDate, formEndDate);
     setStartDate(formStartDate);
     setEndDate(formEndDate);
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -56,6 +58,29 @@ export default function RoomBookForm({ room }: Props) {
     }
   };
 
+  // Calculate total nights between start and end date
+  const numberOfNights = React.useMemo(() => {
+    if (startDate && endDate) {
+      const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+    return 0;
+  }, [startDate, endDate]);
+
+  // Calculate total price
+  const basePrice = room.price || 0;
+  const peakSeasonPrice = room?.peakSeasonRate?.price || 0;
+  const totalPrice = (basePrice + peakSeasonPrice) * numberOfNights;
+  const discount = totalPrice * 0.2; // 20% early bird discount
+  const finalPrice = totalPrice - discount;
+
+  const imageUrl = React.useMemo(() => {
+    if (!room.image) return '/default-hotel.jpg';
+    return room.image.startsWith('http')
+      ? room.image
+      : `${properties_src}${room.image}`;
+  }, [room.image]);
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -63,40 +88,38 @@ export default function RoomBookForm({ room }: Props) {
         <div className="divider"></div>
         <div className="mb-6">
           <Image
-            src={
-              room.image
-                ? room.image?.startsWith('http')
-                  ? room.image
-                  : `${properties_src}}${room.image}`
-                : '/default-hotel.jpg'
-            }
+            src={imageUrl}
             alt="Tempat"
             className="rounded-lg"
             height={100}
             width={100}
           />
           <p className="text-gray-600 mt-4">
-            {room.name}: {room.properties.name}
+            {room.name}
+            {room.properties?.name && `: ${room.properties.name}`}
           </p>
         </div>
         <div className="text-gray-600 mb-4">
-          <p>Rp700,000.00 x 2 nights</p>
-          <p>Rp1,400,000.00</p>
+          <p>
+            Rp{basePrice.toLocaleString('id-ID')},00 x {numberOfNights}{' '}
+            {numberOfNights > 1 ? 'nights' : 'night'}
+          </p>
+          <p>Rp{totalPrice.toLocaleString('id-ID')},00</p>
         </div>
         <div className="text-gray-600 mb-4">
           <p>Early bird discount</p>
-          <p>-Rp280,000.00</p>
+          <p>-Rp{discount.toLocaleString('id-ID')},00</p>
         </div>
         <hr />
         <div className="text-lg font-semibold flex justify-between mt-4">
           <p>Total (IDR)</p>
-          <p>{room.price + room.peakSeasonRate.price}</p>
+          <p>Rp{finalPrice.toLocaleString('id-ID')},00</p>
         </div>
         <button
           type="submit"
           title="booking"
           disabled={!user || (!startDate && !endDate)}
-          className="btn btn-primary text-black dark:text-white disabled:text-gray-900"
+          className="btn btn-primary text-black dark:text-white disabled:text-gray-900 w-full mt-4"
         >
           {user ? 'Pesan sekarang' : 'Masuk untuk memesan'}
         </button>

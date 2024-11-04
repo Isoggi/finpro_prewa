@@ -23,7 +23,6 @@ const AddPeakSeason = ({ rooms }: { rooms: Rooms[] }) => {
     setError(null);
     setSuccess(null);
 
-    // Validate input
     if (!start_date || !end_date || !rates || !rateCategory || !room) {
       setError('Please fill in all required fields');
       setIsLoading(false);
@@ -41,13 +40,11 @@ const AddPeakSeason = ({ rooms }: { rooms: Rooms[] }) => {
 
       setSuccess('Availability added successfully!');
       router.refresh();
-      // Reset form fields
       setStart_date('');
       setEnd_date('');
       setRates('');
       setRateCategory('');
       setRoom('');
-
       setTimeout(() => {
         setIsOpen(false);
         setSuccess(null);
@@ -69,8 +66,8 @@ const AddPeakSeason = ({ rooms }: { rooms: Rooms[] }) => {
 
   return (
     <div>
-      <button className="btn" onClick={handleModal}>
-        Add New Peak Season
+      <button className="btn bg-[#62CDFF]" onClick={handleModal}>
+        Add Peak Season
       </button>
 
       <div className={isOpen ? 'modal modal-open' : 'modal'}>

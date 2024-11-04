@@ -21,7 +21,6 @@ const AddAvailability = ({ rooms }: { rooms: Rooms[] }) => {
     setError(null);
     setSuccess(null);
 
-    // Validate input
     if (!stock || !date || !room) {
       setError('Please fill in all required fields');
       setIsLoading(false);
@@ -32,16 +31,14 @@ const AddAvailability = ({ rooms }: { rooms: Rooms[] }) => {
       await api.post('/availability', {
         stock: Number(stock),
         date: date,
-        room_id: Number(room), // Changed from roomId to room_id
+        room_id: Number(room),
       });
 
       setSuccess('Availability added successfully!');
       router.refresh();
-      // Reset form fields
       setStock('');
       setDate('');
       setRoom('');
-
       setTimeout(() => {
         setIsOpen(false);
         setSuccess(null);
@@ -63,8 +60,8 @@ const AddAvailability = ({ rooms }: { rooms: Rooms[] }) => {
 
   return (
     <div>
-      <button className="btn" onClick={handleModal}>
-        Add New Availability
+      <button className="btn bg-[#62CDFF]" onClick={handleModal}>
+        Add Availability
       </button>
 
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
