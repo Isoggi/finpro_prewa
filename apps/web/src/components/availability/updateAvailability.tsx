@@ -4,13 +4,21 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/config/axios.config';
 import { FaEdit } from 'react-icons/fa';
 
-type Category = {
+type Availability = {
   id: number;
-  name: string;
+  room_id: number;
+  stock: number;
+  date: string;
 };
 
-const UpdateCategory = ({ category }: { category: Category }) => {
-  const [name, setName] = useState(category.name);
+const UpdateAvailability = ({
+  availability,
+}: {
+  availability: Availability;
+}) => {
+  const [stock, setStock] = useState(availability.stock);
+  const [date, setDate] = useState(availability.date);
+  const [isCanceled, setIsCanceled] = useState(availability);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,11 +28,15 @@ const UpdateCategory = ({ category }: { category: Category }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await api.put(`/category/${category.id}`, { name });
+      await api.put(`/availability/${availability.id}`, {
+        stock,
+        date,
+      });
+
       router.refresh();
       setIsOpen(false);
     } catch (error) {
-      console.error('Error updating category:', error);
+      console.error('Error updating availability:', error);
     } finally {
       setIsLoading(false);
     }
@@ -39,19 +51,31 @@ const UpdateCategory = ({ category }: { category: Category }) => {
       </button>
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Update Category</h3>
+          <h3 className="font-bold text-lg">Update Availability</h3>
           <form onSubmit={handleUpdate}>
             <div className="form-control w-full">
-              <label className="label font-bold">Category Name</label>
+              <label className="label font-bold">Stock</label>
               <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type="number"
+                value={stock}
+                onChange={(e) => setStock(Number(e.target.value))}
                 className="input input-bordered"
-                placeholder="Category Name"
+                placeholder="Stock"
+                min="0"
                 required
               />
             </div>
+            <div className="form-control w-full">
+              <label className="label font-bold">Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="input input-bordered"
+                required
+              />
+            </div>
+
             <div className="modal-action">
               <button type="button" className="btn" onClick={handleModal}>
                 Close
@@ -67,4 +91,4 @@ const UpdateCategory = ({ category }: { category: Category }) => {
   );
 };
 
-export default UpdateCategory;
+export default UpdateAvailability;
