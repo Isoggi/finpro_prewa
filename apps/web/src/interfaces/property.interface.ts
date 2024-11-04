@@ -20,9 +20,9 @@ export interface IRooms {
   price: number;
   capacity: number;
   image?: string | undefined;
-  properties: IProperties;
+  property?: IProperties;
   availability: IAvailability[];
-  peakSeasonRate: IPeakSeasonRate;
+  peakSeasonRate: IPeakSeasonRate[];
   address: IAddress;
   review: IReview;
   category: ICategory;

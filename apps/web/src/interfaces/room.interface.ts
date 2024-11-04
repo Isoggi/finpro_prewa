@@ -15,9 +15,9 @@ export interface IRooms {
   price: number;
   capacity: number;
   image?: string | null | undefined;
-  properties: IProperties;
-  availability: IAvailability[];
-  peakSeasonRate: IPeakSeasonRate;
+  property?: IProperties;
+  availability?: IAvailability[];
+  peakSeasonRate?: IPeakSeasonRate[];
   address: IAddress;
   review: IReview;
   category: ICategory;
@@ -34,11 +34,11 @@ export interface IAvailability {
 
 export interface IPeakSeasonRate {
   id: number;
-  name: string;
-  description: string;
-  price: number;
-  capacity: number;
-  image?: string | undefined;
+  room_id: number;
+  start_date: Date;
+  end_date: string;
+  rates: number;
+  rateCategory: 'every' | 'once';
 }
 
 export interface IAddress {
