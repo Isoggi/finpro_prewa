@@ -176,6 +176,7 @@ export async function googleAuthenticate(
   formData: FormData,
 ) {
   try {
+    console.log('action Google', prevState, formData);
     await signIn('google');
   } catch (error) {
     if (error instanceof AuthError) {

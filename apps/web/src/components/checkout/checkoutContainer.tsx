@@ -12,15 +12,15 @@ type Props = {};
 
 export default function CheckoutContainer({}: Props) {
   const session = useSession();
-  const [user, setUser] = React.useState<User | null>(null);
   const [order, setOrder] = React.useState<OrderDetail | null>(null);
   const params = useSearchParams();
 
-  React.useEffect(() => {
-    if (user) return;
-    if (session?.data?.user) setUser(session.data.user);
+  const user: User | null = React.useMemo(() => {
+    if (session.data?.user) {
+      return session.data.user;
+    }
+    return null;
   }, [session]);
-
   React.useEffect(() => {
     const fetchOrder = async () => {
       const response = await api.get(`/order/${params.get('inv')}`, {
@@ -31,8 +31,8 @@ export default function CheckoutContainer({}: Props) {
       });
       setOrder(response.data.data);
     };
-    fetchOrder();
-  }, []);
+    if (user) fetchOrder();
+  }, [user]);
 
   // React.useEffect(() => {
   //   const fetchProperti = async () => {
@@ -48,13 +48,6 @@ export default function CheckoutContainer({}: Props) {
   // }, []);
 
   return (
-    <div>
-      <div className="w-full lg:w-2/3">
-        {order && <CheckoutMethod data={order} />}
-      </div>
-      <div className="w-full lg:w-1/3">
-        {order && <CheckoutDetail order={order} />}
-      </div>
-    </div>
+    <div className="w-full">{order && <CheckoutMethod data={order} />}</div>
   );
 }

@@ -53,6 +53,14 @@ export const formatStyledDate = (utcDate: string) => {
   return formattedDate;
 };
 
+export const dateDiffNum = (start: Date, end: Date) => {
+  const diffInMs = end.getTime() - start.getTime();
+
+  // Calculate difference in days
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+  return diffInDays;
+};
+
 export const dateDiff = (startDate: string, endDate: string) => {
   const start = new Date(startDate);
   const end = new Date(endDate);

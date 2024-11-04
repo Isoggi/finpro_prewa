@@ -29,6 +29,16 @@ export class TransactionRouter {
       AuthMiddleware,
       this.transactionController.createTransaction,
     );
+    this.router.post(
+      '/cancel',
+      AuthMiddleware,
+      this.transactionController.cancelOrder,
+    );
+    this.router.post(
+      '/update',
+      AuthMiddleware,
+      this.transactionController.updateTransaction,
+    );
   }
   public getRouter(): Router {
     return this.router;

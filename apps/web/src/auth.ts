@@ -14,6 +14,17 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
     maxAge: 3 * 60 * 60,
   },
   providers: [
+    google({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+    }),
     Credential({
       authorize: async (credentials) => {
         try {
@@ -36,13 +47,57 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
         }
       },
     }),
-    google({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
   ],
   callbacks: {
-    async signIn() {
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log('check provider', account?.provider);
+      if (account?.provider === 'google') {
+        console.log('masuk google', user);
+        // const res = await api.get('/auth/signin', {
+        //   params: {
+        //     email: user?.email,
+        //   },
+        // });
+
+        // if (res.data.length === 0) {
+        //   const newUser = {
+        //     full_name: profile?.name,
+        //     phone_number: null,
+        //     email: user.email,
+        //     password: null,
+        //     oauth_id: user.id,
+        //     oauth_provider: 'google',
+        //     image: profile?.picture,
+        //   };
+        //   const { data } = await api.post('/signup', newUser);
+
+        //   if (data) {
+        //     user = data;
+        //   }
+        // }
+
+        // const res = await api.get('/users', {
+        //   params: {
+        //     email: user?.email,
+        //   },
+        // });
+
+        // if (res.data.length === 0) {
+        //   const newUser = {
+        //     full_name: user.name,
+        //     phone_number: null,
+        //     email: user.email,
+        //     password: null,
+        //     google_id: user.id,
+        //     image: user.image,
+        //   };
+        //   const { data } = await api.post('/users', newUser);
+
+        //   if (data) {
+        //     user = data;
+        //   }
+        // }
+      }
       return true;
     },
     async session({ session, token }) {
@@ -60,6 +115,27 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
       return session;
     },
     async jwt({ token, user, account, profile, trigger, session }) {
+      if (account?.provider === 'google') {
+        console.log('jwt gogle', token);
+        // const res = await api.get('/auth/refresh-token', {
+        //   params: {
+        //     email: user?.email,
+        //   },
+        // });
+        // if (res.data.length !== 0) {
+        //   token = res.data[0];
+        // }
+        // const res = await api.get('/users', {
+        //   params: {
+        //     email: user?.email,
+        //   },
+        // });
+        // if (res.data.length !== 0) {
+        //   token = res.data[0];
+        // }
+        return token;
+      }
+
       const currentTime = Date.now();
 
       if (user) {
@@ -89,7 +165,6 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
 
 async function refreshAccessToken(token: User) {
   try {
-    // const url = 'YOUR_REFRESH_TOKEN_ENDPOINT';
     const response = await api.post(
       '/auth/refresh-token',
       { token: token.access_token },
@@ -99,15 +174,6 @@ async function refreshAccessToken(token: User) {
         },
       },
     );
-    // const response = await fetch(url, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     refreshToken: token.refreshToken,
-    //   }),
-    // });
 
     const refreshedTokens = response.data.data;
 
