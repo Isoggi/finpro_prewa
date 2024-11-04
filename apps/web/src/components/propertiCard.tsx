@@ -15,7 +15,7 @@ export default function PropertiCard({ data }: Props) {
 
   return (
     <div
-      className="bg-[#ffffff] rounded-lg p-3 text-center transform hover:scale-105 transition duration-200 shadow-lg min-w-[200px] flex-shrink-0 cursor-pointer"
+      className="bg-[#ffffff] rounded-lg p-2 text-center transform hover:scale-105 transition duration-200 shadow-lg min-w-[200px] flex-shrink-0 cursor-pointer"
       onClick={() => handleCardClick(data.slug_address)}
     >
       <div className="gap ">

@@ -43,37 +43,21 @@ export class RoomService {
     let image = null;
 
     try {
-      console.log('Request Body:', req.body);
+      // Validasi data
       if (!property_id || !name || !price || !capacity) {
-        console.error('Missing fields:', {
-          property_id,
-          name,
-          price,
-          capacity,
-        });
         throw new Error('Missing required fields');
       }
 
+      // Parsing harga dan kapasitas
       const parsedPropertyId = parseInt(property_id);
       const parsedPrice = parseFloat(price);
       const parsedCapacity = parseInt(capacity);
 
-      console.log('Parsed Values:', {
-        parsedPropertyId,
-        parsedPrice,
-        parsedCapacity,
-      });
-      if (
-        isNaN(parsedPropertyId) ||
-        isNaN(parsedPrice) ||
-        isNaN(parsedCapacity)
-      ) {
-        throw new Error('Invalid input format');
-      }
       if (req.file) {
-        image = `${req.file.filename}`;
+        image = req.file.filename;
       }
 
+      // Buat data Room
       const newRoom = await prisma.rooms.create({
         data: {
           property_id: parsedPropertyId,
@@ -86,27 +70,27 @@ export class RoomService {
           updated_at: new Date(),
         },
       });
-      if (availability) {
-        const availabilityRoom = JSON.parse(availability);
-        await prisma.availability.createMany({
-          data: availabilityRoom.map((availability: any) => ({
-            room_id: newRoom.id,
-            date: new Date(availability.date),
-            stock: availability.stock,
-          })),
-        });
+
+      // Tambahkan Availability jika ada
+      if (availability && Array.isArray(availability)) {
+        const availabilityData = availability.map((avail: any) => ({
+          room_id: newRoom.id,
+          date: new Date(avail.date),
+          stock: avail.stock,
+        }));
+        await prisma.availability.createMany({ data: availabilityData });
       }
-      if (peakSeasonRate) {
-        const peakSeasonRateRoom = JSON.parse(peakSeasonRate);
-        await prisma.peakSeasonRate.createMany({
-          data: peakSeasonRateRoom.map((peakSeasonRate: any) => ({
-            room_id: newRoom.id,
-            start_date: new Date(peakSeasonRate.startDate),
-            end_date: new Date(peakSeasonRate.endDate),
-            rates: peakSeasonRate.rate,
-            peakSeasonRateCategory: peakSeasonRate.rateCategory,
-          })),
-        });
+
+      // Tambahkan PeakSeasonRate jika ada
+      if (peakSeasonRate && Array.isArray(peakSeasonRate)) {
+        const peakRateData = peakSeasonRate.map((rate: any) => ({
+          room_id: newRoom.id,
+          start_date: new Date(rate.start_date),
+          end_date: new Date(rate.end_date),
+          rates: rate.rates,
+          rateCategory: rate.rateCategory,
+        }));
+        await prisma.peakSeasonRate.createMany({ data: peakRateData });
       }
 
       return newRoom;
@@ -123,17 +107,7 @@ export class RoomService {
       }
 
       console.error('Error creating room:', error);
-
-      if (error instanceof Error) {
-        switch (error.message) {
-          case 'Missing required fields':
-          case 'Invalid input format':
-            throw new ErrorHandler(400);
-          default:
-            throw new ErrorHandler(500);
-        }
-      }
-      throw new ErrorHandler(500);
+      throw error instanceof ErrorHandler ? error : new ErrorHandler(500);
     }
   }
 

@@ -9,6 +9,8 @@ import {
 import { BiSolidCategory } from 'react-icons/bi';
 import { LuTableProperties } from 'react-icons/lu';
 import { MdBedroomChild } from 'react-icons/md';
+import { MdEventAvailable } from 'react-icons/md';
+import { LuCalendarClock } from 'react-icons/lu';
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
@@ -16,6 +18,7 @@ import { users_role } from '@/interfaces/user.interface';
 import { avatar_src } from '@/config/images.config';
 import { showAlert } from '@/lib/utils';
 import Image from 'next/image';
+
 export default function NavbarProfileComponent() {
   const session = useSession();
   const [user, setUser] = useState<User | null>(null);
@@ -84,6 +87,7 @@ export default function NavbarProfileComponent() {
                 <MdBedroomChild />
               </Link>
             )}
+
             {user.user_role === 'tenant' && (
               <Link
                 href="/dashboard/createCategory"
@@ -91,6 +95,26 @@ export default function NavbarProfileComponent() {
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <BiSolidCategory />
+              </Link>
+            )}
+
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/createAvailability"
+                title="Create Availability"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <MdEventAvailable />
+              </Link>
+            )}
+
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/createPeakSeason"
+                title="Create Availability"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <LuCalendarClock />
               </Link>
             )}
 

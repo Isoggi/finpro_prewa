@@ -29,21 +29,15 @@ export interface IRooms {
 }
 
 export interface IAvailability {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  capacity: number;
-  image?: string | undefined;
+  stock: number;
+  date: string;
 }
 
 export interface IPeakSeasonRate {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  capacity: number;
-  image?: string | undefined;
+  start_date: string;
+  end_date: string;
+  rates: number;
+  rateCategory: string;
 }
 
 export interface IAddress {
