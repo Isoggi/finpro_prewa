@@ -2,7 +2,7 @@
 import { useState, SyntheticEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/config/axios.config';
-
+import { FaEdit } from 'react-icons/fa';
 type Category = {
   id: number;
   name: string;
@@ -78,10 +78,9 @@ const UpdateProperti = ({
 
   return (
     <div>
-      <button className="btn btn-info btn-sm" onClick={handleModal}>
-        Edit
+      <button className="btn bg-[#62CDFF] btn-sm" onClick={handleModal}>
+        <FaEdit size={20} />
       </button>
-
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
         <div className="modal-box">
           <h3 className="font-bold text-lg">Update {properties.name}</h3>

@@ -3,7 +3,6 @@ import { useState, SyntheticEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/config/axios.config';
 import type { Properties } from '@prisma/client';
-import { MdCreate } from 'react-icons/md';
 
 const AddRoom = ({ properties }: { properties: Properties[] }) => {
   const [name, setName] = useState('');
@@ -76,7 +75,7 @@ const AddRoom = ({ properties }: { properties: Properties[] }) => {
   return (
     <div>
       <button
-        className="btn btn-primary flex items-center gap-2"
+        className="btn bg-[#62CDFF] flex items-center gap-2"
         onClick={() => setIsOpen(true)}
       >
         Add Room

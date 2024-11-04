@@ -43,37 +43,18 @@ export class RoomService {
     let image = null;
 
     try {
-      console.log('Request Body:', req.body);
       if (!property_id || !name || !price || !capacity) {
-        console.error('Missing fields:', {
-          property_id,
-          name,
-          price,
-          capacity,
-        });
         throw new Error('Missing required fields');
       }
-
       const parsedPropertyId = parseInt(property_id);
       const parsedPrice = parseFloat(price);
       const parsedCapacity = parseInt(capacity);
 
-      console.log('Parsed Values:', {
-        parsedPropertyId,
-        parsedPrice,
-        parsedCapacity,
-      });
-      if (
-        isNaN(parsedPropertyId) ||
-        isNaN(parsedPrice) ||
-        isNaN(parsedCapacity)
-      ) {
-        throw new Error('Invalid input format');
-      }
       if (req.file) {
-        image = `${req.file.filename}`;
+        image = req.file.filename;
       }
 
+      // Buat data Room
       const newRoom = await prisma.rooms.create({
         data: {
           property_id: parsedPropertyId,
@@ -86,29 +67,28 @@ export class RoomService {
           updated_at: new Date(),
         },
       });
-      if (availability) {
-        const availabilityRoom = JSON.parse(availability);
-        await prisma.availability.createMany({
-          data: availabilityRoom.map((availability: any) => ({
-            room_id: newRoom.id,
-            date: new Date(availability.date),
-            stock: availability.stock,
-          })),
-        });
-      }
-      if (peakSeasonRate) {
-        const peakSeasonRateRoom = JSON.parse(peakSeasonRate);
-        await prisma.peakSeasonRate.createMany({
-          data: peakSeasonRateRoom.map((peakSeasonRate: any) => ({
-            room_id: newRoom.id,
-            start_date: new Date(peakSeasonRate.startDate),
-            end_date: new Date(peakSeasonRate.endDate),
-            rates: peakSeasonRate.rate,
-            peakSeasonRateCategory: peakSeasonRate.rateCategory,
-          })),
-        });
+
+      // Tambahkan Availability jika ada
+      if (availability && Array.isArray(availability)) {
+        const availabilityData = availability.map((avail: any) => ({
+          room_id: newRoom.id,
+          date: new Date(avail.date),
+          stock: avail.stock,
+        }));
+        await prisma.availability.createMany({ data: availabilityData });
       }
 
+      // Tambahkan PeakSeasonRate jika ada
+      if (peakSeasonRate && Array.isArray(peakSeasonRate)) {
+        const peakRateData = peakSeasonRate.map((rate: any) => ({
+          room_id: newRoom.id,
+          start_date: new Date(rate.start_date),
+          end_date: new Date(rate.end_date),
+          rates: rate.rates,
+          rateCategory: rate.rateCategory,
+        }));
+        await prisma.peakSeasonRate.createMany({ data: peakRateData });
+      }
       return newRoom;
     } catch (error) {
       if (req.file) {
@@ -121,26 +101,14 @@ export class RoomService {
           if (err) console.error('Error deleting file:', err);
         });
       }
-
       console.error('Error creating room:', error);
-
-      if (error instanceof Error) {
-        switch (error.message) {
-          case 'Missing required fields':
-          case 'Invalid input format':
-            throw new ErrorHandler(400);
-          default:
-            throw new ErrorHandler(500);
-        }
-      }
-      throw new ErrorHandler(500);
+      throw error instanceof ErrorHandler ? error : new ErrorHandler(500);
     }
   }
 
   static async updateRoom(req: Request) {
     const { id } = req.params;
     const { name, description, price, capacity, property_id } = req.body;
-
     try {
       const existingRoom = await prisma.rooms.findUnique({
         where: { id: Number(id) },
@@ -184,7 +152,6 @@ export class RoomService {
         where: { id: Number(id) },
         data: updateData,
       });
-
       return updatedRoom;
     } catch (error) {
       if (req.file) {
@@ -197,7 +164,6 @@ export class RoomService {
           fs.unlinkSync(filePath);
         }
       }
-
       console.error('Error updating room:', error);
       throw error instanceof ErrorHandler ? error : new ErrorHandler(500);
     }
@@ -205,7 +171,6 @@ export class RoomService {
 
   static async deleteRoom(req: Request) {
     const { id } = req.params;
-
     try {
       const room = await prisma.rooms.findUnique({
         where: { id: Number(id) },
@@ -213,7 +178,6 @@ export class RoomService {
       });
 
       if (!room) throw new ErrorHandler(404);
-
       await prisma.$transaction(async (prisma) => {
         await prisma.availability.deleteMany({
           where: { room_id: room.id },
@@ -227,14 +191,12 @@ export class RoomService {
           where: { id: room.id },
         });
       });
-
       if (room.image) {
-        const filePath = path.join(__dirname, '../public', room.image);
+        const filePath = path.join(__dirname, '../public/images', room.image);
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
       }
-
       return { message: 'Room and related data deleted successfully' };
     } catch (error) {
       console.error('Error deleting room:', error);

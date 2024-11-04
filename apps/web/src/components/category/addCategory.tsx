@@ -51,7 +51,7 @@ const AddCategory = () => {
   return (
     <div>
       <button
-        className="btn btn-primary flex items-center gap-2"
+        className="btn bg-[#62CDFF] flex items-center gap-2"
         onClick={() => setIsOpen(true)}
       >
         Add Category

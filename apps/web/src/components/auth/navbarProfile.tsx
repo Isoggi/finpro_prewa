@@ -9,6 +9,8 @@ import {
 import { BiSolidCategory } from 'react-icons/bi';
 import { LuTableProperties } from 'react-icons/lu';
 import { MdBedroomChild } from 'react-icons/md';
+import { MdEventAvailable } from 'react-icons/md';
+import { LuCalendarClock } from 'react-icons/lu';
 import Link from 'next/link';
 import { actionLogout } from '@/action/auth.action';
 import { User } from 'next-auth';
@@ -16,6 +18,7 @@ import { users_role } from '@/interfaces/user.interface';
 import { avatar_src } from '@/config/images.config';
 import { showAlert } from '@/lib/utils';
 import Image from 'next/image';
+
 export default function NavbarProfileComponent() {
   const session = useSession();
   const [user, setUser] = useState<User | null>(null);
@@ -67,8 +70,8 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createProperti"
-                title="Create Properti"
+                href="/dashboard/properti"
+                title="Properti"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <LuTableProperties />
@@ -77,20 +80,41 @@ export default function NavbarProfileComponent() {
 
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createRoom"
-                title="Create Room"
+                href="/dashboard/room"
+                title="Room"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <MdBedroomChild />
               </Link>
             )}
+
             {user.user_role === 'tenant' && (
               <Link
-                href="/dashboard/createCategory"
-                title="Create Category"
+                href="/dashboard/category"
+                title="Category"
                 className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
               >
                 <BiSolidCategory />
+              </Link>
+            )}
+
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/availability"
+                title="Availability"
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <MdEventAvailable />
+              </Link>
+            )}
+
+            {user.user_role === 'tenant' && (
+              <Link
+                href="/dashboard/peakseason"
+                title="Peak Season "
+                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
+              >
+                <LuCalendarClock />
               </Link>
             )}
 
@@ -101,11 +125,13 @@ export default function NavbarProfileComponent() {
                     <img
                       title="avatar"
                       src={
-                        user.image?.includes('http')
-                          ? user.image
-                          : `${process.env.NEXT_PUBLIC_AVATAR_IMAGE}${user.image}`
+                        user.image
+                          ? user?.image?.startsWith('http')
+                            ? user?.image
+                            : `${process.env.NEXT_PUBLIC_AVATAR_IMAGE}${user?.image}`
+                          : ''
                       }
-                      alt="User Avatar"
+                      alt={user.image}
                       className="w-full h-full object-cover"
                     />
                   </div>

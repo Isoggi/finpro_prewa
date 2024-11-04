@@ -92,6 +92,17 @@ const ProppertiDetail = ({ slug }: Props) => {
         </div>
         <div className="flex flex-col md:flex-row md:space-x-4 py-4">
           <div className="bg-white p-4 rounded-lg shadow-sm md:w-2/3">
+            <Image
+              src={
+                properties?.image?.includes('http')
+                  ? properties?.image
+                  : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties?.image}`
+              }
+              alt={properties?.image ?? ''}
+              width={280}
+              height={250}
+              className="rounded-lg object-cover"
+            />
             <h3 className="text-xl font-semibold mb-2">{properties?.name}</h3>
             <p className="text-gray-700">{properties?.description}</p>
             <div className="mt-2">
@@ -140,7 +151,7 @@ const ProppertiDetail = ({ slug }: Props) => {
           </div>
 
           <div className="w-full lg:w-2/3 p-4">
-            <h2 className="text-2xl font-bold mb-4">Rooms</h2>
+            <h2 className="text-2xl font-bold mb-4">Pilih Room</h2>
             <div className="space-y-6">
               {sortedRooms.map((room) => (
                 <div
@@ -156,8 +167,8 @@ const ProppertiDetail = ({ slug }: Props) => {
                         : '/default-hotel.jpg'
                     }
                     alt={room.name}
-                    width={200}
-                    height={150}
+                    width={280}
+                    height={250}
                     className="rounded-lg object-cover"
                   />
                   <div className=" flex-grow flex px-2 py-2 flex-col justify-between">
