@@ -1,11 +1,10 @@
 import { api } from '@/config/axios.config';
 import { showAlert } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 
 type Props = { id: string; invoice_number: string; token: string };
 
-export default function cancelOrderUser({ id, invoice_number, token }: Props) {
+export default function CancelOrderUser({ id, invoice_number, token }: Props) {
   const dialog = document.getElementById(id) as HTMLDialogElement | null;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -53,7 +52,7 @@ export default function cancelOrderUser({ id, invoice_number, token }: Props) {
       <button
         type="button"
         title="Konfirmasi bayar"
-        className="btn btn-sm btn-primary hover:text-red-500"
+        className="text-red-500"
         onClick={(e) => {
           e.stopPropagation();
           if (dialog) dialog.showModal();

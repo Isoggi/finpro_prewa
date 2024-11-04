@@ -102,15 +102,7 @@ export default function OrderDetailComponent({ id }: Props) {
                   {data.transactionItems[0].room.property?.name}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  {
-                    data.transactionItems[0].room.property?.address.district
-                      .name
-                  }
-                  ,{' '}
-                  {
-                    data.transactionItems[0].room.property?.address.provinces
-                      .name
-                  }
+                  {`${data.transactionItems[0].room.property?.address?.district.name}, ${data.transactionItems[0].room.property?.address?.provinces.name}`}
                 </p>
               </>
             )}
@@ -171,10 +163,16 @@ export default function OrderDetailComponent({ id }: Props) {
         <div className="card bg-base-200 w-full mb-4 shadow-xl">
           <div className="card-body">
             <h3 className="card-title">Location</h3>
-            <p>{data.transactionItems?.[0]?.room?.property?.address.detail}</p>
+            {data.transactionItems && (
+              <p>{data.transactionItems[0].room.property?.address?.detail}</p>
+            )}
             <iframe
               title="maps"
-              src={`https://maps.google.com/maps?q=${data.transactionItems?.[0]?.room?.property?.address.lat},${data.transactionItems?.[0]?.room?.property?.address.lng}&output=embed`}
+              src={
+                data.transactionItems
+                  ? `https://maps.google.com/maps?q=${data.transactionItems[0].room.property?.address?.lat},${data.transactionItems[0].room.property?.address?.lng}&output=embed`
+                  : ''
+              }
               className="w-full h-64 mt-2"
               allowFullScreen
             ></iframe>

@@ -1,13 +1,14 @@
 import React from 'react';
-import ModalComponent from '../modal';
 import { Order } from '@/interfaces/order.interface';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaChevronRight, FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV } from 'react-icons/fa';
 import { dateDiff, formatStyledDate } from '@/lib/utils';
+import CancelOrderUser from '../modal/cancelOrderUser';
 
 interface Props extends Order {
   user_role: string;
+  token: string;
 }
 
 export default function OrderCardComponent({
@@ -20,7 +21,9 @@ export default function OrderCardComponent({
   status,
   image,
   payment_method,
+  invoice_number,
   user_role,
+  token,
 }: Props) {
   // console.log(payment_method, user_role, status);
 
@@ -29,7 +32,11 @@ export default function OrderCardComponent({
       <figure>
         {image ? (
           <img
-            src={`${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`}
+            src={
+              image?.startsWith('http')
+                ? image
+                : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`
+            }
             alt="image"
             className="max-w-none h-auto"
           />
@@ -54,9 +61,16 @@ export default function OrderCardComponent({
               tabIndex={0}
               className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
             >
-              <li>
-                <a className="text-red-500">Batalkan pesanan</a>
-              </li>
+              {status === 'waitingpayment' && (
+                <li>
+                  <CancelOrderUser
+                    id={'cancel_order_user'}
+                    invoice_number={invoice_number ?? ''}
+                    token={token}
+                  />
+                  <a className="text-red-500">Batalkan pesanan</a>
+                </li>
+              )}
               <li>
                 <Link
                   href={

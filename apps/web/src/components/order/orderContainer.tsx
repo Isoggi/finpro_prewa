@@ -20,16 +20,25 @@ export default function OrderContainerComponent({ url }: Props) {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
   ); // Timeout ID for debounce
-  const searchParams = useSearchParams();
-
-  setEndDate(searchParams.get('endDate') ?? '');
-  setStartDate(searchParams.get('startDate') ?? '');
-  setOrderNumber(searchParams.get('orderNumber') ?? '');
-  // const page = searchParams.get('page') ? searchParams.get('page') : 1;
-  // const size = searchParams.get('size') ? searchParams.get('size') : 8;
 
   const { data: session } = useSession();
-  const user: User | undefined | null = session ? session.user : null;
+  const user: User | null = useMemo(() => {
+    if (session?.user) {
+      return session.user;
+    }
+    return null;
+  }, [session]);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setEndDate(searchParams.get('endDate') ?? '');
+    setStartDate(searchParams.get('startDate') ?? '');
+    setOrderNumber(searchParams.get('orderNumber') ?? '');
+  }, []);
+
+  // const page = searchParams.get('page') ? searchParams.get('page') : 1;
+  // const size = searchParams.get('size') ? searchParams.get('size') : 8;
 
   // Function to fetch bookings from API
   const fetchBookings = async (
@@ -142,6 +151,7 @@ export default function OrderContainerComponent({ url }: Props) {
                 amount={order.amount}
                 payment_method={order.payment_method}
                 user_role={user?.user_role as string}
+                token={user?.access_token as string}
               />
             ))
           ) : (
