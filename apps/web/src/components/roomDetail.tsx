@@ -56,7 +56,7 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
 
         <div className="mt-4">
           <h3 className="font-semibold">Availability:</h3>
-          {room.availability.map((avail) => (
+          {room?.availability?.map((avail) => (
             <div key={avail.id} className="border-b border-gray-200 py-2">
               <p>
                 {avail.name} - Rp {avail.price.toLocaleString()}
@@ -68,9 +68,9 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
 
         <div className="mt-4">
           <h3 className="font-semibold">Peak Season Rate:</h3>
-          <p>{room.peakSeasonRate?.name}</p>
-          <p>Price: Rp {room.peakSeasonRate?.price.toLocaleString()}</p>
-          <p>Capacity: {room.peakSeasonRate?.capacity}</p>
+          <p>Rate Category: {room.peakSeasonRate?.[0].rateCategory}</p>
+          <p>Price: Rp {room.peakSeasonRate?.[0].rates.toLocaleString()}</p>
+          <p>Capacity: {room.capacity}</p>
         </div>
       </div>
 

@@ -44,9 +44,9 @@ function PropertiesSection() {
       ) : (
         <div className="flex overflow-x-auto gap-x-3 pb-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="flex w-52 flex-col gap-4">
+            <div key={index} className="flex w-full flex-col gap-4">
               <div className="skeleton h-32 w-full bg-gray-300 rounded"></div>
-              <div className="skeleton h-4 w-28 bg-gray-300 rounded"></div>
+              <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
               <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
               <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
             </div>

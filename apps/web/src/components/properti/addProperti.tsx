@@ -90,7 +90,7 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
   return (
     <div>
       <button className="btn bg-[#62CDFF]" onClick={handleModal}>
-        Add
+        Add Properti
       </button>
       <div className={isOpen ? 'modal modal-open' : 'modal'}>
         <div className="modal-box">

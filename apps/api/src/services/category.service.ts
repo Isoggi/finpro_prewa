@@ -1,8 +1,15 @@
 import { Request } from 'express';
 import prisma from '@/prisma';
 import { ErrorHandler } from '@/helpers/response.helper';
-
+import { Prisma } from '@prisma/client';
 export class CategoryService {
+  static async getAllCategory(req: Request) {
+    const { categoryId } = req.query;
+    let where: Prisma.CategoriesWhereInput = {};
+    if (categoryId) where.id = Number(categoryId);
+
+    return await prisma.categories.findMany({ where });
+  }
   static async getByIdService(req: Request) {
     const { id } = req.params;
     const data = await prisma.categories.findUnique({
