@@ -98,7 +98,7 @@ export default function Daftar() {
             </div>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-black rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
                 type="text"
                 placeholder="Phone Number"
                 {...register('phone_number')}

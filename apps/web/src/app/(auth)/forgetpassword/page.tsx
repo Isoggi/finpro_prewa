@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -14,6 +14,7 @@ import Link from 'next/link';
 const MySwal = withReactContent(Swal);
 
 export default function ForgetPassword() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const form = useForm<z.infer<typeof forgetPasswordSchema>>({
     resolver: zodResolver(forgetPasswordSchema),
     defaultValues: {},
@@ -38,6 +39,16 @@ export default function ForgetPassword() {
   });
 
   const onSubmit = async (values: z.infer<typeof forgetPasswordSchema>) => {
+    if (isSubmitted) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Request already submitted. Please check your email.',
+      });
+      return;
+    }
+
+    setIsSubmitted(true);
+
     try {
       const res = await forgetPassword(values.email);
       form.reset();
@@ -52,6 +63,8 @@ export default function ForgetPassword() {
           title: `Gagal mengirim: ${err.message}`,
         });
       }
+    } finally {
+      setIsSubmitted(false);
     }
   };
 
@@ -72,7 +85,7 @@ export default function ForgetPassword() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <input
-                className="w-full p-3 border border-black rounded-lg text-white bg-transparent placeholder-gray-300"
+                className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
                 type="email"
                 placeholder="Email"
                 {...register('email')}
@@ -83,11 +96,11 @@ export default function ForgetPassword() {
               </div>
             </div>
             <button
-              className="w-full py-3 bg-[#e6f2fe]  text-black rounded-full flex items-center justify-center mb-4"
+              className="w-full py-3 bg-[#e6f2fe] text-black rounded-full flex items-center justify-center mb-4"
               type="submit"
-              disabled={form.formState.isSubmitting}
+              disabled={form.formState.isSubmitting || isSubmitted}
             >
-              Submit
+              Kirim
             </button>
           </form>
         </div>

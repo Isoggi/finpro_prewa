@@ -62,7 +62,7 @@ const formProperti = async () => {
       <div className="mb-2">
         <AddProperti categories={category} addresses={addresses} />
       </div>
-      <table className="table w-full">
+      <table className="table w-full ">
         <thead>
           <tr>
             <th>ID</th>

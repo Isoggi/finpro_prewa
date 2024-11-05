@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/config/axios.config';
 import { IoIosSearch } from 'react-icons/io';
+
 export default function SearchBarComponent() {
   const params = useSearchParams();
   const today = params.get('start_date')
@@ -89,18 +90,19 @@ export default function SearchBarComponent() {
   return (
     <div>
       {user?.user_role !== 'tenant' && (
-        <div className="bg-[#e6f2fe] dark:bg-base-100 p-6 shadow-md">
-          <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-base-100 p-6 rounded-full shadow-lg">
-            <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
+        <div className="bg-[#e6f2fe] dark:bg-base-100 p-4 shadow-md">
+          <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-base-100 p-4 md:p-6 rounded-xl shadow-lg space-y-4 md:space-y-0 md:space-x-4">
+            {/* Location Picker */}
+            <div className="flex items-center w-full md:w-auto border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <button
                 onClick={showLocationModal}
                 className="text-sm hover:text-blue-500"
               >
-                {location || 'PIlih Lokasi'}
+                {location || 'Pilih Lokasi'}
               </button>
             </div>
 
-            <div className="flex items-center bg-white border rounded-full px-4 py-2 w-full max-w-sm">
+            <div className="flex items-center bg-white border rounded-xl px-4 py-2 w-full md:w-auto space-x-2">
               <input
                 type="date"
                 id="Start Date"
@@ -109,7 +111,6 @@ export default function SearchBarComponent() {
                 onChange={handleStartDateChange}
                 className="w-full bg-transparent focus:outline-none"
               />
-              <span className="px-2"></span>
               <input
                 type="date"
                 id="End Date"
@@ -120,7 +121,7 @@ export default function SearchBarComponent() {
               />
             </div>
 
-            <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
+            <div className="flex items-center w-full md:w-auto border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <button
                 onClick={showCategoryModal}
                 className="text-sm hover:text-blue-500"
@@ -130,7 +131,7 @@ export default function SearchBarComponent() {
             </div>
 
             <button
-              className="bg-[#62CDFF] text-white p-2 px-4 rounded-xl"
+              className="bg-[#62CDFF] text-white p-2 px-4 rounded-xl w-full md:w-auto"
               onClick={handleFilterClick}
             >
               Ayo Cari

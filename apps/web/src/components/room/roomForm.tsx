@@ -47,51 +47,52 @@ const formRooms = async () => {
       <div className="mb-2">
         <AddRoom properties={properties} />
       </div>
-      <table className="table w-full">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Capacity</th>
-            <th>Property</th>
-            <th>Image</th>
-            <th className="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rooms.map((room, index) => (
-            <tr key={room.id}>
-              <td>{index + 1}</td>
-              <td>{room.name}</td>
-              <td>{room.description}</td>
-              <td>{room.price.toLocaleString()}</td>
-              <td>{room.capacity}</td>
-              <td>{room.property_id}</td>
-              <td>
-                {' '}
-                <img
-                  src={
-                    room.image?.includes('http')
-                      ? room.image
-                      : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
-                  }
-                  alt={room.name}
-                  className="w-full h-20 md:h-32 lg:h-40 object-cover rounded-md mb-2"
-                />
-              </td>
-              <td className="flex justify-center space-x-1">
-                <UpdateRoom
-                  room={{ ...room, price: Number(room.price) }}
-                  properties={properties}
-                />
-                <DeleteRoom id={room.id} name={room.name} />
-              </td>
+      <div className="overflow-x-auto">
+        <table className="table-auto w-full">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="px-2 py-1 text-left">ID</th>
+              <th className="px-2 py-1 text-left">Name</th>
+              <th className="px-2 py-1 text-left">Description</th>
+              <th className="px-2 py-1 text-left">Price</th>
+              <th className="px-2 py-1 text-left">Capacity</th>
+              <th className="px-2 py-1 text-left">Property</th>
+              <th className="px-2 py-1 text-left">Image</th>
+              <th className="px-2 py-1 text-center">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rooms.map((room, index) => (
+              <tr key={room.id} className="border-b">
+                <td className="px-2 py-1">{index + 1}</td>
+                <td className="px-2 py-1">{room.name}</td>
+                <td className="px-2 py-1">{room.description}</td>
+                <td className="px-2 py-1">{room.price.toLocaleString()}</td>
+                <td className="px-2 py-1">{room.capacity}</td>
+                <td className="px-2 py-1">{room.property_id}</td>
+                <td className="px-2 py-1">
+                  <img
+                    src={
+                      room.image?.includes('http')
+                        ? room.image
+                        : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+                    }
+                    alt={room.name}
+                    className="w-full h-20 md:h-32 lg:h-40 object-cover rounded-md mb-2"
+                  />
+                </td>
+                <td className="px-2 py-1 flex justify-center space-x-1">
+                  <UpdateRoom
+                    room={{ ...room, price: Number(room.price) }}
+                    properties={properties}
+                  />
+                  <DeleteRoom id={room.id} name={room.name} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

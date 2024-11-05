@@ -10,13 +10,14 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { verifyForgetPasswordSchema } from '@/schemas/auth.schema';
 import { actionConfirmVerifyPassword } from '@/action/auth.action';
-import { actionConfirmForgetPassword } from '@/action/auth.action';
+
 const MySwal = withReactContent(Swal);
 
 const VerifyEmail = () => {
   const router = useRouter();
   const query = useSearchParams();
   const [emailSent, setEmailSent] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   const handleResendEmail = () => {
     // Simulate API call for resending email
@@ -31,9 +32,10 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     const verifyEmail = async () => {
-      if (emailSent && email) {
+      if (emailSent && email && !isVerified) {
         try {
           await api.patch(`/auth/verify-password`, { email });
+          setIsVerified(true);
         } catch (error) {
           console.error('send failed:', error);
         }
@@ -69,8 +71,8 @@ const VerifyEmail = () => {
   const onSubmit = async (
     values: z.infer<typeof verifyForgetPasswordSchema>,
   ) => {
+    if (isVerified) return;
     try {
-      console.log('confirm password:', values);
       const res = await actionConfirmVerifyPassword(
         token as string,
         values.password,
@@ -80,28 +82,30 @@ const VerifyEmail = () => {
 
       Toast.fire({
         icon: 'success',
-        title: res.message || 'Daftar Berhasil',
+        title: res.message || 'Verification Successful',
       });
+      setIsVerified(true);
     } catch (err) {
       if (err instanceof Error) {
         Toast.fire({
           icon: 'error',
-          title: `Daftar gagal: ${err.message}`,
+          title: `Verification failed: ${err.message}`,
         });
       }
     }
   };
 
   return token ? (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#e6f2fe] ">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <input
-              className="w-full p-2 bg-gray-700 text-white rounded-md"
+              className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
               type="password"
               placeholder="Password"
               {...register('password')}
+              disabled={isVerified}
             />
             <div className="text-red-500 text-sm mt-1">
               <ErrorMessage errors={errors} name="password" />
@@ -110,10 +114,11 @@ const VerifyEmail = () => {
 
           <div className="mb-4">
             <input
-              className="w-full p-2 bg-gray-700 text-white rounded-md"
+              className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
               type="password"
               placeholder="Confirm Password"
               {...register('confirm_password')}
+              disabled={isVerified}
             />
             <div className="text-red-500 text-sm mt-1">
               <ErrorMessage errors={errors} name="confirm_password" />
@@ -121,37 +126,36 @@ const VerifyEmail = () => {
           </div>
 
           <button
-            className="w-full py-2 px-4 bg-[#128ede] text-white rounded-md hover:bg-purple-700 transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
+            className="w-full py-2 px-4 bg-[#e6f2fe] text-black rounded-xl  transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
             type="submit"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || isVerified}
           >
-            Lanjut
+            Simpan
           </button>
         </form>
       </div>
     </div>
   ) : (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#e6f2fe]">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h1 className="text-2xl font-semibold text-center text-gray-800">
-          Verifikasi email anda
+          Verify your email
         </h1>
         <p className="text-center text-gray-600 mt-4">
-          Kami sudah mengirimkan email verifikasi ke alamat email terdaftar.
+          We've sent a verification email to your registered address.
         </p>
         <div className="mt-6 flex justify-center">
           <button
-            className={`btn ${emailSent ? 'btn-disabled' : 'btn-primary'}`}
+            className={`btn ${emailSent ? 'btn-disabled' : 'btn bg-[#e6f2fe]'}`}
             onClick={handleResendEmail}
             disabled={emailSent}
           >
-            {emailSent ? 'Email terkirim!' : 'Kirim ulang'}
+            {emailSent ? 'Email sent!' : 'Resend'}
           </button>
         </div>
         {emailSent && (
           <p className="text-green-500 text-center mt-4">
-            Email verifikasi sudah dikirm ulang! Tunggu 60 detik untuk kirim
-            ulang!
+            Verification email resent! Wait 60 seconds to resend again.
           </p>
         )}
       </div>

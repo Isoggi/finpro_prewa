@@ -19,16 +19,12 @@ export default function ProfileComponent() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    if (session?.user) setUser(session?.user);
+    if (session?.user) setUser(session.user);
   }, [session]);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await api.get('/auth/profile', {
-        headers: {
-          Authorization: `Bearer ${session?.user.access_token}`,
-        },
-      });
+      const response = await api.get('/auth/profile'); // No need for Authorization header if using NextAuth
       setUser(response.data.data as User);
     }
     fetchData();
@@ -117,7 +113,7 @@ export default function ProfileComponent() {
                 watch('image') instanceof File
                   ? URL.createObjectURL(watch('image'))
                   : user?.image
-                    ? avatar_src + user?.image
+                    ? avatar_src + user.image
                     : ''
               }
               alt="Profile Picture"

@@ -20,7 +20,6 @@ function PropertiesSection() {
     const fetchEvents = async () => {
       try {
         const response = await api.get('/properti');
-        console.log(response.data.data);
         setProperti(response.data.data.data as IProperties[]);
       } catch (error) {
         console.log(error);
@@ -30,19 +29,22 @@ function PropertiesSection() {
   }, []);
 
   return (
-    <div className="max-w-screen-xl mx-auto">
+    <div className="max-w-screen-xl mx-auto sm:px-4">
       <h2 className="text-xl font-semibold text-black mb-4">Sedang Popular</h2>
 
       {properti ? (
         chunkArray(properti, 4).map((chunk, chunkIndex) => (
-          <div key={chunkIndex} className="flex overflow-x-auto gap-x-3 pb-4">
+          <div
+            key={chunkIndex}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4"
+          >
             {chunk.map((room, index) => (
               <PropertiCard key={index} data={room} />
             ))}
           </div>
         ))
       ) : (
-        <div className="flex overflow-x-auto gap-x-3 pb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="flex w-full flex-col gap-4">
               <div className="skeleton h-32 w-full bg-gray-300 rounded"></div>

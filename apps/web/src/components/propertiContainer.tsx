@@ -34,27 +34,27 @@ export default function PropertiesContainer() {
   }, [category, location, startDate, endDate]);
 
   return (
-    <div className="max-w-screen-xl mx-auto">
+    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-xl font-semibold text-black mb-4">Hasil Pencarian</h2>
 
-      <div className="flex overflow-x-auto space-x-4 pb-4 mt-4">
-        {properti ? (
-          properti.map((room, index) => (
+      {properti ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
+          {properti.map((room, index) => (
             <PropertiCard key={index} data={room} />
-          ))
-        ) : (
-          <div className="flex overflow-x-auto gap-x-3 pb-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="flex w-full flex-col gap-4">
-                <div className="skeleton h-32 w-full bg-gray-300 rounded"></div>
-                <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
-                <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
-                <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="flex w-full flex-col gap-4">
+              <div className="skeleton h-32 w-full bg-gray-300 rounded"></div>
+              <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
+              <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
+              <div className="skeleton h-4 w-full bg-gray-300 rounded"></div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -12,6 +12,16 @@ export class RoomController {
       next(error);
     }
   }
+
+  async get(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await RoomService.get(req);
+      return res.status(200).json({ message: 'Get Room', data, success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
   async createRoom(req: Request, res: Response, next: NextFunction) {
     try {
       const data = await RoomService.createRoom(req);

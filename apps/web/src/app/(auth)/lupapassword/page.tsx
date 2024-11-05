@@ -94,7 +94,7 @@ const ForgetPasswordEmail = () => {
   };
 
   return token ? (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#e6f2fe]">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
@@ -122,7 +122,7 @@ const ForgetPasswordEmail = () => {
           </div>
 
           <button
-            className="w-full py-2 px-4 bg-[#128ede] text-white rounded-md hover:bg-purple-700 transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
+            className="w-full py-2 px-4 bg-[#e6f2fe] text-white rounded-md hover:bg-purple-700 transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
             type="submit"
             disabled={form.formState.isSubmitting}
           >
@@ -143,7 +143,7 @@ const ForgetPasswordEmail = () => {
         </p>
         <div className="mt-6 flex justify-center">
           <button
-            className={`btn ${emailSent ? 'btn-disabled' : 'btn-primary'}`}
+            className={`btn ${emailSent ? 'btn-disabled' : 'btn bg-[#e6f2fe]'}`}
             onClick={handleResendEmail}
             disabled={emailSent}
           >

@@ -5,6 +5,37 @@ import fs from 'fs';
 import path from 'path';
 
 export class RoomService {
+  static async get(req: Request) {
+    const { slug } = req.params;
+    const data = await prisma.rooms.findMany({
+      where: { name: slug },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        image: true,
+        price: true,
+        capacity: true,
+        available: {
+          select: {
+            id: true,
+            stock: true,
+            date: true,
+          },
+        },
+        peakSeasonRate: {
+          select: {
+            start_date: true,
+            end_date: true,
+            rates: true,
+            rateCategory: true,
+          },
+        },
+      },
+    });
+    return data;
+  }
+
   static async getByIdService(req: Request) {
     const { id } = req.params;
     if (id) {
