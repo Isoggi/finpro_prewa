@@ -20,7 +20,6 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
         const response = await api.get(`/room/${params.id}`);
         const data = response.data.data as IRooms;
         console.log(data);
-
         setRoom(data);
       };
       fetchRoomDetail();
@@ -39,11 +38,9 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
       <div className="flex flex-col md:flex-row">
         <Image
           src={
-            room.image
-              ? room.image.includes('http')
-                ? room.image
-                : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
-              : '/default-hotel.jpg'
+            room.image?.includes('http')
+              ? room.image
+              : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
           }
           alt={room.name}
           width={200}

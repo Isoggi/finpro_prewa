@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 
 const getProperti = async () => {
   const res = await prisma.properties.findMany({
+    where: { isActive: true },
     select: {
       id: true,
       name: true,

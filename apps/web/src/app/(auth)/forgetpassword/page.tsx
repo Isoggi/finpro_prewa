@@ -69,7 +69,7 @@ export default function ForgetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#e6f2fe]  flex-col">
+    <div className="min-h-screen flex bg-[#e6f2fe] flex-col">
       <div className="breadcrumbs text-sm py-4 px-6 text-black">
         <ul>
           <li>
@@ -80,29 +80,41 @@ export default function ForgetPassword() {
       </div>
 
       <div className="flex-grow flex items-center justify-center px-4">
-        <div className="p-8 rounded-lg shadow-lg text-center max-w-sm w-full border bg-white border-white sm:mx-4">
-          <h1 className="text-black text-2xl font-bold mb-6">Lupa Password</h1>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
-              <input
-                className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
-                type="email"
-                placeholder="Email"
-                {...register('email')}
-                required
-              />
-              <div className="text-red-500 text-sm mt-1">
-                <ErrorMessage errors={errors} name="email" />
+        <div className="p-8 rounded-lg shadow-lg text-center max-w-4xl w-full border bg-white border-white sm:mx-4 flex flex-col sm:flex-row items-center">
+          <div className="w-full sm:w-2/3 mb-6 sm:mb-0 sm:mr-4 flex justify-center">
+            <img
+              src="/lupapw.png"
+              alt="Forgot Password Illustration"
+              className="w-full"
+            />
+          </div>
+
+          <div className="w-full sm:w-2/3 text-left">
+            <h1 className="text-black text-2xl font-bold mb-6">
+              Lupa Password
+            </h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="mb-4">
+                <input
+                  className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
+                  type="email"
+                  placeholder="Email"
+                  {...register('email')}
+                  required
+                />
+                <div className="text-red-500 text-sm mt-1">
+                  <ErrorMessage errors={errors} name="email" />
+                </div>
               </div>
-            </div>
-            <button
-              className="w-full py-3 bg-[#e6f2fe] text-black rounded-full flex items-center justify-center mb-4"
-              type="submit"
-              disabled={form.formState.isSubmitting || isSubmitted}
-            >
-              Kirim
-            </button>
-          </form>
+              <button
+                className="w-full py-3 bg-[#e6f2fe] text-black rounded-full flex items-center justify-center mb-4"
+                type="submit"
+                disabled={form.formState.isSubmitting || isSubmitted}
+              >
+                Kirim
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

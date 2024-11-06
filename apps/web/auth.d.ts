@@ -14,6 +14,7 @@ declare module 'next-auth' {
     access_token_expires?: number | undefined;
     user_role?: string | undefined;
     error: string | undefined;
+    isVerified?: boolean;
   }
 
   interface Session {

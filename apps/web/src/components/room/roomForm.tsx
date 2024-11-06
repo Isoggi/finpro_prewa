@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 const getRooms = async () => {
   const res = await prisma.rooms.findMany({
+    where: { isActive: true },
     select: {
       id: true,
       name: true,
@@ -16,6 +17,8 @@ const getRooms = async () => {
       capacity: true,
       property_id: true,
       image: true,
+      property: true,
+      isActive: true,
     },
   });
   return res;
@@ -23,6 +26,7 @@ const getRooms = async () => {
 
 const getProperties = async () => {
   const res = await prisma.properties.findMany({
+    where: { isActive: true },
     select: {
       id: true,
       tenant_id: true,
@@ -34,6 +38,7 @@ const getProperties = async () => {
       image: true,
       created_at: true,
       updated_at: true,
+      isActive: true,
     },
   });
   return res;
@@ -69,7 +74,7 @@ const formRooms = async () => {
                 <td className="px-2 py-1">{room.description}</td>
                 <td className="px-2 py-1">{room.price.toLocaleString()}</td>
                 <td className="px-2 py-1">{room.capacity}</td>
-                <td className="px-2 py-1">{room.property_id}</td>
+                <td className="px-2 py-1">{room.property.name}</td>
                 <td className="px-2 py-1">
                   <img
                     src={

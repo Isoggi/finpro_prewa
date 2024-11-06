@@ -12,7 +12,7 @@ export class RoomRouter {
   }
 
   private routes(): void {
-    this.router.get('/:id', this.roomController.getById);
+    this.router.get('/:slug', this.roomController.getById);
     this.router.post(
       '/',
       this.uploadMiddleware.single('image'),

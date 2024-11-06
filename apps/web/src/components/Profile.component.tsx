@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { z } from 'zod';
-
+import { TiTick } from 'react-icons/ti';
 const MySwal = withReactContent(Swal);
 
 export default function ProfileComponent() {
@@ -19,12 +19,16 @@ export default function ProfileComponent() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    if (session?.user) setUser(session.user);
+    if (session?.user) setUser(session?.user);
   }, [session]);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await api.get('/auth/profile'); // No need for Authorization header if using NextAuth
+      const response = await api.get('/auth/profile', {
+        headers: {
+          Authorization: `Bearer ${session?.user.access_token}`,
+        },
+      });
       setUser(response.data.data as User);
     }
     fetchData();
@@ -72,15 +76,12 @@ export default function ProfileComponent() {
   const onSubmit = async (values: z.infer<typeof profileSchema>) => {
     const formData = new FormData();
     formData.append('name', values.name);
-
     if (values.image instanceof File) {
       formData.append('image', values.image);
     }
-
     if (values.password?.length) {
       formData.append('password', values.password);
     }
-
     try {
       await actionUpdateProfile(formData);
       Toast.fire({
@@ -113,7 +114,7 @@ export default function ProfileComponent() {
                 watch('image') instanceof File
                   ? URL.createObjectURL(watch('image'))
                   : user?.image
-                    ? avatar_src + user.image
+                    ? avatar_src + user?.image
                     : ''
               }
               alt="Profile Picture"
@@ -149,6 +150,7 @@ export default function ProfileComponent() {
               <p className="text-red-500 text-xs">{errors.name.message}</p>
             )}
           </div>
+
           <button
             type="submit"
             className="bg-blue-500 text-white px-3 py-1 w-24 text-sm rounded disabled:bg-gray-700 disabled:cursor-not-allowed"
@@ -156,6 +158,12 @@ export default function ProfileComponent() {
           >
             Simpan
           </button>
+          {user?.isVerified && (
+            <div className="mt-2 text-green-500 text-sm flex items-center">
+              <strong>Account Verified</strong>
+              <TiTick className="ml-2 text-green-500" />
+            </div>
+          )}
         </div>
       </form>
     </div>

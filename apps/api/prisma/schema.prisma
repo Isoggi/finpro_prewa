@@ -79,6 +79,7 @@ model Rooms {
   price       Decimal  @db.Decimal(10, 0)
   capacity    Int
   image       String?  @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   isActive Boolean @default(true)

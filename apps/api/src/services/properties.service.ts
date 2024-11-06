@@ -227,7 +227,7 @@ export class PropertiesService {
     const { id } = req.params;
     if (id) {
       const data = await prisma.properties.findUnique({
-        where: { slug_address: id },
+        where: { slug_address: id, isActive: true },
         include: {
           rooms: {
             include: {

@@ -36,7 +36,7 @@ const SidebarComponent: React.FC = () => {
       </li>
       <li>
         <Link href="/dashboard/properti">
-          <p className={`p-2 rounded `}>properti</p>
+          <p className={`p-2 rounded `}>Properti</p>
         </Link>
       </li>
       <li>
@@ -51,7 +51,7 @@ const SidebarComponent: React.FC = () => {
       </li>
       <li>
         <Link href="/dashboard/availability">
-          <p className={`p-2 rounded `}>Avaibility</p>
+          <p className={`p-2 rounded `}>Availability</p>
         </Link>
       </li>
       <li>

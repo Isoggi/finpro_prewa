@@ -186,7 +186,7 @@ const ProppertiDetail = ({ slug }: Props) => {
                       Rp {room.price.toLocaleString()}/malam
                     </p>
                     <Link
-                      href={`/room/${room.id}`}
+                      href={`/room/${room.slug}`}
                       className="bg-[#62CDFF] text-white py-2 px-4 rounded-lg font-medium"
                     >
                       Pilih

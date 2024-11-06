@@ -14,6 +14,7 @@ const getPeakSeason = async () => {
       rates: true,
       rateCategory: true,
       room_id: true,
+      rooms: true,
     },
   });
   return res;
@@ -38,7 +39,7 @@ const FormPeakSeason = async () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Room Id</th>
+              <th>Room</th>
               <th>Start Date</th>
               <th>End Date</th>
               <th>Rates</th>
@@ -50,7 +51,7 @@ const FormPeakSeason = async () => {
             {peakSeason.map((peakseason, index) => (
               <tr key={peakseason.id}>
                 <td>{index + 1}</td>
-                <td>{peakseason.room_id}</td>
+                <td>{peakseason.rooms.name}</td>
                 <td>{new Date(peakseason.start_date).toLocaleDateString()}</td>
                 <td>{new Date(peakseason.end_date).toLocaleDateString()}</td>
                 <td>{peakseason.rates}</td>
