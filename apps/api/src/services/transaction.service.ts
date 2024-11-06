@@ -1,5 +1,6 @@
 import { ErrorHandler } from '@/helpers/response.helper';
 import { Order } from '@/interfaces/transaction.interface';
+import { addAutoCancelOrder } from '@/libs/bullmq.lib';
 import prisma from '@/prisma';
 import {
   transaction_items_status,
@@ -296,9 +297,15 @@ export class TransactionService {
           });
         }
       });
-      return newTrx.invoice_number;
+      return newTrx;
     });
-    return data;
+
+    await addAutoCancelOrder({
+      id: data.invoice_number ?? `ORDER-${new Date().getTime()}`,
+      name: data.invoice_number ?? `ORDER-${new Date().getTime()}`,
+      data: { transaction_id: data.id },
+    });
+    return data.invoice_number;
   }
 
   static async updateTransaction(req: Request) {
@@ -338,6 +345,44 @@ export class TransactionService {
     });
     if (!trx_id)
       throw new ErrorHandler('Unauthorized access by other user', 401);
+    const result = await prisma.$transaction(async (trx) => {
+      await trx.transactions.update({
+        where: { id: trx_id?.id },
+        data: {
+          status: transactions_status.cancelled,
+          updated_at: new Date(),
+          payment_expire: null,
+        },
+      });
+      await trx.availability.updateMany({
+        where: {
+          room_id: trx_id?.transactionItems[0].room.id,
+          date: {
+            gte: trx_id?.transactionItems[0].start_date,
+            lte: trx_id?.transactionItems[0].end_date,
+          },
+        },
+        data: { stock: { increment: 1 }, updated_at: new Date() },
+      });
+      return true;
+    });
+    return result;
+  }
+
+  static async cancelTransactionById(tansaction_id: number) {
+    const trx_id = await prisma.transactions.findUnique({
+      where: { id: tansaction_id },
+      select: {
+        id: true,
+        transactionItems: {
+          select: {
+            room: { select: { id: true, available: true } },
+            start_date: true,
+            end_date: true,
+          },
+        },
+      },
+    });
     const result = await prisma.$transaction(async (trx) => {
       await trx.transactions.update({
         where: { id: trx_id?.id },
