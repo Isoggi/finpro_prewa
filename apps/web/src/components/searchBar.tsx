@@ -89,8 +89,8 @@ export default function SearchBarComponent() {
   return (
     <div>
       {user?.user_role !== 'tenant' && (
-        <div className="bg-[#e6f2fe] dark:bg-base-100 p-6 shadow-md">
-          <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-base-100 p-6 rounded-full shadow-lg">
+        <div className="bg-[#e6f2fe] dark:bg-[#535C91] p-6 shadow-md">
+          <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center bg-white dark:bg-[#1B1A55]] p-6 rounded-full shadow-lg">
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <button
                 onClick={showLocationModal}
@@ -122,6 +122,7 @@ export default function SearchBarComponent() {
 
             <div className="flex items-center border-b md:border-b-0 md:border-r pr-4 pb-2 md:pb-0">
               <button
+                type="button"
                 onClick={showCategoryModal}
                 className="text-sm hover:text-blue-500"
               >
@@ -171,6 +172,7 @@ export default function SearchBarComponent() {
           <div className="grid gap-2">
             {categories.map((category: any) => (
               <button
+                type="button"
                 key={category.id}
                 onClick={() => {
                   setCategoryName(category.name);

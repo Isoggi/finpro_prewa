@@ -7,7 +7,7 @@ type Props = { params: { id: string } };
 export default async function page({ params }: Props) {
   return (
     <div>
-      <OrderDetailComponent id={Number(params.id)} />
+      <OrderDetailComponent invoice_number={params.id} />
     </div>
   );
 }

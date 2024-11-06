@@ -12,36 +12,34 @@ export default function CancelOrderUser({ id, invoice_number, token }: Props) {
     const status = (
       (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement
     ).value;
-    if (!status) {
-      dialog?.close();
-      return;
-    }
-    try {
-      const response = await api.post(
-        '/order/cancel',
-        {
-          invoice_number: invoice_number,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+    if (status) {
+      try {
+        const response = await api.post(
+          '/order/cancel',
+          {
+            invoice_number: invoice_number,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
-      showAlert({
-        title: 'Berhasil',
-        text: `${response.data.message}`,
-        icon: 'success',
-      });
-    } catch (error) {
-      if (error instanceof Error) {
         showAlert({
-          title: 'Error',
-          text: error.message,
-          icon: 'error',
+          title: 'Berhasil',
+          text: `${response.data.message}`,
+          icon: 'success',
         });
-      }
+      } catch (error) {
+        if (error instanceof Error) {
+          showAlert({
+            title: 'Error',
+            text: error.message,
+            icon: 'error',
+          });
+        }
 
-      console.log(error);
+        console.log(error);
+      }
     }
 
     if (dialog) dialog.close();
@@ -58,7 +56,7 @@ export default function CancelOrderUser({ id, invoice_number, token }: Props) {
           if (dialog) dialog.showModal();
         }}
       >
-        Konfirmasi
+        Batalkan Pesanan
       </button>
       <dialog id={id} className="modal modal-bottom lg:modal-middle">
         <div className="modal-box">
@@ -81,7 +79,6 @@ export default function CancelOrderUser({ id, invoice_number, token }: Props) {
 
           <form onSubmit={handleSubmit}>
             <div className="flex gap-2 items-end">
-              (
               <button
                 type="submit"
                 value={1}
@@ -89,7 +86,7 @@ export default function CancelOrderUser({ id, invoice_number, token }: Props) {
               >
                 Konfirmasi
               </button>
-              )
+
               <button
                 type="submit"
                 value={0}

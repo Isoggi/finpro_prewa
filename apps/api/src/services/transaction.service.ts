@@ -122,8 +122,8 @@ export class TransactionService {
     if (req.user) {
       const { id } = req.user;
 
-      const exist = await prisma.transactions.findUnique({
-        where: { id: Number(data.id), user_id: id },
+      const exist = await prisma.transactions.findFirst({
+        where: { invoice_number: data.invoice_number, user_id: id },
       });
       if (!exist) {
         throw new ErrorHandler('Transaction not found', 404);
@@ -157,7 +157,7 @@ export class TransactionService {
 
   static async getById(req: Request) {
     const user = req.user;
-    const { id } = req.params;
+    const { invoice_number } = req.params;
     const result = await prisma.transactions.findFirst({
       include: {
         transactionItems: {
@@ -197,7 +197,7 @@ export class TransactionService {
         user: true,
       },
       where: {
-        invoice_number: id,
+        invoice_number: invoice_number,
         user_id: user?.id,
       },
     });
@@ -237,6 +237,9 @@ export class TransactionService {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           user_id: Number(user?.id),
+          payment_expire: new Date(
+            new Date().setTime(new Date().getTime() + 60 * 60 * 1000),
+          ),
         },
       });
       const items = await trx.transactionItems.create({
@@ -258,23 +261,40 @@ export class TransactionService {
           amount: items.total_price,
         },
       });
-      // const diffInMs = end_date.getTime() - start_date.getTime();
-      // const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-      // const arrayDay: Date[] = [];
-      // for (let i = 0; i <= diffInDays; i++) {
-      //   const checkDay = new Date(start_date);
-      //   arrayDay.push(new Date(checkDay.setDate(start_date.getDate() + 1)));
-      // }
-      // arrayDay;
-
-      availability.map(async (roomAvail) => {
-        await trx.availability.update({
-          where: { id: roomAvail.id },
-          data: {
-            stock: roomAvail.stock - 1,
-            updated_at: new Date(),
-          },
-        });
+      const diffInMs = end_date.getTime() - start_date.getTime();
+      const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+      const arrayDay: Date[] = [];
+      for (let i = 0; i <= diffInDays; i++) {
+        const checkDay = new Date(start_date);
+        arrayDay.push(new Date(checkDay.setDate(start_date.getDate() + i)));
+      }
+      arrayDay.map(async (availabilityDate) => {
+        if (
+          availability.some(
+            (x) => x.date.getDate() === availabilityDate.getDate(),
+          )
+        ) {
+          const roomAvail = availability.find(
+            (x) => x.date.getDate() === availabilityDate.getDate(),
+          );
+          await trx.availability.update({
+            where: { id: roomAvail?.id },
+            data: {
+              stock: roomAvail?.stock ?? room.capacity - 1,
+              updated_at: new Date(),
+            },
+          });
+        } else {
+          await trx.availability.create({
+            data: {
+              room_id: Number(room_id),
+              date: availabilityDate,
+              stock: room.capacity,
+              created_at: new Date(),
+              updated_at: new Date(),
+            },
+          });
+        }
       });
       return newTrx.invoice_number;
     });
@@ -285,7 +305,7 @@ export class TransactionService {
     const user = req.user;
     const [invoice_number, payment_method] = req.body;
     const trx_id = await prisma.transactions.findFirst({
-      where: { invoice_number: invoice_number },
+      where: { invoice_number: invoice_number, user_id: user?.id },
       select: { id: true },
     });
     const result = await prisma.$transaction(async (trx) => {
@@ -300,5 +320,45 @@ export class TransactionService {
     return result;
   }
 
-  static async cancelTransaction(req: Request) {}
+  static async cancelTransaction(req: Request) {
+    const user = req.user;
+    const { invoice_number } = req.body;
+    const trx_id = await prisma.transactions.findFirst({
+      where: { invoice_number: invoice_number, user_id: user?.id },
+      select: {
+        id: true,
+        transactionItems: {
+          select: {
+            room: { select: { id: true, available: true } },
+            start_date: true,
+            end_date: true,
+          },
+        },
+      },
+    });
+    if (!trx_id)
+      throw new ErrorHandler('Unauthorized access by other user', 401);
+    const result = await prisma.$transaction(async (trx) => {
+      await trx.transactions.update({
+        where: { id: trx_id?.id },
+        data: {
+          status: transactions_status.cancelled,
+          updated_at: new Date(),
+          payment_expire: null,
+        },
+      });
+      await trx.availability.updateMany({
+        where: {
+          room_id: trx_id?.transactionItems[0].room.id,
+          date: {
+            gte: trx_id?.transactionItems[0].start_date,
+            lte: trx_id?.transactionItems[0].end_date,
+          },
+        },
+        data: { stock: { increment: 1 }, updated_at: new Date() },
+      });
+      return true;
+    });
+    return result;
+  }
 }

@@ -28,7 +28,12 @@ const DeleteProperti = ({ id, name }: { id: number; name: string }) => {
 
   return (
     <div>
-      <button className="btn btn-error btn-sm" onClick={() => setIsOpen(true)}>
+      <button
+        title="hapus"
+        type="button"
+        className="btn btn-error btn-sm"
+        onClick={() => setIsOpen(true)}
+      >
         <MdDelete size={20} />
       </button>
       <div className={isOpen ? 'modal modal-open' : 'modal'}>

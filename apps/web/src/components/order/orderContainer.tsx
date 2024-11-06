@@ -51,7 +51,7 @@ export default function OrderContainerComponent({ url }: Props) {
   ) => {
     try {
       console.log(url, userData);
-      setBookings(null);
+
       const response = await api.get(`${url ? url : '/order'}`, {
         params: {
           orderNumber,
@@ -82,16 +82,16 @@ export default function OrderContainerComponent({ url }: Props) {
     }
 
     const timeoutId = setTimeout(() => {
-      console.log('order fetch');
-      fetchBookings(orderNumber, startDate, endDate);
-    }, 500); // Delay of 500ms
+      console.log('order fetch', user);
+      if (user) fetchBookings(orderNumber, startDate, endDate);
+    }, 2000); // Delay of 2000ms
 
     setDebounceTimeout(timeoutId);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [orderNumber, startDate, endDate, user]); // Re-run effect when these dependencies change
+  }, [orderNumber, startDate, endDate]); // Re-run effect when these dependencies change
 
   return (
     <>
@@ -149,6 +149,7 @@ export default function OrderContainerComponent({ url }: Props) {
                 status={order.status}
                 image={order.image}
                 amount={order.amount}
+                invoice_number={order.invoice_number}
                 payment_method={order.payment_method}
                 user_role={user?.user_role as string}
                 token={user?.access_token as string}

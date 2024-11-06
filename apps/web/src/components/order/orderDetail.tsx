@@ -11,10 +11,10 @@ import Link from 'next/link';
 import UploadPayementProofModal from '../modal/uploadPaymentProof';
 
 interface Props {
-  id: number;
+  invoice_number: string;
 }
 
-export default function OrderDetailComponent({ id }: Props) {
+export default function OrderDetailComponent({ invoice_number }: Props) {
   const session = useSession();
 
   const [user, setUser] = React.useState<User | null>(null);
@@ -28,7 +28,9 @@ export default function OrderDetailComponent({ id }: Props) {
 
   const fetchOrder = async (role?: string) => {
     const response = await api.get(
-      role === 'user' ? `/order/${id}` : `/tenant/transaction/${id}`,
+      role === 'user'
+        ? `/order/${invoice_number}`
+        : `/tenant/transaction/${invoice_number}`,
       {
         headers: { Authorization: `Bearer ${user?.access_token}` },
       },
@@ -77,14 +79,14 @@ export default function OrderDetailComponent({ id }: Props) {
                 // </button>
                 <ModalVerifyProofComponent
                   id="modalVerifyOrder"
-                  trx_id={id}
+                  invoice_number={invoice_number}
                   image={data.payment_proof}
                   token={user.access_token}
                 />
               ) : (
                 <UploadPayementProofModal
                   id={'upload-proof-modal'}
-                  trx_id={id}
+                  invoice_number={invoice_number}
                   token={user?.access_token}
                 />
               ))}
