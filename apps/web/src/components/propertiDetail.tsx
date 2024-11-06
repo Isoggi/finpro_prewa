@@ -73,9 +73,11 @@ const ProppertiDetail = ({ slug }: Props) => {
           <div className="md:w-2/3">
             <Image
               src={
-                properties?.image?.includes('http')
-                  ? properties?.image
-                  : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties?.image}`
+                properties?.image
+                  ? properties?.image?.includes('http')
+                    ? properties?.image
+                    : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties?.image}`
+                  : '/default-hotel.jpg'
               }
               alt={properties?.name ?? ''}
               width={600}
@@ -86,7 +88,7 @@ const ProppertiDetail = ({ slug }: Props) => {
 
           <div className="bg-white p-4 rounded-lg shadow-sm md:w-2/3">
             <h3 className="text-xl font-semibold mb-2">{properties?.name}</h3>
-            
+
             <div className="mt-2">
               <FaMapMarker className="inline-block mr-2" />
               <Link
@@ -101,7 +103,7 @@ const ProppertiDetail = ({ slug }: Props) => {
             </div>
           </div>
         </div>
-  
+
         <div className="my-6">
           {properties?.address && (
             <MapLocation
@@ -141,9 +143,11 @@ const ProppertiDetail = ({ slug }: Props) => {
                 >
                   <Image
                     src={
-                      room.image?.includes('http')
-                        ? room.image
-                        : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+                      room.image
+                        ? room.image?.includes('http')
+                          ? room.image
+                          : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+                        : '/default-hotel.jpg'
                     }
                     alt={room.name}
                     width={280}

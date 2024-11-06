@@ -7,14 +7,14 @@ import { showAlert } from '@/lib/utils';
 
 type Props = {
   id: string;
-  trx_id: number;
+  invoice_number: string;
   image: string | undefined;
   token: string | undefined;
 };
 
 export default function ModalVerifyProofComponent({
   id,
-  trx_id,
+  invoice_number,
   image,
   token,
 }: Props) {
@@ -29,7 +29,7 @@ export default function ModalVerifyProofComponent({
       const response = await api.post(
         '/tenant/transaction/verifyOrder',
         {
-          id: trx_id,
+          invoice_number: invoice_number,
           status,
         },
         {

@@ -30,3 +30,7 @@ export const NODEMAILER_EMAIL =
   process.env.NODEMAILER_EMAIL || 'jcwd2902@gmail.com';
 export const NODEMAILER_PASSWORD =
   process.env.NODEMAILER_PASSWORD || 'dsefbavzyajmaqkr';
+
+export const REDIS_URL = process.env.REDIS_URL || '';
+export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || 'dsefbavzyajmaqkr';
+export const REDIS_PORT = process.env.REDIS_PORT || 6379;
