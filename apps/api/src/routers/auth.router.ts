@@ -39,11 +39,7 @@ export class AuthRouter {
       this.authController.updateProfile,
     );
 
-    this.router.post(
-      '/refresh-token',
-      AuthMiddleware,
-      this.authController.refreshToken,
-    );
+    this.router.post('/refresh-token', this.authController.refreshToken);
   }
 
   public getRouter(): Router {

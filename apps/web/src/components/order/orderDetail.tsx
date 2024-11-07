@@ -59,7 +59,13 @@ export default function OrderDetailComponent({ invoice_number }: Props) {
             <span
               className={`card-title badge badge-lg ${data.status === 'completed' ? 'badge-success' : 'badge-warning'}`}
             >
-              {data.status}
+              {data.status === 'completed'
+                ? 'Lunas'
+                : data.status === 'waitingpayment'
+                  ? 'Tunggu Bayar'
+                  : data.status === 'waitingapproval'
+                    ? 'Menunggu Konfirmasi'
+                    : 'Dibatalkan'}
             </span>
             <span>
               <p className="text-lg">Pembayaran</p>

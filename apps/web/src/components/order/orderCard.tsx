@@ -1,11 +1,12 @@
 import React from 'react';
 import { Order } from '@/interfaces/order.interface';
-import Image from 'next/image';
 import Link from 'next/link';
 import { FaEllipsisV } from 'react-icons/fa';
 import { dateDiff, formatStyledDate } from '@/lib/utils';
 import CancelOrderUser from '../modal/cancelOrderUser';
 import CountdownTimer from '../countdownTimer';
+import UploadPayementProofModal from '../modal/uploadPaymentProof';
+import ModalVerifyProofComponent from '../modal/verifyPaymentProof';
 
 interface Props extends Order {
   user_role: string;
@@ -29,7 +30,7 @@ export default function OrderCardComponent({
   // console.log(payment_method, user_role, status);
   const isTestReview = true;
   return (
-    <div className="card w-full bg-[base-300] dark:bg-[#535C91] shadow-md">
+    <div className="card w-full bg-[#AA77FF] dark:bg-[#535C91] shadow-md">
       {/* <figure>
         {image ? (
           <img
@@ -70,11 +71,30 @@ export default function OrderCardComponent({
               tabIndex={0}
               className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
             >
-              {status === 'waitingpayment' && (
+              {status === 'waitingpayment' && user_role === 'user' && (
+                <>
+                  <li>
+                    <CancelOrderUser
+                      id={`CancelOrder${invoice_number}`}
+                      invoice_number={invoice_number ?? ''}
+                      token={token}
+                    />
+                  </li>
+                  <li>
+                    <UploadPayementProofModal
+                      id={`UploadProof${invoice_number}`}
+                      invoice_number={invoice_number ?? ''}
+                      token={token}
+                    />
+                  </li>
+                </>
+              )}
+              {status === 'waitingpayment' && user_role === 'tenant' && (
                 <li>
-                  <CancelOrderUser
-                    id={'cancel_order_user'}
+                  <ModalVerifyProofComponent
+                    id={`VerifyOrder${invoice_number}`}
                     invoice_number={invoice_number ?? ''}
+                    image={payment_method}
                     token={token}
                   />
                 </li>
@@ -105,10 +125,10 @@ export default function OrderCardComponent({
           <div className="flex flex-col items-start">
             <div className="flex flex-row items-start">
               <span className="text-white badge badge-info">{category}</span>
-              <h2 className="card-title">{name}</h2>
+              <h2 className="card-title">{name} </h2>
             </div>
             <div className="flex flex-row items-start">
-              <p className="text-sm">{description}</p>
+              <p className="text-sm">{description} </p>
               <p className="text-sm">
                 {formatStyledDate(startDate)}{' '}
                 <span className="text-info">
