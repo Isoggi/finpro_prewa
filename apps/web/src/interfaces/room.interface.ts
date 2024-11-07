@@ -6,6 +6,10 @@ export interface IProperties {
   description: string;
   image?: string | undefined;
   slug_address: string;
+  rooms: IRooms[];
+  category: ICategory;
+  address?: IAddress;
+  provinces?: IProvinces;
 }
 
 export interface IRooms {

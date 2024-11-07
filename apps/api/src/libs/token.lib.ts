@@ -17,7 +17,7 @@ export const decodeToken = (token: string) => {
 
 export const generateForgetPaswordToken = (
   payload: any,
-  expiresIn: string = '1h',
+  expiresIn: string = '2m',
 ) => {
   return sign(payload, FORGETPASSWORD_JWT_SECRET, {
     expiresIn,

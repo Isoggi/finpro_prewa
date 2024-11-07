@@ -1,7 +1,5 @@
 'use client';
-
-import React, { useState, useEffect } from 'react';
-
+import React, { useState } from 'react';
 import { loginAction, googleAuthenticate } from '@/action/auth.action';
 import { loginSchema } from '@/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,12 +10,14 @@ import { useFormState } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import { showAlert } from '@/lib/utils';
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 export default function Masuk() {
   const [errorMsgGoogle, dispatchGoogle] = useFormState(
     googleAuthenticate,
     undefined,
   );
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -79,17 +79,26 @@ export default function Masuk() {
                 <ErrorMessage errors={errors} name="email" />
               </div>
             </div>
-            <div className="mb-4">
+
+            <div className="mb-4 relative">
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Silahkan masukan Password"
                 {...register('password')}
                 className="w-full p-3 border border-gray-300 rounded-lg text-black bg-transparent placeholder-gray-300"
               />
+              <button
+                type="button"
+                className="absolute right-3 top-4 text-gray-500"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
               <div className="text-red-500 text-sm mt-1">
                 <ErrorMessage errors={errors} name="password" />
               </div>
             </div>
+
             <p className="text-sm mb-4 text-left">
               <Link
                 href="/forgetpassword"

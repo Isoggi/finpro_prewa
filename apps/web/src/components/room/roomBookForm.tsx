@@ -93,7 +93,11 @@ export default function RoomBookForm({ room }: Props) {
         <div className="divider"></div>
         <div className="mb-6">
           <Image
-            src={imageUrl}
+            src={
+              room.image?.includes('http')
+                ? room.image
+                : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+            }
             alt="Tempat"
             className="rounded-lg"
             height={100}

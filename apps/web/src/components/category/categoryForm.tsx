@@ -19,31 +19,41 @@ const getCategories = async () => {
 const FormCategory = async () => {
   const categories = await getCategories();
   return (
-    <div>
-      <div className="mb-2">
+    <div className="container mx-auto p-4">
+      <div className="mb-4">
         <AddCategory />
       </div>
-      <table className="table w-full">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th className="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((category, index) => (
-            <tr key={category.id}>
-              <td>{index + 1}</td>
-              <td>{category.name}</td>
-              <td className="flex justify-center space-x-1">
-                <UpdateCategory category={category} />
-                <DeleteCategory id={category.id} name={category.name} />
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {categories.map((category, index) => (
+              <tr key={category.id}>
+                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{category.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <div className="flex justify-center space-x-2">
+                    <UpdateCategory category={category} />
+                    <DeleteCategory id={category.id} name={category.name} />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

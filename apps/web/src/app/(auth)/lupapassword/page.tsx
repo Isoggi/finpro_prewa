@@ -9,18 +9,18 @@ import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { verifyForgetPasswordSchema } from '@/schemas/auth.schema';
-import { actionConfirmVerifyPassword } from '@/action/auth.action';
 import { actionConfirmForgetPassword } from '@/action/auth.action';
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const MySwal = withReactContent(Swal);
 
 const ForgetPasswordEmail = () => {
   const router = useRouter();
   const query = useSearchParams();
   const [emailSent, setEmailSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleResendEmail = () => {
-    // Simulate API call for resending email
     setEmailSent(true);
     setTimeout(() => {
       setEmailSent(false);
@@ -71,7 +71,6 @@ const ForgetPasswordEmail = () => {
     values: z.infer<typeof verifyForgetPasswordSchema>,
   ) => {
     try {
-      console.log('forget password:', values);
       const res = await actionConfirmForgetPassword(
         token as string,
         values.password,
@@ -94,41 +93,73 @@ const ForgetPasswordEmail = () => {
   };
 
   return token ? (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200">
-      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <input
-              className="w-full p-2 bg-gray-700 text-white rounded-md"
-              type="password"
-              placeholder="Password baru"
-              {...register('password')}
-            />
-            <div className="text-red-500 text-sm mt-1">
-              <ErrorMessage errors={errors} name="password" />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#e6f2fe]">
+      <div className="p-8 rounded-lg shadow-lg text-center max-w-4xl w-full border bg-white border-white sm:mx-4 flex flex-col sm:flex-row items-center">
+        <div className="w-full sm:w-2/3 mb-6 sm:mb-0 sm:mr-4 flex justify-center">
+          <img
+            src="/resetpw.png"
+            alt="Forgot Password Illustration"
+            className="w-full"
+          />
+        </div>
+        <div className="w-full sm:w-2/3 text-left">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-4 relative">
+              <p className="text-black text-base font-bold mb-3">
+                Password baru
+              </p>
+              <input
+                className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password baru"
+                {...register('password')}
+              />
+              <button
+                type="button"
+                className="absolute right-3 mt-4 top-10 text-gray-500"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+              <div className="text-red-500 text-sm mt-1">
+                <ErrorMessage errors={errors} name="password" />
+              </div>
             </div>
-          </div>
-
-          <div className="mb-4">
-            <input
-              className="w-full p-2 bg-gray-700 text-white rounded-md"
-              type="password"
-              placeholder="Konfirmasi password baru"
-              {...register('confirm_password')}
-            />
-            <div className="text-red-500 text-sm mt-1">
-              <ErrorMessage errors={errors} name="confirm_password" />
+            <div className="mb-4 relative">
+              <p className="text-black text-base font-bold mb-3">
+                Konfirmasi Password Baru
+              </p>
+              <input
+                className="w-full p-3 border border-black rounded-lg text-black bg-transparent placeholder-gray-300"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Konfirmasi password baru"
+                {...register('confirm_password')}
+              />
+              <button
+                type="button"
+                className="absolute right-3 mt-4 top-10 text-gray-500"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+              >
+                {showConfirmPassword ? (
+                  <FaEyeSlash className="jus" />
+                ) : (
+                  <FaEye />
+                )}
+              </button>
+              <div className="text-red-500 text-sm mt-1">
+                <ErrorMessage errors={errors} name="confirm_password" />
+              </div>
             </div>
-          </div>
 
-          <button
-            className="w-full py-2 px-4 bg-[#128ede] text-white rounded-md hover:bg-purple-700 transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
-            type="submit"
-            disabled={form.formState.isSubmitting}
-          >
-            Reset Password
-          </button>
-        </form>
+            <button
+              className="w-full py-2 px-4 bg-[#e6f2fe] text-black rounded-md transition disabled:bg-[#128ede] disabled:text-white disabled:cursor-not-allowed"
+              type="submit"
+              disabled={form.formState.isSubmitting}
+            >
+              Reset Password
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   ) : (
@@ -143,7 +174,7 @@ const ForgetPasswordEmail = () => {
         </p>
         <div className="mt-6 flex justify-center">
           <button
-            className={`btn ${emailSent ? 'btn-disabled' : 'btn-primary'}`}
+            className={`btn ${emailSent ? 'btn-disabled' : 'btn bg-[#e6f2fe]'}`}
             onClick={handleResendEmail}
             disabled={emailSent}
           >

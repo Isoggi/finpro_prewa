@@ -21,6 +21,7 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
+
   const resetForm = () => {
     setName('');
     setDescription('');
@@ -37,6 +38,7 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
       resetForm();
     }
   };
+
   const validateForm = () => {
     if (!name.trim()) return 'Property name is required';
     if (!description.trim()) return 'Description is required';
@@ -44,6 +46,7 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
     if (!selectedAddress) return 'Address is required';
     return null;
   };
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -71,22 +74,28 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
       const response = await api.post('/properti', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      if (response.status === 201) {
-        setSuccess('Property created successfully!');
-        resetForm();
-        router.refresh();
-        setTimeout(() => {
-          setIsOpen(false);
-          setSuccess(null);
-        }, 1500);
-      }
+      setSuccess('Property added successfully!');
+      router.refresh();
+      setName('');
+      setDescription('');
+      setCategory('');
+      setSelectedAddress('');
+      setSelectedFile(null);
+      setTimeout(() => {
+        setIsOpen(false);
+        setSuccess(null);
+      }, 1500);
     } catch (error: any) {
-      setError(error.response?.data?.message || 'Failed to create property');
-      console.error('Error creating property:', error);
+      const errorMessage =
+        error.response?.data?.message ||
+        'An error occurred while adding Property';
+      setError(errorMessage);
+      console.error('Error adding Properti:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div>
       <button className="btn bg-[#62CDFF]" onClick={handleModal}>
@@ -158,16 +167,19 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
                 accept="image/*"
               />
             </div>
+
             {error && (
               <div className="alert alert-error mt-4">
                 <span>{error}</span>
               </div>
             )}
+
             {success && (
               <div className="alert alert-success mt-4">
                 <span>{success}</span>
               </div>
             )}
+
             <div className="modal-action">
               <button type="button" className="btn" onClick={handleModal}>
                 Close
@@ -186,4 +198,5 @@ const AddProperti = ({ categories, addresses }: AddPropertiProps) => {
     </div>
   );
 };
+
 export default AddProperti;
