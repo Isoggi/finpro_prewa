@@ -88,11 +88,13 @@ export default function ForgetPassword() {
               className="w-full"
             />
           </div>
-
           <div className="w-full sm:w-2/3 text-left">
-            <h1 className="text-black text-2xl font-bold mb-6">
+            <h1 className="text-black text-2xl font-bold mb-1">
               Lupa Password
             </h1>
+            <p className="text-black text-sm mb-6">
+              Masukkan email anda untuk reset password
+            </p>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
                 <input

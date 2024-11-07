@@ -68,14 +68,16 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
           <div className="flex flex-col">
             <div className="flex items-center text-sm">
               <CiLocationOn className="mr-1" />
-              <p>{room.address?.provinces.name || 'Tidak tersedia'}</p>
+              <p>{room.property?.address?.district.name || 'Tidak tersedia'}</p>
               <span className="mx-1">-</span>
-              <p>{room.address?.district.name || 'Tidak tersedia'}</p>
+              <p>
+                {room.property?.address?.provinces.name || 'Tidak tersedia'}
+              </p>
             </div>
           </div>
           <h2 className="flex items-center text-sm">
             <MdVilla className="mr-1" />
-            {room.category?.name || 'Tidak tersedia'}
+            {room.property?.category?.name || 'Tidak tersedia'}
           </h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6 mt-6">

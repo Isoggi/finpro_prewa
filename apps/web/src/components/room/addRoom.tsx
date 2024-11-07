@@ -34,7 +34,7 @@ const AddRoom = ({ properties }: { properties: Properties[] }) => {
     formData.append('property_id', property_id);
     formData.append('name', name);
     formData.append('description', description);
-    formData.append('price', price);
+    formData.append('price', parseFloat(price).toString()); // decimal
     formData.append('capacity', capacity);
 
     if (selectedFile) {
@@ -135,6 +135,7 @@ const AddRoom = ({ properties }: { properties: Properties[] }) => {
                 placeholder="Room Price"
                 required
                 min="0"
+                step="0.01"
               />
             </div>
 

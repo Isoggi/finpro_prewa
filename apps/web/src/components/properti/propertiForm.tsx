@@ -91,7 +91,7 @@ const formProperti = async () => {
                       : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties.image}`
                   }
                   alt={properties.name}
-                  className="w-full h-20 md:h-32 lg:h-40 object-cover rounded-md mb-2"
+                  className="w-full object-cover rounded-md mb-2"
                 />
               </td>
               <td className="flex justify-center space-x-1">

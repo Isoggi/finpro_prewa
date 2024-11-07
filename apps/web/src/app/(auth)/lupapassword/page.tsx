@@ -10,8 +10,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { verifyForgetPasswordSchema } from '@/schemas/auth.schema';
 import { actionConfirmForgetPassword } from '@/action/auth.action';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import the icons
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const MySwal = withReactContent(Swal);
 
 const ForgetPasswordEmail = () => {

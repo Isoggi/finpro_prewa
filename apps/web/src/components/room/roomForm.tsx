@@ -52,23 +52,23 @@ const formRooms = async () => {
       <div className="mb-2">
         <AddRoom properties={properties} />
       </div>
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full">
+      <div>
+        <table className="table w-full">
           <thead>
-            <tr className="bg-gray-200">
-              <th className="px-2 py-1 text-left">ID</th>
-              <th className="px-2 py-1 text-left">Name</th>
-              <th className="px-2 py-1 text-left">Description</th>
-              <th className="px-2 py-1 text-left">Price</th>
-              <th className="px-2 py-1 text-left">Capacity</th>
-              <th className="px-2 py-1 text-left">Property</th>
-              <th className="px-2 py-1 text-left">Image</th>
-              <th className="px-2 py-1 text-center">Actions</th>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Capacity</th>
+              <th>Property</th>
+              <th>Image</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {rooms.map((room, index) => (
-              <tr key={room.id} className="border-b">
+              <tr key={room.id} className="">
                 <td className="px-2 py-1">{index + 1}</td>
                 <td className="px-2 py-1">{room.name}</td>
                 <td className="px-2 py-1">{room.description}</td>
@@ -83,7 +83,7 @@ const formRooms = async () => {
                         : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
                     }
                     alt={room.name}
-                    className="w-full h-20 md:h-32 lg:h-40 object-cover rounded-md mb-2"
+                    className="w-full object-cover rounded-md mb-2"
                   />
                 </td>
                 <td className="px-2 py-1 flex justify-center space-x-1">
