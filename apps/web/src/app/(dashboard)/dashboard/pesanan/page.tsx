@@ -7,13 +7,10 @@ export default async function OrderPage() {
       <div className="container mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Riwayat</h1>
+          <h1 className="text-2xl font-bold">Histori Transaksi Properti</h1>
         </div>
 
         {/* Tabs */}
-        {/* <div className="tabs">
-          <a className="tab tab-bordered tab-active">Pesanan Lama</a>
-        </div> */}
         {<OrderContainerComponent url="/tenant/transaction" />}
       </div>
     </div>

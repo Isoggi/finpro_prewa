@@ -5,15 +5,12 @@ import { PeakSeasonRate } from '@prisma/client';
 export class PeakSeasonService {
   static async getByIdService(req: Request) {
     const { id } = req.params;
-
     const peakSeason = await prisma.peakSeasonRate.findUnique({
       where: { id: Number(id) },
     });
-
     if (!peakSeason) {
       throw new ErrorHandler(404);
     }
-
     return peakSeason;
   }
 

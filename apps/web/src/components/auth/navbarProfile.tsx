@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import { SessionContextValue, useSession } from 'next-auth/react';
 import {
@@ -68,59 +69,9 @@ export default function NavbarProfileComponent() {
               </Link>
             )}
 
-            {user.user_role === 'tenant' && (
-              <Link
-                href="/dashboard/properti"
-                title="Properti"
-                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
-              >
-                <LuTableProperties />
-              </Link>
-            )}
-
-            {user.user_role === 'tenant' && (
-              <Link
-                href="/dashboard/room"
-                title="Room"
-                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
-              >
-                <MdBedroomChild />
-              </Link>
-            )}
-
-            {user.user_role === 'tenant' && (
-              <Link
-                href="/dashboard/category"
-                title="Category"
-                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
-              >
-                <BiSolidCategory />
-              </Link>
-            )}
-
-            {user.user_role === 'tenant' && (
-              <Link
-                href="/dashboard/availability"
-                title="Availability"
-                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
-              >
-                <MdEventAvailable />
-              </Link>
-            )}
-
-            {user.user_role === 'tenant' && (
-              <Link
-                href="/dashboard/peakseason"
-                title="Peak Season "
-                className="text-2xl text-zinc-400 transition-colors flex items-center justify-center hover:text-gray-700"
-              >
-                <LuCalendarClock />
-              </Link>
-            )}
-
             {user.user_role !== 'tenant' && (
               <Link href="/profile" title="Profile">
-                {user.image ? (
+                {/* {user.image ? (
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
                     <img
                       title="avatar"
@@ -135,9 +86,9 @@ export default function NavbarProfileComponent() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                ) : (
-                  <FaUser className="text-zinc-400 text-2xl hover:text-gray-700 transition-colors" />
-                )}
+                ) : ( */}
+                <FaUser className="text-zinc-400 text-2xl hover:text-gray-700 transition-colors" />
+                {/* )} */}
               </Link>
             )}
 

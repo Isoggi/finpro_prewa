@@ -6,10 +6,11 @@ import path from 'path';
 
 export class RoomService {
   static async getByIdService(req: Request) {
-    const { id } = req.params;
-    if (id) {
-      const data = await prisma.rooms.findUnique({
-        where: { id: parseInt(id) },
+    const { slug } = req.params;
+    const slugName = decodeURI(slug);
+    if (slug) {
+      const data = await prisma.rooms.findFirst({
+        where: { slug: slug, isActive: true },
         include: {
           available: true,
           peakSeasonRate: true,
@@ -21,13 +22,8 @@ export class RoomService {
           },
         },
       });
-      return {
-        ...data,
-        address: data?.property.address,
-        category: data?.property.category,
-      };
+      return data;
     }
-    return null;
   }
 
   static async createRoom(req: Request) {
@@ -63,6 +59,7 @@ export class RoomService {
           price: parsedPrice,
           capacity: parsedCapacity,
           image,
+          slug: name.toLowerCase().replace(/\s+/g, '-'), // generate a slug from the name
           created_at: new Date(),
           updated_at: new Date(),
         },

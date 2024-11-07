@@ -177,7 +177,10 @@ export async function googleAuthenticate(
 ) {
   try {
     console.log('action Google', prevState, formData);
-    await signIn('google');
+    await signIn('google', {
+      redirect: true,
+      redirectTo: '/',
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       return 'Google Log In failed';

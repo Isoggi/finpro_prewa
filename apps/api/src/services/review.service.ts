@@ -17,7 +17,9 @@ export class ReviewService {
     });
     return data;
   }
-
+  static async getReviewOrder(req: Request) {
+    const { id } = req.query;
+  }
   static async getReviewChildren(req: Request) {
     const { id } = req.query;
 
@@ -32,6 +34,18 @@ export class ReviewService {
 
   static async postReview(req: Request) {
     const { id, text, prev_review_id } = req.body;
-    return true;
+    const user = req.user;
+    if (!user) throw new ErrorHandler('Unauthorized', 401);
+    const res = await prisma.$transaction(async (trx) => {
+      await trx.reviews.create({
+        data: {
+          user_id: user?.id,
+          property_id: id,
+          comment: text,
+          prev_review_id: prev_review_id,
+        },
+      });
+    });
+    return res;
   }
 }

@@ -55,16 +55,6 @@ const Template = ({ children }: LayoutProps) => {
             ></label>
             {/* <ul className="menu p-4 w-64 bg-base-200 text-base-content"> */}
             <ul className="menu text-base-content bg-base-100 min-h-full w-80 p-4">
-              {/* Sidebar content */}
-              {/* <li>
-                <Link href="/">Home</Link>
-              </li>
-              <li>
-                <Link href="/dashboard">Dahsboard</Link>
-              </li>
-              <li>
-                <Link href="/dashboard/pesanan">Pesanan</Link>
-              </li> */}
               <SidebarComponent />
             </ul>
           </div>

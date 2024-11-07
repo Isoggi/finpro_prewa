@@ -14,7 +14,7 @@ export class TenantService {
       orderNumber,
       startDate,
       endDate,
-      status = transactions_status.waitingpayment,
+      type = transactions_status.waitingpayment,
     } = req.query;
     if (!user) throw new ErrorHandler('Unauthorized', 401);
     const [result, totalCount] = await Promise.all([
@@ -39,11 +39,8 @@ export class TenantService {
           invoice_number: {
             contains: orderNumber ? orderNumber?.toString() : undefined,
           },
-          status: status
-            ? {
-                equals: status as transactions_status,
-              }
-            : undefined,
+          status:
+            type === 'undefined' ? undefined : (type as transactions_status),
         },
         include: {
           transactionItems: {
@@ -86,8 +83,8 @@ export class TenantService {
                 : undefined,
               room: {
                 is: {
-                  // property: { is: { tenant_id: user?.id } },
-                  property: { is: { tenant_id: 2 } },
+                  property: { is: { tenant_id: user?.id } },
+                  // property: { is: { tenant_id: 2 } },
                 },
               },
             },
@@ -123,10 +120,10 @@ export class TenantService {
   static async verifyOrder(req: Request) {
     const { user } = req;
     if (!user) throw new ErrorHandler('Unauthorized', 401);
-    const { id, status } = req.body;
-    if (!id) throw new ErrorHandler('Invalid request', 400);
+    const { invoice_number, status } = req.body;
+    if (!invoice_number) throw new ErrorHandler('Invalid request', 400);
     const trxData = await prisma.transactions.findFirst({
-      where: { invoice_number: id },
+      where: { invoice_number: invoice_number },
       select: { id: true },
     });
     if (!trxData) throw new ErrorHandler('Transaction not found', 404);

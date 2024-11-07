@@ -247,36 +247,48 @@ export class AuthService {
 
   static async forgetPassword(req: Request) {
     const { password, token } = req.body;
-    const userData = decodeForgetPasswordToken(token);
-    if (!userData) {
-      throw new ErrorHandler('Invalid token', 400);
-    }
-    const userId = Number(decodeGeneralToken(userData.id));
-    const data = await prisma.users.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        forget_password_token: true,
-      },
-    });
 
-    if (data) {
-      const isMatch = token === data.forget_password_token;
-      if (isMatch) {
-        const hashPassword = await hash(password, 10);
-        await prisma.$transaction(async (trx) => {
-          return await trx.users.update({
-            where: { id: data.id },
-            data: { password: hashPassword },
-          });
-        });
-      } else {
+    try {
+      const userData = decodeForgetPasswordToken(token);
+      if (!userData) {
         throw new ErrorHandler('Invalid token', 400);
       }
-    } else {
-      throw new ErrorHandler('User not found', 404);
+      const userId = Number(decodeGeneralToken(userData.id));
+      const data = await prisma.users.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          forget_password_token: true,
+        },
+      });
+
+      if (data) {
+        const isMatch = token === data.forget_password_token;
+        if (isMatch) {
+          const hashPassword = await hash(password, 10);
+          await prisma.$transaction(async (trx) => {
+            return await trx.users.update({
+              where: { id: data.id },
+              data: { password: hashPassword },
+            });
+          });
+        } else {
+          throw new ErrorHandler('Invalid token', 400);
+        }
+      } else {
+        throw new ErrorHandler('User not found', 404);
+      }
+      return 'Password changed successfully';
+    } catch (error: any) {
+      if (error.name === 'TokenExpiredError') {
+        throw new ErrorHandler(
+          'Token expired. Please request a new password reset email.',
+          400,
+        );
+      } else {
+        throw new ErrorHandler(error.message, 400);
+      }
     }
-    return 'Password changed successfully';
   }
 
   static async getProfile(req: Request) {

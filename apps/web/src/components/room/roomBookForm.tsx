@@ -72,7 +72,9 @@ export default function RoomBookForm({ room }: Props) {
 
   // Calculate total price
   const basePrice = room.price || 0;
-  const peakSeasonPrice = room?.peakSeasonRate?.price || 0;
+  const peakSeasonPrice = room.peakSeasonRate
+    ? room.peakSeasonRate[0].rates
+    : 0;
   const totalPrice = (basePrice + peakSeasonPrice) * numberOfNights;
   const discount = totalPrice * 0.2; // 20% early bird discount
   const finalPrice = totalPrice - discount;
@@ -91,7 +93,11 @@ export default function RoomBookForm({ room }: Props) {
         <div className="divider"></div>
         <div className="mb-6">
           <Image
-            src={imageUrl}
+            src={
+              room.image?.includes('http')
+                ? room.image
+                : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+            }
             alt="Tempat"
             className="rounded-lg"
             height={100}
@@ -103,7 +109,6 @@ export default function RoomBookForm({ room }: Props) {
         </div>
         <div className="text-gray-600 mb-4">
           <p>
-
             Rp{basePrice.toLocaleString('id-ID')},00 x {numberOfNights}{' '}
             {numberOfNights > 1 ? 'nights' : 'night'}
           </p>
@@ -112,43 +117,28 @@ export default function RoomBookForm({ room }: Props) {
         <div className="text-gray-600 mb-4">
           <p>Early bird discount</p>
           <p>-Rp{discount.toLocaleString('id-ID')},00</p>
-            Rp{room.price.toLocaleString('id-ID')} x{' '}
-            {differenceInDays(endDate ?? new Date(), startDate ?? new Date())}{' '}
-            hari
-          </p>
-          <p>
-            Rp
-            {(
-              room.price *
-              differenceInDays(endDate ?? new Date(), startDate ?? new Date())
-            ).toLocaleString('id-ID')}
-          </p>
         </div>
         {room.peakSeasonRate && (
           <div className="text-gray-600 mb-4">
             <p>Biaya Musim Puncak</p>
-            <p>Rp {room.peakSeasonRate[0].rates.toLocaleString('id-ID')}</p>
+            <p>Rp{peakSeasonPrice.toLocaleString('id-ID')}</p>
           </div>
         )}
-        <hr />
-        <div className="text-lg font-semibold flex justify-between mt-4">
-          <p>Total (IDR)</p>
-          <p>Rp{finalPrice.toLocaleString('id-ID')},00</p>
-          <p>
-            Rp{' '}
-            {((room.peakSeasonRate ? room.peakSeasonRate[0].rates : 0) +
-              room.price) *
-              differenceInDays(endDate ?? new Date(), startDate ?? new Date())}
-          </p>
+        <div>
+          <hr />
+          <div className="text-lg font-semibold flex justify-between mt-4">
+            <p>Total (IDR)</p>
+            <p>Rp{finalPrice.toLocaleString('id-ID')},00</p>
+          </div>
+          <button
+            type="submit"
+            title="booking"
+            disabled={!user || (!startDate && !endDate)}
+            className="btn btn-primary text-black dark:text-white disabled:text-gray-900 w-full mt-4"
+          >
+            {user ? 'Pesan sekarang' : 'Masuk untuk memesan'}
+          </button>
         </div>
-        <button
-          type="submit"
-          title="booking"
-          disabled={!user || (!startDate && !endDate)}
-          className="btn btn-primary text-black dark:text-white disabled:text-gray-900 w-full mt-4"
-        >
-          {user ? 'Pesan sekarang' : 'Masuk untuk memesan'}
-        </button>
       </form>
     </div>
   );

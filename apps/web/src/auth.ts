@@ -151,7 +151,10 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
       if (trigger === 'update' && session) {
         token = { ...token, ...session };
       }
-      if (currentTime < (token.access_token_expires as number)) {
+      if (
+        currentTime <
+        (token.access_token_expires as number) - 5 * 60 * 1000
+      ) {
         console.log(token.access_token_expires);
         // Token is still valid, return it
         return token;
@@ -165,15 +168,9 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
 
 async function refreshAccessToken(token: User) {
   try {
-    const response = await api.post(
-      '/auth/refresh-token',
-      { token: token.access_token },
-      {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      },
-    );
+    const response = await api.post('/auth/refresh-token', {
+      token: token.access_token,
+    });
 
     const refreshedTokens = response.data.data;
 
@@ -185,7 +182,7 @@ async function refreshAccessToken(token: User) {
     return {
       ...user,
       access_token: refreshedTokens.access_token,
-      access_token_expires: Date.now() + 3 * 59 * 60 * 1000, // Keep old refresh token if not returned
+      access_token_expires: Date.now() + 3 * 60 * 60 * 1000, // Keep old refresh token if not returned
     };
   } catch (error) {
     console.error('Failed to refresh access token:', error);

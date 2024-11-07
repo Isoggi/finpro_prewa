@@ -12,6 +12,7 @@ export class RoomController {
       next(error);
     }
   }
+
   async createRoom(req: Request, res: Response, next: NextFunction) {
     try {
       const data = await RoomService.createRoom(req);

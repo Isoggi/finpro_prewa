@@ -10,9 +10,13 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-type Props = { id: string; trx_id: number; token: string | undefined };
+type Props = { id: string; invoice_number: string; token: string | undefined };
 
-export default function UploadPayementProofModal({ id, trx_id, token }: Props) {
+export default function UploadPayementProofModal({
+  id,
+  invoice_number,
+  token,
+}: Props) {
   const form = useForm<z.infer<typeof uploadPaymentProofSchema>>({
     resolver: zodResolver(uploadPaymentProofSchema),
   });
@@ -31,7 +35,7 @@ export default function UploadPayementProofModal({ id, trx_id, token }: Props) {
       const response = await api.post(
         '/order/upload-payment-proof',
         {
-          id: trx_id,
+          invoice_number: invoice_number,
           image: values.image,
         },
         {
