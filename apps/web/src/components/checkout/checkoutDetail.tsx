@@ -8,8 +8,8 @@ export default function checkoutDetail({ order }: Props) {
   console.log(order);
   const normalPrice = order.amount;
   const ratedPrice = order.transactionItems?.length
-    ? order.transactionItems[0].room.peak_season_rate
-      ? order.transactionItems[0].room.peak_season_rate[0].price + order.amount
+    ? order.transactionItems[0].room.peakSeasonRate
+      ? order.transactionItems[0].room.peakSeasonRate[0].rates + order.amount
       : order.amount
     : order.amount;
   const isSamePrice = normalPrice === ratedPrice;

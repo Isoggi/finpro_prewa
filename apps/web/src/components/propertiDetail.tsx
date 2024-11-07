@@ -77,9 +77,11 @@ const ProppertiDetail = ({ slug }: Props) => {
           <div className=" md:w-2/3">
             <Image
               src={
-                properties?.image?.includes('http')
-                  ? properties?.image
-                  : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties?.image}`
+                properties?.image
+                  ? properties?.image?.includes('http')
+                    ? properties?.image
+                    : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties?.image}`
+                  : '/default-hotel.jpg'
               }
               alt={properties?.name ?? ''}
               width={500}
@@ -165,9 +167,11 @@ const ProppertiDetail = ({ slug }: Props) => {
                 >
                   <Image
                     src={
-                      room.image?.includes('http')
-                        ? room.image
-                        : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+                      room.image
+                        ? room.image?.includes('http')
+                          ? room.image
+                          : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+                        : '/default-hotel.jpg'
                     }
                     alt={room.name}
                     width={300}

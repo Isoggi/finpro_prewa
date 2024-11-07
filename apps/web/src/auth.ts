@@ -151,7 +151,10 @@ export const { signIn, signOut, handlers, auth, unstable_update } = NextAuth({
       if (trigger === 'update' && session) {
         token = { ...token, ...session };
       }
-      if (currentTime < (token.access_token_expires as number)) {
+      if (
+        currentTime <
+        (token.access_token_expires as number) - 5 * 60 * 1000
+      ) {
         console.log(token.access_token_expires);
         // Token is still valid, return it
         return token;

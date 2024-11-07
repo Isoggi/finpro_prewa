@@ -1,17 +1,18 @@
 import React from 'react';
-import ModalComponent from '../modal';
 import { Order } from '@/interfaces/order.interface';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaChevronRight, FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV } from 'react-icons/fa';
 import { dateDiff, formatStyledDate } from '@/lib/utils';
+import CancelOrderUser from '../modal/cancelOrderUser';
+import CountdownTimer from '../countdownTimer';
 
 interface Props extends Order {
   user_role: string;
+  token: string;
 }
 
 export default function OrderCardComponent({
-  id,
   name,
   category,
   description,
@@ -19,19 +20,26 @@ export default function OrderCardComponent({
   endDate,
   status,
   image,
+  invoice_number,
+  payment_expire,
   payment_method,
   user_role,
+  token,
 }: Props) {
   // console.log(payment_method, user_role, status);
-
+  const isTestReview = true;
   return (
-    <div className="card lg:card-side w-full bg-base-300 shadow-md">
-      <figure>
+    <div className="card w-full bg-[base-300] dark:bg-[#535C91] shadow-md">
+      {/* <figure>
         {image ? (
           <img
-            src={`${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`}
+            src={
+              image?.startsWith('http')
+                ? image
+                : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${image}`
+            }
             alt="image"
-            className="max-w-none h-auto"
+            className="rounded-xl w-24"
           />
         ) : (
           <Image
@@ -39,30 +47,44 @@ export default function OrderCardComponent({
             alt="image"
             width={100}
             height={100}
-            className="max-w-none h-auto"
+            className="rounded-xl w-24"
           />
         )}
-      </figure>
+      </figure> */}
 
       <div className="card-body">
         <div className="card-actions justify-end">
+          {status === 'waitingpayment' && payment_expire && (
+            <CountdownTimer targetDate={payment_expire ?? new Date()} />
+          )}
           <div className="dropdown dropdown-bottom dropdown-end">
-            <div title="cek detail" tabIndex={0} role="button" className="m-1">
+            <div
+              title="Lihat menu tambahan "
+              tabIndex={0}
+              role="button"
+              className="m-1"
+            >
               <FaEllipsisV />
             </div>
             <ul
               tabIndex={0}
               className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
             >
-              <li>
-                <a className="text-red-500">Batalkan pesanan</a>
-              </li>
+              {status === 'waitingpayment' && (
+                <li>
+                  <CancelOrderUser
+                    id={'cancel_order_user'}
+                    invoice_number={invoice_number ?? ''}
+                    token={token}
+                  />
+                </li>
+              )}
               <li>
                 <Link
                   href={
                     user_role === 'tenant'
-                      ? `/dashboard/pesanan/${id}`
-                      : `/pesanan/${id}`
+                      ? `/dashboard/pesanan/${invoice_number}`
+                      : `/pesanan/${invoice_number}`
                   }
                   className="hover:text-secondary text-primary"
                 >
@@ -70,27 +92,62 @@ export default function OrderCardComponent({
                 </Link>
               </li>
             </ul>
-          </div>{' '}
-        </div>
-        <div className="flex flex-col lg:flex-row justify-between items-center">
-          <div className="flex flex-col items-left">
-            <span className="text-white badge badge-info">{category}</span>
-            <div>
-              <h2 className="card-title">{name}</h2>
-              <span
-                className={`badge ${status === 'completed' ? 'badge-success' : 'badge-warning'}`}
-              >
-                {status}
-              </span>
-            </div>
-
-            <p className="text-sm">{description}</p>
-            <p className="text-sm">
-              {formatStyledDate(startDate)}{' '}
-              <span className="text-info">{dateDiff(startDate, endDate)}</span>
-            </p>
           </div>
         </div>
+        <div className="flex flex-col items-center lg:items-start">
+          <div className="hidden lg:block">
+            <span
+              className={`badge ${status === 'completed' ? 'badge-success' : 'badge-warning'}`}
+            >
+              {status === 'waitingpayment' ? 'Menunggu bayar' : status}
+            </span>
+          </div>
+          <div className="flex flex-col items-start">
+            <div className="flex flex-row items-start">
+              <span className="text-white badge badge-info">{category}</span>
+              <h2 className="card-title">{name}</h2>
+            </div>
+            <div className="flex flex-row items-start">
+              <p className="text-sm">{description}</p>
+              <p className="text-sm">
+                {formatStyledDate(startDate)}{' '}
+                <span className="text-info">
+                  {dateDiff(startDate, endDate)}
+                </span>
+              </p>
+            </div>
+          </div>
+          <div className="block lg:hidden">
+            <span
+              className={`badge ${status === 'completed' ? 'badge-success' : 'badge-warning'}`}
+            >
+              {status === 'waitingpayment' ? 'Menunggu bayar' : status}
+            </span>
+          </div>
+        </div>
+        {user_role === 'user' &&
+          (new Date() > new Date(startDate) || isTestReview) && (
+            <div className="card-actions justify-end">
+              <button
+                title="Tambah komentar"
+                type="button"
+                className="text-sm text-info"
+              >
+                Review anda
+              </button>
+            </div>
+          )}
+        {user_role === 'tenant' && (
+          <div className="card-actions justify-end divider">
+            <button
+              title="Balas komentar"
+              type="button"
+              className="text-sm text-info"
+            >
+              Balas komentar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

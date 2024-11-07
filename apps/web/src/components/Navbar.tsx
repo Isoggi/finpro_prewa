@@ -14,13 +14,16 @@ export default function Navbar() {
       <nav className="bg-[#ffffff] dark:bg-base-100 p-4 shadow-md">
         <div className="container max-w-screen-xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Image
-              src="/prewa.png"
-              alt="Prewa Logo"
-              className="h-12"
-              width={100}
-              height={100}
-            />
+            <a title="Prewa" href="/">
+              <Image
+                src="/prewa.png"
+                alt="Prewa Logo"
+                className="h-12"
+                width={100}
+                height={100}
+              />
+            </a>
+
             <a href="#" className="text-sm hidden md:block">
               Sewa
             </a>

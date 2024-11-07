@@ -20,16 +20,25 @@ export default function OrderContainerComponent({ url }: Props) {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null,
   ); // Timeout ID for debounce
-  const searchParams = useSearchParams();
-
-  setEndDate(searchParams.get('endDate') ?? '');
-  setStartDate(searchParams.get('startDate') ?? '');
-  setOrderNumber(searchParams.get('orderNumber') ?? '');
-  // const page = searchParams.get('page') ? searchParams.get('page') : 1;
-  // const size = searchParams.get('size') ? searchParams.get('size') : 8;
 
   const { data: session } = useSession();
-  const user: User | undefined | null = session ? session.user : null;
+  const user: User | null = useMemo(() => {
+    if (session?.user) {
+      return session.user;
+    }
+    return null;
+  }, [session]);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setEndDate(searchParams.get('endDate') ?? '');
+    setStartDate(searchParams.get('startDate') ?? '');
+    setOrderNumber(searchParams.get('orderNumber') ?? '');
+  }, []);
+
+  // const page = searchParams.get('page') ? searchParams.get('page') : 1;
+  // const size = searchParams.get('size') ? searchParams.get('size') : 8;
 
   // Function to fetch bookings from API
   const fetchBookings = async (
@@ -42,7 +51,7 @@ export default function OrderContainerComponent({ url }: Props) {
   ) => {
     try {
       console.log(url, userData);
-      setBookings(null);
+
       const response = await api.get(`${url ? url : '/order'}`, {
         params: {
           orderNumber,
@@ -73,16 +82,16 @@ export default function OrderContainerComponent({ url }: Props) {
     }
 
     const timeoutId = setTimeout(() => {
-      console.log('order fetch');
-      fetchBookings(orderNumber, startDate, endDate);
-    }, 500); // Delay of 500ms
+      console.log('order fetch', user);
+      if (user) fetchBookings(orderNumber, startDate, endDate);
+    }, 2000); // Delay of 2000ms
 
     setDebounceTimeout(timeoutId);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [orderNumber, startDate, endDate, user]); // Re-run effect when these dependencies change
+  }, [orderNumber, startDate, endDate]); // Re-run effect when these dependencies change
 
   return (
     <>
@@ -140,8 +149,10 @@ export default function OrderContainerComponent({ url }: Props) {
                 status={order.status}
                 image={order.image}
                 amount={order.amount}
+                invoice_number={order.invoice_number}
                 payment_method={order.payment_method}
                 user_role={user?.user_role as string}
+                token={user?.access_token as string}
               />
             ))
           ) : (

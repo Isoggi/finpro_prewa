@@ -47,3 +47,24 @@ export const sendForgetPasswordEmail = (
   };
   return transporter.sendMail(mailOptions);
 };
+export const sendCancelOrderEmail = (
+  to: string,
+  data: {
+    email: string;
+    invoice: string;
+    userName: string;
+    propertiName: string;
+    address: string;
+  },
+) => {
+  const templatePath = join(__dirname, '/../templates/', 'forgetPassword.hbs');
+  const templateSource = readFileSync(templatePath, 'utf-8');
+  const compiledTemplate = compile(templateSource);
+  const html = compiledTemplate(data);
+  const mailOptions: nodemailer.SendMailOptions = {
+    to,
+    subject: `Pembatalan Order ${data.invoice}`,
+    html,
+  };
+  return transporter.sendMail(mailOptions);
+};
