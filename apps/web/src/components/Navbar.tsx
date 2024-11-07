@@ -3,8 +3,12 @@ import React from 'react';
 import NavbarProfileComponent from './auth/navbarProfile';
 import SearchBarComponent from './searchBar';
 import Image from 'next/image';
-
+import { useRouter, usePathname } from 'next/navigation';
 export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isPropertyDetail =
+    pathname.includes('/properti/') || pathname.includes('/room/');
   return (
     <>
       <nav className="bg-[#ffffff] dark:bg-base-100 p-4 shadow-md">
@@ -38,7 +42,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-      <SearchBarComponent />
+      {!isPropertyDetail && <SearchBarComponent />}
     </>
   );
 }

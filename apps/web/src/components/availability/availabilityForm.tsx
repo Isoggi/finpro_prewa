@@ -10,7 +10,7 @@ interface Availability {
   id: number;
   room_id: number;
   stock: number;
-  date: string;
+  date: Date;
 }
 const getAvailability = async () => {
   const res = await prisma.availability.findMany({
@@ -46,7 +46,7 @@ const FormAvailability = async () => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Room Id</th>
+            <th>Room</th>
             <th>Stock</th>
             <th>Date </th>
             <th className="text-center">Actions</th>
@@ -56,7 +56,7 @@ const FormAvailability = async () => {
           {availability.map((availability, index) => (
             <tr key={availability.id}>
               <td>{index + 1}</td>
-              <td>{availability.room_id}</td>
+              <td>{availability.rooms.name}</td>
               <td>{availability.stock}</td>
               <td>{availability.date.toLocaleDateString()}</td>
               <td className="flex justify-center space-x-1">

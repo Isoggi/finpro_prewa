@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 
 const getProperti = async () => {
   const res = await prisma.properties.findMany({
+    where: { isActive: true },
     select: {
       id: true,
       name: true,
@@ -62,7 +63,7 @@ const formProperti = async () => {
       <div className="mb-2">
         <AddProperti categories={category} addresses={addresses} />
       </div>
-      <table className="table w-full">
+      <table className="table w-full ">
         <thead>
           <tr>
             <th>ID</th>
@@ -90,7 +91,7 @@ const formProperti = async () => {
                       : `${process.env.NEXT_PUBLIC_PROPERTY_IMAGE}${properties.image}`
                   }
                   alt={properties.name}
-                  className="w-full h-20 md:h-32 lg:h-40 object-cover rounded-md mb-2"
+                  className="w-full object-cover rounded-md mb-2"
                 />
               </td>
               <td className="flex justify-center space-x-1">

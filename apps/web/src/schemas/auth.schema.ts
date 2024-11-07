@@ -95,7 +95,13 @@ export const profileSchema = z.object({
       message:
         'Mohon masukan kata sandi anda sebagai Kata sandi minimal harus 6 karakter, berisi huruf dan angka',
     })
+
     .trim()
     .optional(),
+  phone_number: z
+    .string({ message: 'Mohon masukan nomor telepon Anda.' })
+    .min(8, {
+      message: 'Mohon masukan nomor telepon yang valid.',
+    }),
   image: z.any().optional(),
 });

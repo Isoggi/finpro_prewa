@@ -29,12 +29,37 @@ const SidebarComponent: React.FC = () => {
       </li>
       <li>
         <Link href="/dashboard">
-          <p className={`p-2 rounded ${isActive()}`}>Dashboard</p>
+          <p className={`p-2 rounded `}>Dashboard</p>
         </Link>
       </li>
       <li>
         <Link href="/dashboard/pesanan">
-          <p className={`p-2 rounded ${isActive('pesanan')}`}>Pesanan</p>
+          <p className={`p-2 rounded `}>Pesanan</p>
+        </Link>
+      </li>
+      <li>
+        <Link href="/dashboard/properti">
+          <p className={`p-2 rounded `}>Properti</p>
+        </Link>
+      </li>
+      <li>
+        <Link href="/dashboard/room">
+          <p className={`p-2 rounded `}>Room</p>
+        </Link>
+      </li>
+      <li>
+        <Link href="/dashboard/category">
+          <p className={`p-2 rounded `}>Category</p>
+        </Link>
+      </li>
+      <li>
+        <Link href="/dashboard/availability">
+          <p className={`p-2 rounded `}>Availability</p>
+        </Link>
+      </li>
+      <li>
+        <Link href="/dashboard/peakseason">
+          <p className={`p-2 rounded `}>PeakSeason</p>
         </Link>
       </li>
       <li>

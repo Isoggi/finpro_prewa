@@ -27,22 +27,19 @@ const AddCategory = () => {
     try {
       const response = await api.post('/category', { name });
 
-      if (response.status === 201) {
-        setSuccess('Category created successfully!');
-        router.refresh();
-        setName('');
-
-        setTimeout(() => {
-          setIsOpen(false);
-          setSuccess(null);
-        }, 1500);
-      }
+      setSuccess('Category added successfully!');
+      router.refresh();
+      setName('');
+      setTimeout(() => {
+        setIsOpen(false);
+        setSuccess(null);
+      }, 1500);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
-        'An error occurred while creating the category';
+        'An error occurred while adding Category';
       setError(errorMessage);
-      console.error('Error creating category:', error);
+      console.error('Error adding Category:', error);
     } finally {
       setIsLoading(false);
     }

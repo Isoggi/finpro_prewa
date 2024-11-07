@@ -34,7 +34,7 @@ const AddRoom = ({ properties }: { properties: Properties[] }) => {
     formData.append('property_id', property_id);
     formData.append('name', name);
     formData.append('description', description);
-    formData.append('price', price);
+    formData.append('price', parseFloat(price).toString()); // decimal
     formData.append('capacity', capacity);
 
     if (selectedFile) {
@@ -46,27 +46,24 @@ const AddRoom = ({ properties }: { properties: Properties[] }) => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (response.status === 201) {
-        setSuccess('Room created successfully!');
-        router.refresh();
-        setName('');
-        setDescription('');
-        setPrice('');
-        setCapacity('');
-        setPropertyId('');
-        setSelectedFile(null);
-
-        setTimeout(() => {
-          setIsOpen(false);
-          setSuccess(null);
-        }, 1500);
-      }
+      setSuccess('Availability added successfully!');
+      router.refresh();
+      setName('');
+      setDescription('');
+      setPrice('');
+      setCapacity('');
+      setPropertyId('');
+      setSelectedFile(null);
+      setTimeout(() => {
+        setIsOpen(false);
+        setSuccess(null);
+      }, 1500);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
-        'An error occurred while creating the room';
+        'An error occurred while adding availability';
       setError(errorMessage);
-      console.error('Error creating room:', error);
+      console.error('Error adding availability:', error);
     } finally {
       setIsLoading(false);
     }
@@ -138,6 +135,7 @@ const AddRoom = ({ properties }: { properties: Properties[] }) => {
                 placeholder="Room Price"
                 required
                 min="0"
+                step="0.01"
               />
             </div>
 
