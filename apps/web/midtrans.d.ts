@@ -1,4 +1,3 @@
-declare module 'midtrans-client' {}
 interface Snap {
   pay: (token: string, options?: SnapOptions) => void;
 }

@@ -7,13 +7,16 @@ import React from 'react';
 import CheckoutDetail from './checkoutDetail';
 import { useRouter } from 'next/navigation';
 import CountdownTimer from '../countdownTimer';
+import CheckoutGateway from './checkoutGateway';
+import UploadPayementProofModal from '../modal/uploadPaymentProof';
 
 type Props = { data?: OrderDetail | null; user?: User | null };
 
-export default function CheckoutMethod({ data }: Props) {
+export default function CheckoutMethod({ data, user }: Props) {
   const router = useRouter();
   const order = data;
   const [expired, setExpired] = React.useState<boolean>(false);
+  const [methodActive, setMethodActive] = React.useState<boolean>(false);
   const [paymentMethod, setPaymentMethod] = React.useState<string | null>(null);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -25,7 +28,7 @@ export default function CheckoutMethod({ data }: Props) {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+            Authorization: `Bearer ${user?.access_token}`,
           },
         },
       );
@@ -39,7 +42,7 @@ export default function CheckoutMethod({ data }: Props) {
     } catch (error) {
       showAlert({
         title: 'Gagal',
-        text: 'Ada masalah padad pembayaran',
+        text: 'Ada masalah pada pembayaran',
         icon: 'error',
       });
     }
@@ -85,7 +88,7 @@ export default function CheckoutMethod({ data }: Props) {
             </label>
           </div>
 
-          <div className="form-control">
+          {/* <div className="form-control">
             <label className="cursor-pointer label">
               <input
                 type="radio"
@@ -96,7 +99,21 @@ export default function CheckoutMethod({ data }: Props) {
               />
               <span className="label-text">Dokus</span>
             </label>
-          </div>
+          </div> */}
+          {methodActive && paymentMethod == 'midtrans' && (
+            <CheckoutGateway
+              invoice={order?.invoice_number ?? ''}
+              total={order?.amount ?? 0}
+              token={user?.access_token ?? null}
+            />
+          )}
+          {methodActive && paymentMethod == 'manual' && (
+            <UploadPayementProofModal
+              id="payment-proof-submit"
+              token={user?.access_token}
+              invoice_number={order?.invoice_number ?? ''}
+            />
+          )}
         </form>
       </div>
       <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md">
@@ -129,8 +146,14 @@ export default function CheckoutMethod({ data }: Props) {
 
         <button
           type="submit"
-          className="btn btn-primary w-full mt-6"
-          disabled={!paymentMethod && expired}
+          className="btn btn-primary w-full mt-6 disabled:btn-disabled"
+          disabled={!paymentMethod && (expired || methodActive)}
+          onClick={(e) => {
+            console.log('working?');
+            showAlert({ icon: 'info', title: 'Menunggu' });
+            setMethodActive(true);
+            // handleSubmit(e);
+          }}
         >
           Bayar Sekarang
         </button>

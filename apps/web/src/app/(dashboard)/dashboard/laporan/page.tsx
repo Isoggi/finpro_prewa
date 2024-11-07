@@ -19,6 +19,9 @@ export default function LaporanPage({}: Props) {
           <tbody></tbody>
         </table>
       </div>
+      <h1 className='className="text-2xl font-bold text-center mb-6'>
+        Property Report
+      </h1>
     </div>
   );
 }

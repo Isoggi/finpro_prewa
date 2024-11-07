@@ -30,7 +30,7 @@ export default function OrderCardComponent({
   // console.log(payment_method, user_role, status);
   const isTestReview = true;
   return (
-    <div className="card w-full bg-[base-300] dark:bg-[#535C91] shadow-md">
+    <div className="card w-full bg-[#AA77FF] dark:bg-[#535C91] shadow-md">
       {/* <figure>
         {image ? (
           <img
@@ -73,7 +73,6 @@ export default function OrderCardComponent({
             >
               {status === 'waitingpayment' && user_role === 'user' && (
                 <>
-                  {' '}
                   <li>
                     <CancelOrderUser
                       id={`CancelOrder${invoice_number}`}
@@ -82,13 +81,11 @@ export default function OrderCardComponent({
                     />
                   </li>
                   <li>
-                    (
                     <UploadPayementProofModal
                       id={`UploadProof${invoice_number}`}
                       invoice_number={invoice_number ?? ''}
                       token={token}
                     />
-                    )
                   </li>
                 </>
               )}

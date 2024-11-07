@@ -47,7 +47,7 @@ model Properties {
   image        String?  @db.VarChar(255)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
-  isActive Boolean @default(true)
+  isActive     Boolean  @default(true)
 
   category Categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_1")
   tenant   Users      @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_ibfk_2")
@@ -81,7 +81,7 @@ model Rooms {
   image       String?  @db.VarChar(255)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  isActive Boolean @default(true)
+  isActive    Boolean  @default(true)
 
   property       Properties         @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "properties_rooms_ibfk_1")
   transaction    TransactionItems[]
@@ -129,16 +129,17 @@ model Provinces {
 }
 
 model Reviews {
-  id             Int        @id @default(autoincrement())
-  user_id        Int
-  property_id    Int
-  rating         Int?
-  comment        String?    @db.Text
-  prev_review_id Int?
-  created_at     DateTime   @default(now())
-  updated_at     DateTime   @updatedAt
-  user           Users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
-  property       Properties @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
+  id                  Int                   @id @default(autoincrement())
+  user_id             Int
+  property_id         Int
+  rating              Int?
+  comment             String?               @db.Text
+  prev_review_id      Int?
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  user                Users                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
+  property            Properties            @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
+  Transactions_Review Transactions_Review[]
 
   @@index([property_id], map: "property_id")
   @@index([user_id], map: "user_id")
@@ -186,11 +187,25 @@ model Transactions {
   updated_at     DateTime                    @updatedAt
   payment_expire DateTime?
 
-  user             Users              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
-  transactionItems TransactionItems[]
+  user Users @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_ibfk_1")
+
+  transactionItems    TransactionItems[]
+  Transactions_Review Transactions_Review[]
 
   @@index([user_id], map: "user_id")
   @@map("transactions")
+}
+
+model Transactions_Review {
+  id             Int          @id @default(autoincrement())
+  transaction_id Int
+  review_id      Int
+  review         Reviews      @relation(fields: [review_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_review_ibfk_1")
+  transaction    Transactions @relation(fields: [transaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transaction_review_ibfk_2")
+
+  @@index([review_id], map: "review_id")
+  @@index([transaction_id], map: "transaction_id")
+  @@map("transactions_reviews")
 }
 
 model Users {

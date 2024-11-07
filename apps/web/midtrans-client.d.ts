@@ -292,3 +292,4 @@
 //     });
 //   }
 // }
+declare module 'midtrans-client';
