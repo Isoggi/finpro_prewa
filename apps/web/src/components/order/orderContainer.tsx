@@ -10,11 +10,21 @@ import OrderCardLoader from './orderCardLoader';
 import { useSearchParams } from 'next/navigation';
 
 type Props = { url?: string };
+type TypeProps = 'waitingpayment' | 'completed' | 'cancelled' | undefined;
+
+const typeArray = [
+  { id: 'cancelled', name: 'Batal' },
+  { id: 'completed', name: 'Selesai' },
+  { id: 'waitingpayment', name: 'Menunggu pembayaran' },
+  { id: undefined, name: 'Semua' },
+];
 
 export default function OrderContainerComponent({ url }: Props) {
   const [orderNumber, setOrderNumber] = useState<string>(''); // Order number filter
   const [startDate, setStartDate] = useState<string>(''); // Start date filter
   const [endDate, setEndDate] = useState<string>(''); // End date filter
+  const [type, setType] = useState<TypeProps>('waitingpayment');
+  const [isFetching, setIsFetching] = useState(false);
   const [bookings, setBookings] = useState<Order[] | null>(null); // Filtered booking results
   const [totalPages, setTotalPages] = useState(0);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
@@ -35,28 +45,34 @@ export default function OrderContainerComponent({ url }: Props) {
     setEndDate(searchParams.get('endDate') ?? '');
     setStartDate(searchParams.get('startDate') ?? '');
     setOrderNumber(searchParams.get('orderNumber') ?? '');
+    setType((searchParams.get('type') as TypeProps) ?? 'waitingpayment');
   }, []);
 
-  // const page = searchParams.get('page') ? searchParams.get('page') : 1;
-  // const size = searchParams.get('size') ? searchParams.get('size') : 8;
-
+  const showTypeModal = () => {
+    const typeModal = document.getElementById(
+      'type_modal',
+    ) as HTMLDialogElement | null;
+    typeModal?.showModal();
+  };
   // Function to fetch bookings from API
   const fetchBookings = async (
     orderNumber?: string,
     startDate?: string,
     endDate?: string,
+    type?: TypeProps,
     page = 1,
     size = 8,
     userData = user,
   ) => {
     try {
       console.log(url, userData);
-
+      setIsFetching(true);
       const response = await api.get(`${url ? url : '/order'}`, {
         params: {
           orderNumber,
           startDate,
           endDate,
+          type,
           page,
           size,
         },
@@ -69,7 +85,9 @@ export default function OrderContainerComponent({ url }: Props) {
       // Update bookings state
       setBookings(data.data);
       setTotalPages(data.totalPages);
+      setIsFetching(false);
     } catch (error) {
+      setIsFetching(false);
       console.error('Failed to fetch bookings', error);
     }
   };
@@ -83,7 +101,7 @@ export default function OrderContainerComponent({ url }: Props) {
 
     const timeoutId = setTimeout(() => {
       console.log('order fetch', user);
-      if (user) fetchBookings(orderNumber, startDate, endDate);
+      if (user) fetchBookings(orderNumber, startDate, endDate, type);
     }, 2000); // Delay of 2000ms
 
     setDebounceTimeout(timeoutId);
@@ -91,7 +109,7 @@ export default function OrderContainerComponent({ url }: Props) {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [orderNumber, startDate, endDate]); // Re-run effect when these dependencies change
+  }, [orderNumber, startDate, endDate, type]); // Re-run effect when these dependencies change
 
   return (
     <>
@@ -131,11 +149,50 @@ export default function OrderContainerComponent({ url }: Props) {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
+        <div className="flex items-center border-b md:border-b-0 md:border-none pr-4 pb-2 md:pb-0">
+          <button
+            type="button"
+            onClick={showTypeModal}
+            className="text-sm hover:text-blue-500"
+          >
+            {[...typeArray].filter((t) => t.id === type)[0]?.name ||
+              'Pilih Tipe Transaksi'}
+          </button>
+        </div>
+        <dialog id="type_modal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-4">Pilih Jenis Transaksi</h3>
+            <div className="grid gap-2">
+              {typeArray.map(
+                (type: { id: string | undefined; name: string }) => (
+                  <button
+                    type="button"
+                    key={type.id}
+                    onClick={() => {
+                      setType(type.id as TypeProps);
+                      (
+                        document.getElementById(
+                          'type_modal',
+                        ) as HTMLDialogElement
+                      ).close();
+                    }}
+                    className="w-full text-left p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    {type.name}
+                  </button>
+                ),
+              )}
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
       </div>
 
       {/* Booking History Cards */}
       <div className="space-y-4 my-4">
-        {bookings ? (
+        {bookings && !isFetching ? (
           bookings.length ? (
             bookings.map((order, index) => (
               <OrderCardComponent
@@ -168,7 +225,7 @@ export default function OrderContainerComponent({ url }: Props) {
         <NavbarPaginationComponent
           totalPages={totalPages}
           onPageChange={(page) =>
-            fetchBookings(orderNumber, startDate, endDate, page)
+            fetchBookings(orderNumber, startDate, endDate, type, page)
           }
         />
       )}

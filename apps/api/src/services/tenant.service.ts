@@ -14,7 +14,7 @@ export class TenantService {
       orderNumber,
       startDate,
       endDate,
-      status = transactions_status.waitingpayment,
+      type = transactions_status.waitingpayment,
     } = req.query;
     if (!user) throw new ErrorHandler('Unauthorized', 401);
     const [result, totalCount] = await Promise.all([
@@ -39,11 +39,8 @@ export class TenantService {
           invoice_number: {
             contains: orderNumber ? orderNumber?.toString() : undefined,
           },
-          status: status
-            ? {
-                equals: status as transactions_status,
-              }
-            : undefined,
+          status:
+            type === 'undefined' ? undefined : (type as transactions_status),
         },
         include: {
           transactionItems: {

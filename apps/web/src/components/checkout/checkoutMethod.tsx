@@ -45,16 +45,17 @@ export default function CheckoutMethod({ data }: Props) {
     }
   };
   return (
-    <div className="flex gap-6">
-      <div className="w-full lg:w-2/3 bg-white p-6 rounded-lg shadow-md">
-        <CountdownTimer
-          targetDate={order?.payment_expire ?? new Date()}
-          onExpired={() => setExpired(false)}
-        />
-      </div>
-      <div className="w-full lg:w-1/3 hidden lg:block"></div>
+    <div className="flex flex-col lg:flex-row gap-6">
       {/* Left Column - Payment Options */}
       <div className="w-full lg:w-2/3 bg-white p-6 rounded-lg shadow-md">
+        <CountdownTimer
+          targetDate={
+            order?.payment_expire ??
+            new Date(new Date().setTime(new Date().getTime() + 60 * 60 * 1000))
+          }
+          onExpired={() => setExpired(true)}
+        />
+
         {order && <CheckoutDetail order={order} />}
         <h2 className="font-semibold text-lg mb-4">Metode Pembayaran</h2>
         <form onSubmit={handleSubmit}>
@@ -129,7 +130,7 @@ export default function CheckoutMethod({ data }: Props) {
         <button
           type="submit"
           className="btn btn-primary w-full mt-6"
-          disabled={!paymentMethod || expired}
+          disabled={!paymentMethod && expired}
         >
           Bayar Sekarang
         </button>

@@ -1,7 +1,4 @@
-// declare module 'midtrans-client' {
-//   interface midtransClient: any;
-//   export default midtransClient;
-// }
+declare module 'midtrans-client' {}
 interface Snap {
   pay: (token: string, options?: SnapOptions) => void;
 }

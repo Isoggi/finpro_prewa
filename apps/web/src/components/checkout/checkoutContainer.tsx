@@ -23,12 +23,14 @@ export default function CheckoutContainer({}: Props) {
   }, [session]);
   React.useEffect(() => {
     const fetchOrder = async () => {
+      console.log(user?.access_token);
       const response = await api.get(`/order/${params.get('inv')}`, {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
           // Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJrcmlzdGFudG9zYXB0YWRpQGdtYWlsLmNvbSIsIm5hbWUiOiJLcmlzdGFudG8iLCJwaG9uZV9udW1iZXIiOiIwODExMjIyMjMzMzMiLCJpbWFnZSI6bnVsbCwicm9sZSI6InVzZXIiLCJpc1ZlcmlmaWVkIjp0cnVlLCJ1c2VyX3JvbGUiOiJ1c2VyIiwiaWF0IjoxNzI5NzU4NDc3LCJleHAiOjE3Mjk3NjkyNzd9.-0X5JoPG7zuRH_fDNjtDbcudGft3ftRQ7gDsLP_ips4`,
         },
       });
+      console.log(response.data.data);
       setOrder(response.data.data);
     };
     if (user) fetchOrder();
