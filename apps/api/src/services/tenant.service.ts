@@ -20,25 +20,31 @@ export class TenantService {
     const [result, totalCount] = await Promise.all([
       prisma.transactions.findMany({
         where: {
-          transactionItems: {
-            some: {
-              start_date: startDate
-                ? { gte: new Date(startDate.toString()) }
-                : undefined,
-              end_date: endDate
-                ? { lte: new Date(endDate.toString()) }
-                : undefined,
-              room: {
-                is: {
-                  property: { is: { tenant_id: user?.id } },
-                  // property: { is: { tenant_id: 2 } },
+          OR: [
+            {
+              transactionItems: {
+                some: {
+                  start_date: startDate
+                    ? { gte: new Date(startDate.toString()) }
+                    : undefined,
+                  end_date: endDate
+                    ? { lte: new Date(endDate.toString()) }
+                    : undefined,
+                  room: {
+                    is: {
+                      property: { is: { tenant_id: user?.id } },
+                      // property: { is: { tenant_id: 2 } },
+                    },
+                  },
                 },
               },
             },
-          },
-          invoice_number: {
-            contains: orderNumber ? orderNumber?.toString() : undefined,
-          },
+            {
+              invoice_number: {
+                contains: orderNumber ? orderNumber?.toString() : undefined,
+              },
+            },
+          ],
           status:
             type === 'undefined' ? undefined : (type as transactions_status),
         },
@@ -66,6 +72,19 @@ export class TenantService {
               }, // You can select specific room fields here
             },
           },
+          Transactions_Review: {
+            select: {
+              review: {
+                select: {
+                  id: true,
+                  comment: true,
+                  prev_review_id: true,
+                  created_at: true,
+                  user: { select: { id: true, name: true } },
+                },
+              },
+            },
+          },
         },
         take: Number(size),
         skip: (Number(page) - 1) * Number(size),
@@ -73,22 +92,33 @@ export class TenantService {
       }),
       prisma.transactions.count({
         where: {
-          transactionItems: {
-            some: {
-              start_date: startDate
-                ? { gte: new Date(startDate.toString()) }
-                : undefined,
-              end_date: endDate
-                ? { lte: new Date(endDate.toString()) }
-                : undefined,
-              room: {
-                is: {
-                  property: { is: { tenant_id: user?.id } },
-                  // property: { is: { tenant_id: 2 } },
+          OR: [
+            {
+              transactionItems: {
+                some: {
+                  start_date: startDate
+                    ? { gte: new Date(startDate.toString()) }
+                    : undefined,
+                  end_date: endDate
+                    ? { lte: new Date(endDate.toString()) }
+                    : undefined,
+                  room: {
+                    is: {
+                      property: { is: { tenant_id: user?.id } },
+                      // property: { is: { tenant_id: 2 } },
+                    },
+                  },
                 },
               },
             },
-          },
+            {
+              invoice_number: {
+                contains: orderNumber ? orderNumber?.toString() : undefined,
+              },
+            },
+          ],
+          status:
+            type === 'undefined' ? undefined : (type as transactions_status),
         },
       }),
     ]);
