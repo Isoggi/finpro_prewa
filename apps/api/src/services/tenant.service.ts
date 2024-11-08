@@ -134,6 +134,15 @@ export class TenantService {
         status: order.status,
         payment_method: order.payment_method,
         image: order.transactionItems[0].room.property.image,
+        review: order.Transactions_Review.map((r) => {
+          return {
+            id: r.review.id,
+            comment: r.review.comment ?? '',
+            prev_review_id: r.review.prev_review_id,
+            user: r.review.user.name,
+            created_at: r.review.created_at,
+          };
+        }),
       };
       return _res;
     });
