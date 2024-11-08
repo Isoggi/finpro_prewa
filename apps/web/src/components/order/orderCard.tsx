@@ -7,6 +7,8 @@ import CancelOrderUser from '../modal/cancelOrderUser';
 import CountdownTimer from '../countdownTimer';
 import UploadPayementProofModal from '../modal/uploadPaymentProof';
 import ModalVerifyProofComponent from '../modal/verifyPaymentProof';
+import ReviewBox from '../review/reviewBox';
+import { UserChatReview } from '../review/chatReview';
 
 interface Props extends Order {
   user_role: string;
@@ -26,11 +28,13 @@ export default function OrderCardComponent({
   payment_method,
   user_role,
   token,
+  review,
 }: Props) {
   // console.log(payment_method, user_role, status);
   const isTestReview = true;
+  console.log(review);
   return (
-    <div className="card w-full bg-[#AA77FF] dark:bg-[#535C91] shadow-md">
+    <div className="card w-full bg-white dark:bg-[#535C91] shadow-md">
       {/* <figure>
         {image ? (
           <img
@@ -146,26 +150,48 @@ export default function OrderCardComponent({
           </div>
         </div>
         {user_role === 'user' &&
-          (new Date() > new Date(startDate) || isTestReview) && (
+          ((new Date() > new Date(startDate) && status === 'completed') ||
+            isTestReview) && (
             <div className="card-actions justify-end">
-              <button
-                title="Tambah komentar"
-                type="button"
-                className="text-sm text-info"
-              >
-                Review anda
-              </button>
+              {review ? (
+                review?.map((r) => (
+                  <UserChatReview
+                    key={r.id}
+                    text={r.comment}
+                    time={r.created_at}
+                    user={r.user}
+                    id={r.id}
+                  />
+                ))
+              ) : (
+                <ReviewBox token={token} trx_id={invoice_number} />
+              )}
             </div>
           )}
-        {user_role === 'tenant' && (
+        {user_role === 'tenant' && status === 'completed' && (
           <div className="card-actions justify-end divider">
-            <button
-              title="Balas komentar"
-              type="button"
-              className="text-sm text-info"
-            >
-              Balas komentar
-            </button>
+            {review ? (
+              <>
+                {review.map((r) => (
+                  <UserChatReview
+                    key={r.id}
+                    text={r.comment}
+                    time={r.created_at}
+                    user={r.user}
+                    id={r.id}
+                  />
+                ))}
+                {review.length < 2 && (
+                  <ReviewBox
+                    token={token}
+                    trx_id={invoice_number}
+                    prev_review_id={review[0]?.id}
+                  />
+                )}
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         )}
       </div>

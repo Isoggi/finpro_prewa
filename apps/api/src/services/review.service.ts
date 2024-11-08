@@ -1,7 +1,6 @@
 import { ErrorHandler } from '@/helpers/response.helper';
 import prisma from '@/prisma';
 import { Request } from 'express';
-import { number } from 'zod';
 
 export class ReviewService {
   static async getReview(req: Request) {
@@ -33,18 +32,42 @@ export class ReviewService {
   }
 
   static async postReview(req: Request) {
-    const { id, text, prev_review_id } = req.body;
+    const { text, prev_review_id, transaction_id, property_id } = req.body;
     const user = req.user;
     if (!user) throw new ErrorHandler('Unauthorized', 401);
     const res = await prisma.$transaction(async (trx) => {
-      await trx.reviews.create({
+      let prop_id = '';
+      let data = { prop: 0, trans: 0 };
+      if (transaction_id) {
+        let transaction = await trx.transactions.findFirst({
+          where: { invoice_number: transaction_id },
+          select: {
+            id: true,
+            transactionItems: {
+              select: {
+                room: { select: { property: { select: { id: true } } } },
+              },
+            },
+          },
+        });
+        data.trans = transaction?.id ?? 0;
+        data.prop = transaction?.transactionItems[0].room.property.id ?? 0;
+      }
+      const rev = await trx.reviews.create({
         data: {
           user_id: user?.id,
-          property_id: id,
+          property_id: data.prop ?? property_id,
           comment: text,
           prev_review_id: prev_review_id,
         },
       });
+      const trx_rev = await trx.transactions_Review.create({
+        data: {
+          transaction_id: data.trans,
+          review_id: rev.id,
+        },
+      });
+      return trx_rev;
     });
     return res;
   }

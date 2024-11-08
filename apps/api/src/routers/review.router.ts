@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ReviewController } from '../controllers/review.controller';
+import { AuthMiddleware } from '@/middlewares/auth.middleware';
 // import { validateAuth } from "../middlewares/authValidator.middleware";
 // import { loginSchema, registerSchema } from "../schemas/auth.schema";
 // import { AuthMiddleware } from "../middlewares/auth.middleware";
@@ -13,17 +14,9 @@ export class ReviewRouter {
   }
 
   private routes(): void {
-    this.router.get(
-      '/review',
-      // validateReview(),
-      this.reviewController.get,
-    );
-
-    this.router.post(
-      '/review',
-      // validateReview('post'),
-      this.reviewController.post,
-    );
+    this.router.get('/', this.reviewController.get);
+    this.router.post('/', AuthMiddleware, this.reviewController.post);
+    this.router.get('/:id', this.reviewController.get);
   }
   public getRouter(): Router {
     return this.router;

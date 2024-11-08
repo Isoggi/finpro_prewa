@@ -20,6 +20,8 @@ import { CategoryRouter } from './routers/category.router';
 import { AvailabilityRouter } from './routers/availability.routes';
 import { AvailabilityController } from './controllers/availability.controller';
 import { PeakSeasonRouter } from './routers/PeakSeason.router';
+import { ReviewRouter } from './routers/review.router';
+import { ReportRouter } from './routers/report.router';
 export default class App {
   private app: Express;
 
@@ -77,6 +79,8 @@ export default class App {
     this.app.use('/api/category', new CategoryRouter().getRouter());
     this.app.use('/api/availability', new AvailabilityRouter().getRouter());
     this.app.use('/api/peak-season', new PeakSeasonRouter().getRouter());
+    this.app.use('/api/review', new ReviewRouter().getRouter());
+    this.app.use('/api/report', new ReportRouter().getRouter());
   }
 
   public start(): void {

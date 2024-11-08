@@ -38,9 +38,11 @@ const RoomDetail = ({ params }: { params: { id: string } }) => {
       <div className="flex flex-col md:flex-row">
         <Image
           src={
-            room.image?.includes('http')
-              ? room.image
-              : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+            room.image
+              ? room.image?.includes('http')
+                ? room.image
+                : `${process.env.NEXT_PUBLIC_ROOM_IMAGE}${room.image}`
+              : '/default-hotel.jpg'
           }
           alt={room.name}
           width={200}

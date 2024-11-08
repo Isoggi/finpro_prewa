@@ -210,6 +210,7 @@ export default function OrderContainerComponent({ url }: Props) {
                 payment_method={order.payment_method}
                 user_role={user?.user_role as string}
                 token={user?.access_token as string}
+                review={order.review}
               />
             ))
           ) : (

@@ -9,6 +9,8 @@ export async function middleware(request: NextRequest) {
   const user = session?.user;
 
   console.log('middleware', user);
+
+  const { pathname } = request.nextUrl;
   if (user?.id && (pathname === '/masuk' || pathname === '/daftar')) {
     if (user?.user_role === 'tenant') {
       return redirect(new URL('/dashboard', request.url));

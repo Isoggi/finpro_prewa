@@ -29,6 +29,13 @@ export interface TransactionItems {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export interface TransactionReview {
+  id?: number;
+  transaction_id?: number;
+  comment: string;
+  prev_review_id?: number | null | undefined;
+}
 export interface Order {
   invoice_number: string;
   category: string;
@@ -40,4 +47,5 @@ export interface Order {
   payment_method?: transactions_payment_method;
   image?: string | null | undefined;
   items?: TransactionItems[] | null | undefined;
+  review?: TransactionReview[] | null | undefined;
 }

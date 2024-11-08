@@ -88,18 +88,6 @@ export default function CheckoutMethod({ data, user }: Props) {
             </label>
           </div>
 
-          {/* <div className="form-control">
-            <label className="cursor-pointer label">
-              <input
-                type="radio"
-                name="payment"
-                className="radio"
-                onChange={() => setPaymentMethod('doku')}
-                checked={paymentMethod === 'doku'}
-              />
-              <span className="label-text">Dokus</span>
-            </label>
-          </div> */}
           {methodActive && paymentMethod == 'midtrans' && (
             <CheckoutGateway
               invoice={order?.invoice_number ?? ''}

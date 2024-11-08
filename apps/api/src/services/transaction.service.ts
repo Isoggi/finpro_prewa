@@ -1,5 +1,5 @@
 import { ErrorHandler } from '@/helpers/response.helper';
-import { Order } from '@/interfaces/transaction.interface';
+import { Order, TransactionReview } from '@/interfaces/transaction.interface';
 import { addAutoCancelOrder } from '@/libs/bullmq.lib';
 import prisma from '@/prisma';
 import {
@@ -72,6 +72,19 @@ export class TransactionService {
               }, // You can select specific room fields here
             },
           },
+          Transactions_Review: {
+            select: {
+              review: {
+                select: {
+                  id: true,
+                  comment: true,
+                  prev_review_id: true,
+                  created_at: true,
+                  user: { select: { id: true, name: true } },
+                },
+              },
+            },
+          },
         },
         take: Number(size),
         skip: (Number(page) - 1) * Number(size),
@@ -80,7 +93,8 @@ export class TransactionService {
       prisma.transactions.count({
         where: {
           user_id: user?.id,
-          // user_id: 1,
+          status:
+            type === 'undefined' ? undefined : (type as transactions_status),
           OR: [
             {
               invoice_number: {
@@ -112,6 +126,15 @@ export class TransactionService {
         status: order.status,
         payment_method: order.payment_method,
         image: order.transactionItems[0].room.property.image,
+        review: order.Transactions_Review.map((r) => {
+          return {
+            id: r.review.id,
+            comment: r.review.comment ?? '',
+            prev_review_id: r.review.prev_review_id,
+            user: r.review.user.name,
+            created_at: r.review.created_at,
+          };
+        }),
       };
       return _res;
     });
@@ -328,7 +351,7 @@ export class TransactionService {
 
   static async updateTransaction(req: Request) {
     const user = req.user;
-    const [invoice_number, payment_method] = req.body;
+    const [invoice_number, payment_method, midtrans] = req.body;
     const trx_id = await prisma.transactions.findFirst({
       where: { invoice_number: invoice_number, user_id: user?.id },
       select: { id: true },
@@ -337,8 +360,10 @@ export class TransactionService {
       return await trx.transactions.update({
         where: { id: trx_id?.id },
         data: {
-          payment_method: payment_method,
-          status: transactions_status.waitingpayment,
+          payment_method: payment_method as transactions_payment_method,
+          status: midtrans
+            ? transactions_status.completed
+            : transactions_status.waitingpayment,
         },
       });
     });

@@ -1,4 +1,5 @@
 import { IRooms } from './property.interface';
+import { Review } from './review.interface';
 import { User } from './user.interface';
 
 export interface Order {
@@ -21,6 +22,7 @@ export interface Order {
   payment_proof?: string;
   invoice_number?: string;
   payment_expire?: Date | null | undefined;
+  review?: Review[];
 }
 
 export interface OrderDetail extends Order {

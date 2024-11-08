@@ -15,14 +15,27 @@ export async function POST(request: NextRequest) {
 
     let token;
     console.log(order_token, 'ini order_token di route.ts');
-    // const statusResponse = await snap.transaction.status(order_id);
-    // token =  await api.get(`/order/get-midtrans-token/${order_id}`);
-    // statusResponse.transaction_status === 'pending'
-    //   ? statusResponse.transaction_id
-    //   : null;
-    // console.log(statusResponse, 'ini token kalo udah ada');
-
-    // const { carts, shippingCost } = await request.json();
+    //   const payload = {
+    //     transaction_details: {
+    //         order_id: transaction_id,
+    //         gross_amount
+    //     },
+    //     item_details: productsFromDB.map((product) => ({
+    //         id: product.id,
+    //         price: product.price,
+    //         quantity: product.quantity,
+    //         name: product.name,
+    //     })),
+    //     customer_details: {
+    //         first_name: customer_name,
+    //         email: customer_email
+    //     },
+    //     callbacks: {
+    //         finish: `${FRONT_END_URL}/order-status?transaction_id=${transaction_id}`,
+    //         error: `${FRONT_END_URL}/order-status?transaction_id=${transaction_id}`,
+    //         pending: `${FRONT_END_URL}/order-status?transaction_id=${transaction_id}`
+    //     }
+    // }
     const parameter =
       // : Midtrans.TransactionRequestBody
       {
@@ -37,13 +50,13 @@ export async function POST(request: NextRequest) {
           gross_amount: total,
         },
       };
-    if (!token) {
-      console.log(token, 'before isi token');
-      token = await snap.createTransactionToken(parameter);
-      console.log(token, 'after isi token');
-    }
+    // if (!token) {
+    //   console.log(token, 'before isi token');
+    //   token = await snap.createTransactionToken(parameter);
+    //   console.log(token, 'after isi token');
+    // }
     console.log(token, 'ini token');
-    token = await snap.createTransactionToken(parameter);
+    token = token ?? (await snap.createTransactionToken(parameter));
 
     return NextResponse.json({ token });
   } catch (error) {
