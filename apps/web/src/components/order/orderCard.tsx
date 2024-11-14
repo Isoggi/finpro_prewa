@@ -153,19 +153,21 @@ export default function OrderCardComponent({
           ((new Date() > new Date(startDate) && status === 'completed') ||
             isTestReview) && (
             <div className="card-actions justify-end">
-              {review ? (
-                review?.map((r) => (
-                  <UserChatReview
-                    key={r.id}
-                    text={r.comment}
-                    time={r.created_at}
-                    user={r.user}
-                    id={r.id}
-                  />
-                ))
-              ) : (
+              {
+                // review ? (
+                //   review?.map((r) => (
+                //     <UserChatReview
+                //       key={r.id}
+                //       text={r.comment}
+                //       time={r.created_at}
+                //       user={r.user}
+                //       id={r.id}
+                //     />
+                //   ))
+                // )
+                // :
                 <ReviewBox token={token} trx_id={invoice_number} />
-              )}
+              }
             </div>
           )}
         {user_role === 'tenant' && status === 'completed' && (
